@@ -34,6 +34,8 @@ export function SelectPage() {
 				<Select options={options} color="primary" className="w-40" placeholder="Primary" />
 				<Select options={options} color="secondary" className="w-40" placeholder="Secondary" />
 				<Select options={options} color="accent" className="w-40" placeholder="Accent" />
+				<Select options={options} color="success" className="w-40" placeholder="Success" />
+				<Select options={options} color="error" className="w-40" placeholder="Error" />
 			</ShowcaseSection>
 
 			<ShowcaseSection title="Sizes">

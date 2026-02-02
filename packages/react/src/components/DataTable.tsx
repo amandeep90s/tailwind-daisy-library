@@ -1,3 +1,4 @@
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
 import React, { forwardRef, useCallback, useMemo, useState } from "react";
 import { Pagination } from "./Pagination";
@@ -8,6 +9,7 @@ import { Pagination } from "./Pagination";
 
 export type DataTableSize = "xs" | "sm" | "md" | "lg";
 export type SortDirection = "asc" | "desc" | null;
+export type PaginationVariant = "numbered" | "simple";
 
 export interface DataTableColumnDef<T> {
 	/** Unique key for the column */
@@ -98,6 +100,12 @@ export interface SortableDataTableProps<T> extends React.HTMLAttributes<HTMLDivE
 	paginationClassName?: string;
 	/** Position of pagination */
 	paginationPosition?: "top" | "bottom" | "both";
+	/** Pagination variant - numbered (default) shows page numbers, simple shows only prev/next buttons */
+	paginationVariant?: PaginationVariant;
+	/** Available page size options for simple pagination variant */
+	pageSizeOptions?: number[];
+	/** Callback when page size changes (for controlled page size) */
+	onPageSizeChange?: (pageSize: number) => void;
 }
 
 // ============================================================================
@@ -216,13 +224,16 @@ export const SortableDataTable = forwardRef<HTMLDivElement, SortableDataTablePro
 			sortBothIcon,
 			expandIcon,
 			pagination = false,
-			pageSize = 10,
+			pageSize: controlledPageSize = 10,
 			currentPage: controlledCurrentPage,
 			onPageChange,
 			defaultPage = 1,
 			paginationSiblingCount = 1,
 			paginationClassName,
 			paginationPosition = "bottom",
+			paginationVariant = "numbered",
+			pageSizeOptions = [10, 20, 30, 50],
+			onPageSizeChange,
 			...props
 		}: SortableDataTableProps<T>,
 		ref: React.ForwardedRef<HTMLDivElement>,
@@ -231,11 +242,13 @@ export const SortableDataTable = forwardRef<HTMLDivElement, SortableDataTablePro
 		const [internalExpandedKeys, setInternalExpandedKeys] = useState<(string | number)[]>(defaultExpandedKeys);
 		const [internalSortState, setInternalSortState] = useState<DataTableSortState>(defaultSort);
 		const [internalCurrentPage, setInternalCurrentPage] = useState<number>(defaultPage);
+		const [internalPageSize, setInternalPageSize] = useState<number>(controlledPageSize);
 
 		// Use controlled or uncontrolled state
 		const expandedKeys = controlledExpandedKeys ?? internalExpandedKeys;
 		const sortState = controlledSortState ?? internalSortState;
 		const currentPage = controlledCurrentPage ?? internalCurrentPage;
+		const pageSize = onPageSizeChange ? controlledPageSize : internalPageSize;
 
 		// Handle expand toggle
 		const handleExpandToggle = useCallback(
@@ -327,6 +340,23 @@ export const SortableDataTable = forwardRef<HTMLDivElement, SortableDataTablePro
 			[controlledCurrentPage, onPageChange],
 		);
 
+		// Handle page size change
+		const handlePageSizeChange = useCallback(
+			(newPageSize: number) => {
+				if (onPageSizeChange) {
+					onPageSizeChange(newPageSize);
+				} else {
+					setInternalPageSize(newPageSize);
+				}
+				// Reset to first page when page size changes
+				if (controlledCurrentPage === undefined) {
+					setInternalCurrentPage(1);
+				}
+				onPageChange?.(1);
+			},
+			[onPageSizeChange, controlledCurrentPage, onPageChange],
+		);
+
 		// Get paginated data
 		const paginatedData = useMemo(() => {
 			if (!pagination) return sortedData;
@@ -334,6 +364,14 @@ export const SortableDataTable = forwardRef<HTMLDivElement, SortableDataTablePro
 			const endIndex = startIndex + pageSize;
 			return sortedData.slice(startIndex, endIndex);
 		}, [pagination, sortedData, currentPage, pageSize]);
+
+		// Calculate record range for simple pagination
+		const recordRange = useMemo(() => {
+			if (!pagination) return { start: 1, end: sortedData.length, total: sortedData.length };
+			const start = (currentPage - 1) * pageSize + 1;
+			const end = Math.min(currentPage * pageSize, sortedData.length);
+			return { start, end, total: sortedData.length };
+		}, [pagination, currentPage, pageSize, sortedData.length]);
 
 		// Get row class
 		const getRowClass = (item: T, index: number) => {
@@ -375,8 +413,8 @@ export const SortableDataTable = forwardRef<HTMLDivElement, SortableDataTablePro
 			return <ExpandIcon expanded={expanded} />;
 		};
 
-		// Render pagination component
-		const renderPagination = () => {
+		// Render numbered pagination component (original)
+		const renderNumberedPagination = () => {
 			if (!pagination || totalPages <= 1) return null;
 			return (
 				<div className={clsx("flex justify-center", paginationClassName)}>
@@ -388,6 +426,63 @@ export const SortableDataTable = forwardRef<HTMLDivElement, SortableDataTablePro
 					/>
 				</div>
 			);
+		};
+
+		// Render simple pagination component (new variant)
+		const renderSimplePagination = () => {
+			if (!pagination) return null;
+			return (
+				<div className={clsx("flex items-center justify-between", paginationClassName)}>
+					{/* Page size selector and record count */}
+					<div className="flex items-center gap-2">
+						<select
+							className="select select-bordered select-sm"
+							value={pageSize}
+							onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+							aria-label="Rows per page"
+						>
+							{pageSizeOptions.map((option) => (
+								<option key={option} value={option}>
+									{option}
+								</option>
+							))}
+						</select>
+						<span className="text-sm text-base-content/70">
+							of {recordRange.total} records
+						</span>
+					</div>
+
+					{/* Prev/Next buttons */}
+					<div className="flex items-center gap-1">
+						<button
+							type="button"
+							className="btn btn-ghost btn-sm btn-square"
+							onClick={() => handlePageChange(currentPage - 1)}
+							disabled={currentPage === 1}
+							aria-label="Previous page"
+						>
+							<ChevronLeftIcon className="w-5 h-5" />
+						</button>
+						<button
+							type="button"
+							className="btn btn-ghost btn-sm btn-square"
+							onClick={() => handlePageChange(currentPage + 1)}
+							disabled={currentPage >= totalPages}
+							aria-label="Next page"
+						>
+							<ChevronRightIcon className="w-5 h-5" />
+						</button>
+					</div>
+				</div>
+			);
+		};
+
+		// Render pagination based on variant
+		const renderPagination = () => {
+			if (paginationVariant === "simple") {
+				return renderSimplePagination();
+			}
+			return renderNumberedPagination();
 		};
 
 		return (

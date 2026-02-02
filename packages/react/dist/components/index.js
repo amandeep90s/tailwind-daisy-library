@@ -1245,7 +1245,7 @@ var Combobox = (0, import_react16.forwardRef)(
               ),
               children: [
                 /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "truncate", children: selectedOption?.label || placeholder }),
-                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_solid.ChevronUpDownIcon, { className: "h-5 w-5" })
+                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_solid.ChevronDownIcon, { className: (0, import_clsx16.default)("h-5 w-5 shrink-0 transition-transform duration-200", isOpen && "rotate-180") })
               ]
             }
           ),
@@ -1442,6 +1442,7 @@ var ContextMenu = (0, import_react18.forwardRef)(
 ContextMenu.displayName = "ContextMenu";
 
 // src/components/DataTable.tsx
+var import_outline2 = require("@heroicons/react/24/outline");
 var import_clsx20 = __toESM(require("clsx"));
 var import_react20 = __toESM(require("react"));
 
@@ -1586,21 +1587,26 @@ var SortableDataTable = (0, import_react20.forwardRef)(
     sortBothIcon,
     expandIcon,
     pagination = false,
-    pageSize = 10,
+    pageSize: controlledPageSize = 10,
     currentPage: controlledCurrentPage,
     onPageChange,
     defaultPage = 1,
     paginationSiblingCount = 1,
     paginationClassName,
     paginationPosition = "bottom",
+    paginationVariant = "numbered",
+    pageSizeOptions = [10, 20, 30, 50],
+    onPageSizeChange,
     ...props
   }, ref) => {
     const [internalExpandedKeys, setInternalExpandedKeys] = (0, import_react20.useState)(defaultExpandedKeys);
     const [internalSortState, setInternalSortState] = (0, import_react20.useState)(defaultSort);
     const [internalCurrentPage, setInternalCurrentPage] = (0, import_react20.useState)(defaultPage);
+    const [internalPageSize, setInternalPageSize] = (0, import_react20.useState)(controlledPageSize);
     const expandedKeys = controlledExpandedKeys ?? internalExpandedKeys;
     const sortState = controlledSortState ?? internalSortState;
     const currentPage = controlledCurrentPage ?? internalCurrentPage;
+    const pageSize = onPageSizeChange ? controlledPageSize : internalPageSize;
     const handleExpandToggle = (0, import_react20.useCallback)(
       (key) => {
         const newKeys = expandedKeys.includes(key) ? expandedKeys.filter((k) => k !== key) : [...expandedKeys, key];
@@ -1667,12 +1673,32 @@ var SortableDataTable = (0, import_react20.forwardRef)(
       },
       [controlledCurrentPage, onPageChange]
     );
+    const handlePageSizeChange = (0, import_react20.useCallback)(
+      (newPageSize) => {
+        if (onPageSizeChange) {
+          onPageSizeChange(newPageSize);
+        } else {
+          setInternalPageSize(newPageSize);
+        }
+        if (controlledCurrentPage === void 0) {
+          setInternalCurrentPage(1);
+        }
+        onPageChange?.(1);
+      },
+      [onPageSizeChange, controlledCurrentPage, onPageChange]
+    );
     const paginatedData = (0, import_react20.useMemo)(() => {
       if (!pagination) return sortedData;
       const startIndex = (currentPage - 1) * pageSize;
       const endIndex = startIndex + pageSize;
       return sortedData.slice(startIndex, endIndex);
     }, [pagination, sortedData, currentPage, pageSize]);
+    const recordRange = (0, import_react20.useMemo)(() => {
+      if (!pagination) return { start: 1, end: sortedData.length, total: sortedData.length };
+      const start = (currentPage - 1) * pageSize + 1;
+      const end = Math.min(currentPage * pageSize, sortedData.length);
+      return { start, end, total: sortedData.length };
+    }, [pagination, currentPage, pageSize, sortedData.length]);
     const getRowClass = (item, index) => {
       if (typeof rowClassName === "function") {
         return rowClassName(item, index);
@@ -1703,7 +1729,7 @@ var SortableDataTable = (0, import_react20.forwardRef)(
       }
       return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(ExpandIcon, { expanded });
     };
-    const renderPagination = () => {
+    const renderNumberedPagination = () => {
       if (!pagination || totalPages <= 1) return null;
       return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: (0, import_clsx20.default)("flex justify-center", paginationClassName), children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
         Pagination,
@@ -1714,6 +1740,58 @@ var SortableDataTable = (0, import_react20.forwardRef)(
           siblingCount: paginationSiblingCount
         }
       ) });
+    };
+    const renderSimplePagination = () => {
+      if (!pagination) return null;
+      return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: (0, import_clsx20.default)("flex items-center justify-between", paginationClassName), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+            "select",
+            {
+              className: "select select-bordered select-sm",
+              value: pageSize,
+              onChange: (e) => handlePageSizeChange(Number(e.target.value)),
+              "aria-label": "Rows per page",
+              children: pageSizeOptions.map((option) => /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("option", { value: option, children: option }, option))
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("span", { className: "text-sm text-base-content/70", children: [
+            "of ",
+            recordRange.total,
+            " records"
+          ] })
+        ] }),
+        /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { className: "flex items-center gap-1", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+            "button",
+            {
+              type: "button",
+              className: "btn btn-ghost btn-sm btn-square",
+              onClick: () => handlePageChange(currentPage - 1),
+              disabled: currentPage === 1,
+              "aria-label": "Previous page",
+              children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(import_outline2.ChevronLeftIcon, { className: "w-5 h-5" })
+            }
+          ),
+          /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
+            "button",
+            {
+              type: "button",
+              className: "btn btn-ghost btn-sm btn-square",
+              onClick: () => handlePageChange(currentPage + 1),
+              disabled: currentPage >= totalPages,
+              "aria-label": "Next page",
+              children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(import_outline2.ChevronRightIcon, { className: "w-5 h-5" })
+            }
+          )
+        ] })
+      ] });
+    };
+    const renderPagination = () => {
+      if (paginationVariant === "simple") {
+        return renderSimplePagination();
+      }
+      return renderNumberedPagination();
     };
     return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)("div", { ref, className: (0, import_clsx20.default)("w-full", className), ...props, children: [
       pagination && (paginationPosition === "top" || paginationPosition === "both") && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: "mb-4", children: renderPagination() }),
@@ -2521,6 +2599,7 @@ var Radio = (0, import_react26.forwardRef)(({ value, label, className, id, ...pr
 Radio.displayName = "Radio";
 
 // src/components/Select.tsx
+var import_solid2 = require("@heroicons/react/20/solid");
 var import_clsx26 = __toESM(require("clsx"));
 var import_react27 = require("react");
 var import_jsx_runtime26 = require("react/jsx-runtime");
@@ -2544,25 +2623,52 @@ var sizeClasses10 = {
   lg: "select-lg"
 };
 var Select = (0, import_react27.forwardRef)(
-  ({ variant = "bordered", color, size = "md", options, placeholder, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
-      "select",
-      {
-        ref,
-        className: (0, import_clsx26.default)(
-          "select w-full",
-          variantClasses10[variant],
-          color && colorClasses3[color],
-          sizeClasses10[size],
-          className
-        ),
-        ...props,
-        children: [
-          placeholder && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "", disabled: true, children: placeholder }),
-          options ? options.map((option) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
-        ]
-      }
-    );
+  ({
+    variant = "bordered",
+    color,
+    size = "md",
+    options,
+    placeholder,
+    children,
+    className,
+    showArrow = true,
+    ...props
+  }, ref) => {
+    const rightPadding = showArrow ? "pr-10" : "pr-4";
+    return /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)("div", { className: "relative w-full", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime26.jsxs)(
+        "select",
+        {
+          ref,
+          className: (0, import_clsx26.default)(
+            "select w-full appearance-none bg-no-repeat bg-position-[right_1rem_center] bg-size-[1.5em_1.5em]",
+            "bg-none",
+            // Important: Override DaisyUI's default background image
+            variantClasses10[variant],
+            color && colorClasses3[color],
+            sizeClasses10[size],
+            rightPadding,
+            className
+          ),
+          style: {
+            // Ensure no native arrow shows up in any browser
+            backgroundImage: "none !important"
+          },
+          ...props,
+          children: [
+            placeholder && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: "", disabled: true, children: placeholder }),
+            options ? options.map((option) => /* @__PURE__ */ (0, import_jsx_runtime26.jsx)("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
+          ]
+        }
+      ),
+      showArrow && /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
+        import_solid2.ChevronDownIcon,
+        {
+          className: "pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-base-content/70",
+          "aria-hidden": "true"
+        }
+      )
+    ] });
   }
 );
 Select.displayName = "Select";
@@ -4187,7 +4293,7 @@ var TabPanel = (0, import_react53.forwardRef)(({ value, children, className, ...
 TabPanel.displayName = "TabPanel";
 
 // src/components/Toast.tsx
-var import_outline2 = require("@heroicons/react/24/outline");
+var import_outline3 = require("@heroicons/react/24/outline");
 var import_clsx53 = __toESM(require("clsx"));
 var import_react54 = require("react");
 var import_jsx_runtime53 = require("react/jsx-runtime");
@@ -4206,10 +4312,10 @@ var variantClasses19 = {
   error: "alert-error"
 };
 var variantIcons = {
-  info: import_outline2.InformationCircleIcon,
-  success: import_outline2.CheckCircleIcon,
-  warning: import_outline2.ExclamationTriangleIcon,
-  error: import_outline2.ExclamationCircleIcon
+  info: import_outline3.InformationCircleIcon,
+  success: import_outline3.CheckCircleIcon,
+  warning: import_outline3.ExclamationTriangleIcon,
+  error: import_outline3.ExclamationCircleIcon
 };
 var positionClasses3 = {
   top: "toast-top toast-center",
@@ -4237,7 +4343,7 @@ var ToastItem = (0, import_react54.forwardRef)(
     return /* @__PURE__ */ (0, import_jsx_runtime53.jsxs)("div", { ref, className: (0, import_clsx53.default)("alert", variantClasses19[variant], className), ...props, children: [
       /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(Icon, { className: "h-6 w-6" }),
       /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("span", { children: message }),
-      onDismiss && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("button", { onClick: onDismiss, className: "btn btn-sm btn-circle btn-ghost ml-auto", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(import_outline2.XMarkIcon, { className: "h-5 w-5" }) })
+      onDismiss && /* @__PURE__ */ (0, import_jsx_runtime53.jsx)("button", { onClick: onDismiss, className: "btn btn-sm btn-circle btn-ghost ml-auto", children: /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(import_outline3.XMarkIcon, { className: "h-5 w-5" }) })
     ] });
   }
 );

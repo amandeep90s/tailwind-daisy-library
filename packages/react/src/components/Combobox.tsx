@@ -1,4 +1,4 @@
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
 import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 
@@ -211,7 +211,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
           <span className="truncate">
             {selectedOption?.label || placeholder}
           </span>
-          <ChevronUpDownIcon className="h-5 w-5" />
+          <ChevronDownIcon className={clsx("h-5 w-5 shrink-0 transition-transform duration-200", isOpen && "rotate-180")} />
         </button>
 
         {/* Dropdown Content */}

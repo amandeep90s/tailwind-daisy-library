@@ -398,6 +398,22 @@ export function DataTablePage() {
 			</ShowcaseSection>
 
 			<ShowcaseSection
+				title="Simple Pagination"
+				description="A minimal pagination variant with only prev/next buttons, a page size selector, and record count display. Perfect for cleaner interfaces."
+			>
+				<SortableDataTable
+					data={extendedUsers}
+					columns={userColumns}
+					getRowKey={(user) => user.id}
+					pagination
+					pageSize={5}
+					paginationVariant="simple"
+					pageSizeOptions={[5, 10, 20]}
+					zebra
+				/>
+			</ShowcaseSection>
+
+			<ShowcaseSection
 				title="Pagination with Different Positions"
 				description="Pagination can be placed at the top, bottom, or both positions."
 			>
@@ -729,6 +745,23 @@ export function DataTablePage() {
 						type: "'top' | 'bottom' | 'both'",
 						default: "'bottom'",
 						description: "Position of the pagination controls",
+					},
+					{
+						name: "paginationVariant",
+						type: "'numbered' | 'simple'",
+						default: "'numbered'",
+						description: "Pagination variant - numbered shows page numbers, simple shows only prev/next buttons with record count",
+					},
+					{
+						name: "pageSizeOptions",
+						type: "number[]",
+						default: "[10, 20, 30, 50]",
+						description: "Available page size options for the simple pagination variant dropdown",
+					},
+					{
+						name: "onPageSizeChange",
+						type: "(pageSize: number) => void",
+						description: "Callback when page size changes (for controlled page size)",
 					},
 				]}
 			/>

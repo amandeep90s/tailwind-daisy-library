@@ -986,7 +986,7 @@ var Collapsible = forwardRef15(
 Collapsible.displayName = "Collapsible";
 
 // src/components/Combobox.tsx
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx16 from "clsx";
 import { forwardRef as forwardRef16, useCallback as useCallback2, useEffect as useEffect3, useRef as useRef2, useState as useState5 } from "react";
 import { jsx as jsx16, jsxs as jsxs13 } from "react/jsx-runtime";
@@ -1113,7 +1113,7 @@ var Combobox = forwardRef16(
               ),
               children: [
                 /* @__PURE__ */ jsx16("span", { className: "truncate", children: selectedOption?.label || placeholder }),
-                /* @__PURE__ */ jsx16(ChevronUpDownIcon, { className: "h-5 w-5" })
+                /* @__PURE__ */ jsx16(ChevronDownIcon, { className: clsx16("h-5 w-5 shrink-0 transition-transform duration-200", isOpen && "rotate-180") })
               ]
             }
           ),
@@ -1310,6 +1310,7 @@ var ContextMenu = forwardRef18(
 ContextMenu.displayName = "ContextMenu";
 
 // src/components/DataTable.tsx
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import clsx20 from "clsx";
 import React19, { forwardRef as forwardRef20, useCallback as useCallback3, useMemo, useState as useState8 } from "react";
 
@@ -1454,21 +1455,26 @@ var SortableDataTable = forwardRef20(
     sortBothIcon,
     expandIcon,
     pagination = false,
-    pageSize = 10,
+    pageSize: controlledPageSize = 10,
     currentPage: controlledCurrentPage,
     onPageChange,
     defaultPage = 1,
     paginationSiblingCount = 1,
     paginationClassName,
     paginationPosition = "bottom",
+    paginationVariant = "numbered",
+    pageSizeOptions = [10, 20, 30, 50],
+    onPageSizeChange,
     ...props
   }, ref) => {
     const [internalExpandedKeys, setInternalExpandedKeys] = useState8(defaultExpandedKeys);
     const [internalSortState, setInternalSortState] = useState8(defaultSort);
     const [internalCurrentPage, setInternalCurrentPage] = useState8(defaultPage);
+    const [internalPageSize, setInternalPageSize] = useState8(controlledPageSize);
     const expandedKeys = controlledExpandedKeys ?? internalExpandedKeys;
     const sortState = controlledSortState ?? internalSortState;
     const currentPage = controlledCurrentPage ?? internalCurrentPage;
+    const pageSize = onPageSizeChange ? controlledPageSize : internalPageSize;
     const handleExpandToggle = useCallback3(
       (key) => {
         const newKeys = expandedKeys.includes(key) ? expandedKeys.filter((k) => k !== key) : [...expandedKeys, key];
@@ -1535,12 +1541,32 @@ var SortableDataTable = forwardRef20(
       },
       [controlledCurrentPage, onPageChange]
     );
+    const handlePageSizeChange = useCallback3(
+      (newPageSize) => {
+        if (onPageSizeChange) {
+          onPageSizeChange(newPageSize);
+        } else {
+          setInternalPageSize(newPageSize);
+        }
+        if (controlledCurrentPage === void 0) {
+          setInternalCurrentPage(1);
+        }
+        onPageChange?.(1);
+      },
+      [onPageSizeChange, controlledCurrentPage, onPageChange]
+    );
     const paginatedData = useMemo(() => {
       if (!pagination) return sortedData;
       const startIndex = (currentPage - 1) * pageSize;
       const endIndex = startIndex + pageSize;
       return sortedData.slice(startIndex, endIndex);
     }, [pagination, sortedData, currentPage, pageSize]);
+    const recordRange = useMemo(() => {
+      if (!pagination) return { start: 1, end: sortedData.length, total: sortedData.length };
+      const start = (currentPage - 1) * pageSize + 1;
+      const end = Math.min(currentPage * pageSize, sortedData.length);
+      return { start, end, total: sortedData.length };
+    }, [pagination, currentPage, pageSize, sortedData.length]);
     const getRowClass = (item, index) => {
       if (typeof rowClassName === "function") {
         return rowClassName(item, index);
@@ -1571,7 +1597,7 @@ var SortableDataTable = forwardRef20(
       }
       return /* @__PURE__ */ jsx20(ExpandIcon, { expanded });
     };
-    const renderPagination = () => {
+    const renderNumberedPagination = () => {
       if (!pagination || totalPages <= 1) return null;
       return /* @__PURE__ */ jsx20("div", { className: clsx20("flex justify-center", paginationClassName), children: /* @__PURE__ */ jsx20(
         Pagination,
@@ -1582,6 +1608,58 @@ var SortableDataTable = forwardRef20(
           siblingCount: paginationSiblingCount
         }
       ) });
+    };
+    const renderSimplePagination = () => {
+      if (!pagination) return null;
+      return /* @__PURE__ */ jsxs17("div", { className: clsx20("flex items-center justify-between", paginationClassName), children: [
+        /* @__PURE__ */ jsxs17("div", { className: "flex items-center gap-2", children: [
+          /* @__PURE__ */ jsx20(
+            "select",
+            {
+              className: "select select-bordered select-sm",
+              value: pageSize,
+              onChange: (e) => handlePageSizeChange(Number(e.target.value)),
+              "aria-label": "Rows per page",
+              children: pageSizeOptions.map((option) => /* @__PURE__ */ jsx20("option", { value: option, children: option }, option))
+            }
+          ),
+          /* @__PURE__ */ jsxs17("span", { className: "text-sm text-base-content/70", children: [
+            "of ",
+            recordRange.total,
+            " records"
+          ] })
+        ] }),
+        /* @__PURE__ */ jsxs17("div", { className: "flex items-center gap-1", children: [
+          /* @__PURE__ */ jsx20(
+            "button",
+            {
+              type: "button",
+              className: "btn btn-ghost btn-sm btn-square",
+              onClick: () => handlePageChange(currentPage - 1),
+              disabled: currentPage === 1,
+              "aria-label": "Previous page",
+              children: /* @__PURE__ */ jsx20(ChevronLeftIcon, { className: "w-5 h-5" })
+            }
+          ),
+          /* @__PURE__ */ jsx20(
+            "button",
+            {
+              type: "button",
+              className: "btn btn-ghost btn-sm btn-square",
+              onClick: () => handlePageChange(currentPage + 1),
+              disabled: currentPage >= totalPages,
+              "aria-label": "Next page",
+              children: /* @__PURE__ */ jsx20(ChevronRightIcon, { className: "w-5 h-5" })
+            }
+          )
+        ] })
+      ] });
+    };
+    const renderPagination = () => {
+      if (paginationVariant === "simple") {
+        return renderSimplePagination();
+      }
+      return renderNumberedPagination();
     };
     return /* @__PURE__ */ jsxs17("div", { ref, className: clsx20("w-full", className), ...props, children: [
       pagination && (paginationPosition === "top" || paginationPosition === "both") && /* @__PURE__ */ jsx20("div", { className: "mb-4", children: renderPagination() }),
@@ -2389,6 +2467,7 @@ var Radio = forwardRef25(({ value, label, className, id, ...props }, ref) => {
 Radio.displayName = "Radio";
 
 // src/components/Select.tsx
+import { ChevronDownIcon as ChevronDownIcon2 } from "@heroicons/react/20/solid";
 import clsx26 from "clsx";
 import { forwardRef as forwardRef26 } from "react";
 import { jsx as jsx26, jsxs as jsxs22 } from "react/jsx-runtime";
@@ -2412,25 +2491,52 @@ var sizeClasses10 = {
   lg: "select-lg"
 };
 var Select = forwardRef26(
-  ({ variant = "bordered", color, size = "md", options, placeholder, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsxs22(
-      "select",
-      {
-        ref,
-        className: clsx26(
-          "select w-full",
-          variantClasses10[variant],
-          color && colorClasses3[color],
-          sizeClasses10[size],
-          className
-        ),
-        ...props,
-        children: [
-          placeholder && /* @__PURE__ */ jsx26("option", { value: "", disabled: true, children: placeholder }),
-          options ? options.map((option) => /* @__PURE__ */ jsx26("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
-        ]
-      }
-    );
+  ({
+    variant = "bordered",
+    color,
+    size = "md",
+    options,
+    placeholder,
+    children,
+    className,
+    showArrow = true,
+    ...props
+  }, ref) => {
+    const rightPadding = showArrow ? "pr-10" : "pr-4";
+    return /* @__PURE__ */ jsxs22("div", { className: "relative w-full", children: [
+      /* @__PURE__ */ jsxs22(
+        "select",
+        {
+          ref,
+          className: clsx26(
+            "select w-full appearance-none bg-no-repeat bg-position-[right_1rem_center] bg-size-[1.5em_1.5em]",
+            "bg-none",
+            // Important: Override DaisyUI's default background image
+            variantClasses10[variant],
+            color && colorClasses3[color],
+            sizeClasses10[size],
+            rightPadding,
+            className
+          ),
+          style: {
+            // Ensure no native arrow shows up in any browser
+            backgroundImage: "none !important"
+          },
+          ...props,
+          children: [
+            placeholder && /* @__PURE__ */ jsx26("option", { value: "", disabled: true, children: placeholder }),
+            options ? options.map((option) => /* @__PURE__ */ jsx26("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
+          ]
+        }
+      ),
+      showArrow && /* @__PURE__ */ jsx26(
+        ChevronDownIcon2,
+        {
+          className: "pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-base-content/70",
+          "aria-hidden": "true"
+        }
+      )
+    ] });
   }
 );
 Select.displayName = "Select";
