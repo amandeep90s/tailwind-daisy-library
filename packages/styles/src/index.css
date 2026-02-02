@@ -1,0 +1,22 @@
+/**
+ * Shared UI Library - Main CSS Entry Point
+ * 
+ * This file uses TailwindCSS v4 with DaisyUI v5 plugin syntax
+ * Consumer apps can customize by overriding CSS variables
+ */
+
+@import "tailwindcss";
+
+/* Import shared theme configuration */
+@import "./theme.css";
+
+/* Content sources for Tailwind CSS v4 */
+@source "../../../react/src/**/*.tsx";
+@source "../../../showcase/src/**/*.tsx";
+
+/* Custom utility classes */
+@layer utilities {
+	.text-balance {
+		text-wrap: balance;
+	}
+}

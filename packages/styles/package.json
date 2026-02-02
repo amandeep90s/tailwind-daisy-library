@@ -1,0 +1,52 @@
+{
+  "name": "@shared-ui-library/styles",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CSS styles and DaisyUI theme for shared UI library",
+  "main": "./dist/index.css",
+  "exports": {
+    ".": "./dist/index.css",
+    "./css": "./dist/index.css",
+    "./library": "./dist/library.css",
+    "./library.css": "./dist/library.css",
+    "./theme.css": "./src/theme.css",
+    "./theme": {
+      "types": "./dist/theme.d.ts",
+      "import": "./dist/theme.mjs",
+      "require": "./dist/theme.js"
+    },
+    "./variants": {
+      "types": "./dist/variants.d.ts",
+      "import": "./dist/variants.mjs",
+      "require": "./dist/variants.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src/index.css",
+    "src/library.css",
+    "src/theme.css"
+  ],
+  "scripts": {
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "npm run build:css:index && npm run build:css:library",
+    "build:css:index": "npx @tailwindcss/cli -i ./src/index.css -o ./dist/index.css --minify",
+    "build:css:library": "npx @tailwindcss/cli -i ./src/library.css -o ./dist/library.css --minify",
+    "build:js": "tsup",
+    "dev": "npx @tailwindcss/cli -i ./src/index.css -o ./dist/index.css --watch"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^4.0.0",
+    "daisyui": "^5.0.0"
+  },
+  "dependencies": {
+    "@shared-ui-library/tokens": "*"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.0",
+    "daisyui": "^5.0.0",
+    "tailwindcss": "^4.0.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  }
+}

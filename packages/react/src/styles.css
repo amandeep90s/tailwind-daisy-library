@@ -1,0 +1,19 @@
+/**
+ * Storybook CSS - Main styles with TailwindCSS v4 and DaisyUI v5
+ * 
+ * Imports the shared theme from @shared-ui-library/styles
+ */
+
+@import "tailwindcss";
+
+/* Import shared theme configuration */
+@import "../../styles/src/theme.css";
+
+/* Content sources for Tailwind CSS v4 to scan */
+@source "./**/*.tsx";
+@source "./components/**/*.tsx";
+
+/* Storybook-specific overrides if needed */
+.sb-show-main.sb-main-padded {
+	padding: 1rem;
+}

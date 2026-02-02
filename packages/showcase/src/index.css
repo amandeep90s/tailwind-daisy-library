@@ -1,0 +1,26 @@
+/**
+ * Showcase App - Main CSS Entry Point
+ * 
+ * Imports the shared theme from @shared-ui-library/styles
+ */
+
+@import "tailwindcss";
+
+/* Import shared theme configuration */
+@import "../../styles/src/theme.css";
+
+/* Source paths for Tailwind CSS v4 to scan */
+@source "./**/*.tsx";
+@source "../../react/src/**/*.tsx";
+
+/* Custom typography using Inter font */
+@layer base {
+	:root {
+		--font-sans:
+			"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	}
+
+	html {
+		font-family: var(--font-sans);
+	}
+}

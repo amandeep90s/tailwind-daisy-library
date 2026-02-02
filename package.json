@@ -1,0 +1,70 @@
+{
+  "name": "shared-ui-library",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Framework agnostic shared UI library with DaisyUI v5 and TailwindCSS v4",
+  "workspaces": [
+    "packages/*"
+  ],
+  "exports": {
+    "./react": {
+      "types": "./packages/react/dist/index.d.ts",
+      "import": "./packages/react/dist/index.mjs",
+      "require": "./packages/react/dist/index.js"
+    },
+    "./tokens": {
+      "types": "./packages/tokens/dist/index.d.ts",
+      "import": "./packages/tokens/dist/index.mjs",
+      "require": "./packages/tokens/dist/index.js"
+    },
+    "./styles": {
+      "types": "./packages/styles/dist/index.d.ts",
+      "import": "./packages/styles/dist/index.mjs",
+      "require": "./packages/styles/dist/index.js"
+    },
+    "./styles/index.css": {
+      "style": "./packages/styles/dist/index.css",
+      "default": "./packages/styles/dist/index.css"
+    }
+  },
+  "scripts": {
+    "build": "npm run build:tokens && npm run build:styles && npm run build:react",
+    "build:tokens": "npm --workspace=@shared-ui-library/tokens run build",
+    "build:styles": "npm --workspace=@shared-ui-library/styles run build",
+    "build:react": "npm --workspace=@shared-ui-library/react run build",
+    "dev:showcase": "npm --workspace=@shared-ui-library/showcase run dev",
+    "storybook": "npm --workspace=@shared-ui-library/react run storybook",
+    "build-storybook": "npm --workspace=@shared-ui-library/react run build-storybook",
+    "clean": "rm -rf packages/*/dist packages/*/.turbo node_modules/.cache",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "ui-library",
+    "daisyui",
+    "tailwindcss",
+    "react",
+    "components"
+  ],
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18",
+    "tailwindcss": "^4.0.0",
+    "daisyui": "^5.0.0",
+    "@heroicons/react": "^2.0.0"
+  },
+  "peerDependenciesMeta": {
+    "tailwindcss": {
+      "optional": false
+    },
+    "daisyui": {
+      "optional": false
+    },
+    "@heroicons/react": {
+      "optional": false
+    }
+  },
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18"
+  }
+}

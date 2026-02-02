@@ -1,0 +1,19 @@
+/**
+ * Shared UI Library - Library-Only Styles
+ * 
+ * This file contains ONLY the library's custom styles and theme.
+ * It does NOT include @import "tailwindcss" to avoid conflicts.
+ * 
+ * Consumer apps should manage their own Tailwind setup and import
+ * this file between @tailwind components and @tailwind utilities.
+ */
+
+/* Import shared theme configuration */
+@import "./theme.css";
+
+/* Custom utility classes */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
