@@ -281,7 +281,8 @@ import { forwardRef as forwardRef3 } from "react";
 import { jsx as jsx3, jsxs as jsxs3 } from "react/jsx-runtime";
 var variantClasses3 = {
   bordered: "input-bordered",
-  ghost: "input-ghost"
+  ghost: "input-ghost",
+  floating: ""
 };
 var colorClasses2 = {
   default: "",
@@ -317,6 +318,31 @@ var Input = forwardRef3(
     ...props
   }, ref) => {
     const inputId = id || (label ? `input-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
+    if (variant === "floating") {
+      return /* @__PURE__ */ jsxs3("div", { className: "form-control w-full", children: [
+        /* @__PURE__ */ jsxs3("label", { className: "floating-label", children: [
+          /* @__PURE__ */ jsx3("span", { children: label }),
+          /* @__PURE__ */ jsx3(
+            "input",
+            {
+              ref,
+              id: inputId,
+              className: clsx3(
+                "input",
+                error ? colorClasses2.error : colorClasses2[color],
+                sizeClasses3[size],
+                className
+              ),
+              "aria-invalid": error ? "true" : void 0,
+              "aria-describedby": error ? `${inputId}-error` : helperText ? `${inputId}-helper` : void 0,
+              ...props
+            }
+          )
+        ] }),
+        error && /* @__PURE__ */ jsx3("span", { className: "label-text-alt text-xs text-error mt-1", children: error }),
+        !error && helperText && /* @__PURE__ */ jsx3("span", { className: "label-text-alt text-xs mt-1", children: helperText })
+      ] });
+    }
     const inputClasses = clsx3(
       "input w-full",
       variantClasses3[variant],
@@ -890,31 +916,58 @@ import clsx13 from "clsx";
 import { forwardRef as forwardRef13 } from "react";
 import { jsx as jsx13, jsxs as jsxs10 } from "react/jsx-runtime";
 var variantClasses7 = {
-  default: "bg-base-100 shadow-xl",
-  bordered: "card-bordered",
-  compact: "card-compact",
+  default: "bg-base-100",
+  bordered: "card-border",
+  compact: "card-sm",
   side: "card-side"
 };
 var Card = forwardRef13(
-  ({ variant = "default", imageSrc, imageAlt = "", children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsxs10("div", { ref, className: clsx13("card", variantClasses7[variant], className), ...props, children: [
-      imageSrc && /* @__PURE__ */ jsx13("figure", { children: /* @__PURE__ */ jsx13("img", { src: imageSrc, alt: imageAlt }) }),
-      children
-    ] });
+  ({
+    variant = "default",
+    imageSrc,
+    imageAlt = "",
+    children,
+    className,
+    ...props
+  }, ref) => {
+    return /* @__PURE__ */ jsxs10(
+      "div",
+      {
+        ref,
+        className: clsx13("card shadow-sm", variantClasses7[variant], className),
+        ...props,
+        children: [
+          imageSrc && /* @__PURE__ */ jsx13("figure", { children: /* @__PURE__ */ jsx13("img", { src: imageSrc, alt: imageAlt }) }),
+          children
+        ]
+      }
+    );
   }
 );
 Card.displayName = "Card";
-var CardBody = forwardRef13(({ children, className, ...props }, ref) => {
-  return /* @__PURE__ */ jsx13("div", { ref, className: clsx13("card-body", className), ...props, children });
-});
+var CardBody = forwardRef13(
+  ({ children, className, ...props }, ref) => {
+    return /* @__PURE__ */ jsx13("div", { ref, className: clsx13("card-body", className), ...props, children });
+  }
+);
 CardBody.displayName = "CardBody";
-var CardTitle = forwardRef13(({ children, className, ...props }, ref) => {
-  return /* @__PURE__ */ jsx13("h2", { ref, className: clsx13("card-title", className), ...props, children });
-});
+var CardTitle = forwardRef13(
+  ({ children, className, ...props }, ref) => {
+    return /* @__PURE__ */ jsx13("h2", { ref, className: clsx13("card-title", className), ...props, children });
+  }
+);
 CardTitle.displayName = "CardTitle";
 var CardActions = forwardRef13(
   ({ justify = "end", children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx13("div", { ref, className: clsx13("card-actions", `justify-${justify}`, className), ...props, children });
+    return /* @__PURE__ */ jsx13(
+      "div",
+      {
+        ref,
+        className: clsx13("card-actions", `justify-${justify}`, className),
+        ...props,
+        children
+      }
+    );
   }
 );
 CardActions.displayName = "CardActions";

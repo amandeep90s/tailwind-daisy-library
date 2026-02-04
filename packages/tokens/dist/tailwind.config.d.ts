@@ -49,10 +49,10 @@ declare const tailwindConfig: {
                     content: "oklch(98% 0.01 240)";
                 };
                 base: {
-                    100: "oklch(98% 0.02 240)";
-                    200: "oklch(95% 0.03 240)";
-                    300: "oklch(92% 0.04 240)";
-                    content: "oklch(20% 0.05 240)";
+                    100: "oklch(100% 0 0)";
+                    200: "oklch(98% 0 0)";
+                    300: "oklch(95% 0 0)";
+                    content: "oklch(21% 0.006 285.885)";
                 };
                 info: {
                     DEFAULT: "oklch(70% 0.2 220)";
@@ -129,10 +129,10 @@ declare const tailwindColorsFlat: {
     "accent-content": "oklch(98% 0.01 160)";
     neutral: "oklch(50% 0.05 240)";
     "neutral-content": "oklch(98% 0.01 240)";
-    "base-100": "oklch(98% 0.02 240)";
-    "base-200": "oklch(95% 0.03 240)";
-    "base-300": "oklch(92% 0.04 240)";
-    "base-content": "oklch(20% 0.05 240)";
+    "base-100": "oklch(100% 0 0)";
+    "base-200": "oklch(98% 0 0)";
+    "base-300": "oklch(95% 0 0)";
+    "base-content": "oklch(21% 0.006 285.885)";
     info: "oklch(70% 0.2 220)";
     "info-content": "oklch(98% 0.01 220)";
     success: "oklch(0.4509 0.099094 161.8675)";
@@ -163,10 +163,10 @@ declare const tailwindColors: {
         content: "oklch(98% 0.01 240)";
     };
     base: {
-        100: "oklch(98% 0.02 240)";
-        200: "oklch(95% 0.03 240)";
-        300: "oklch(92% 0.04 240)";
-        content: "oklch(20% 0.05 240)";
+        100: "oklch(100% 0 0)";
+        200: "oklch(98% 0 0)";
+        300: "oklch(95% 0 0)";
+        content: "oklch(21% 0.006 285.885)";
     };
     info: {
         DEFAULT: "oklch(70% 0.2 220)";

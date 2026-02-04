@@ -11,10 +11,10 @@ declare const colors: {
     readonly accentContent: "oklch(98% 0.01 160)";
     readonly neutral: "oklch(50% 0.05 240)";
     readonly neutralContent: "oklch(98% 0.01 240)";
-    readonly base100: "oklch(98% 0.02 240)";
-    readonly base200: "oklch(95% 0.03 240)";
-    readonly base300: "oklch(92% 0.04 240)";
-    readonly baseContent: "oklch(20% 0.05 240)";
+    readonly base100: "oklch(100% 0 0)";
+    readonly base200: "oklch(98% 0 0)";
+    readonly base300: "oklch(95% 0 0)";
+    readonly baseContent: "oklch(21% 0.006 285.885)";
     readonly info: "oklch(70% 0.2 220)";
     readonly infoContent: "oklch(98% 0.01 220)";
     readonly success: "oklch(0.4509 0.099094 161.8675)";

@@ -50,10 +50,10 @@ var colors = {
   neutral: "oklch(50% 0.05 240)",
   neutralContent: "oklch(98% 0.01 240)",
   // Base colors
-  base100: "oklch(98% 0.02 240)",
-  base200: "oklch(95% 0.03 240)",
-  base300: "oklch(92% 0.04 240)",
-  baseContent: "oklch(20% 0.05 240)",
+  base100: "oklch(100% 0 0)",
+  base200: "oklch(98% 0 0)",
+  base300: "oklch(95% 0 0)",
+  baseContent: "oklch(21% 0.006 285.885)",
   // Semantic colors
   info: "oklch(70% 0.2 220)",
   infoContent: "oklch(98% 0.01 220)",

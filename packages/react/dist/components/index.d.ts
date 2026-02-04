@@ -122,7 +122,7 @@ type ButtonProps = ButtonAsButtonProps | ButtonAsLinkProps;
  */
 declare const Button: React__default.ForwardRefExoticComponent<ButtonProps & React__default.RefAttributes<HTMLButtonElement | HTMLAnchorElement>>;
 
-type InputVariant = "bordered" | "ghost";
+type InputVariant = "bordered" | "ghost" | "floating";
 type InputColor = "default" | "neutral" | "primary" | "secondary" | "accent" | "info" | "success" | "warning" | "error";
 type InputSize = "xs" | "sm" | "md" | "lg" | "xl";
 interface InputProps extends Omit<React__default.InputHTMLAttributes<HTMLInputElement>, "size"> {

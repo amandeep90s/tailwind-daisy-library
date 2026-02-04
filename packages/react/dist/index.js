@@ -422,7 +422,8 @@ var import_react3 = require("react");
 var import_jsx_runtime3 = require("react/jsx-runtime");
 var variantClasses3 = {
   bordered: "input-bordered",
-  ghost: "input-ghost"
+  ghost: "input-ghost",
+  floating: ""
 };
 var colorClasses2 = {
   default: "",
@@ -458,6 +459,31 @@ var Input = (0, import_react3.forwardRef)(
     ...props
   }, ref) => {
     const inputId = id || (label ? `input-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
+    if (variant === "floating") {
+      return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "form-control w-full", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("label", { className: "floating-label", children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: label }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+            "input",
+            {
+              ref,
+              id: inputId,
+              className: (0, import_clsx3.default)(
+                "input",
+                error ? colorClasses2.error : colorClasses2[color],
+                sizeClasses3[size],
+                className
+              ),
+              "aria-invalid": error ? "true" : void 0,
+              "aria-describedby": error ? `${inputId}-error` : helperText ? `${inputId}-helper` : void 0,
+              ...props
+            }
+          )
+        ] }),
+        error && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "label-text-alt text-xs text-error mt-1", children: error }),
+        !error && helperText && /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "label-text-alt text-xs mt-1", children: helperText })
+      ] });
+    }
     const inputClasses = (0, import_clsx3.default)(
       "input w-full",
       variantClasses3[variant],
@@ -1026,31 +1052,58 @@ var import_clsx13 = __toESM(require("clsx"));
 var import_react13 = require("react");
 var import_jsx_runtime13 = require("react/jsx-runtime");
 var variantClasses7 = {
-  default: "bg-base-100 shadow-xl",
-  bordered: "card-bordered",
-  compact: "card-compact",
+  default: "bg-base-100",
+  bordered: "card-border",
+  compact: "card-sm",
   side: "card-side"
 };
 var Card = (0, import_react13.forwardRef)(
-  ({ variant = "default", imageSrc, imageAlt = "", children, className, ...props }, ref) => {
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)("div", { ref, className: (0, import_clsx13.default)("card", variantClasses7[variant], className), ...props, children: [
-      imageSrc && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("figure", { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("img", { src: imageSrc, alt: imageAlt }) }),
-      children
-    ] });
+  ({
+    variant = "default",
+    imageSrc,
+    imageAlt = "",
+    children,
+    className,
+    ...props
+  }, ref) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsxs)(
+      "div",
+      {
+        ref,
+        className: (0, import_clsx13.default)("card shadow-sm", variantClasses7[variant], className),
+        ...props,
+        children: [
+          imageSrc && /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("figure", { children: /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("img", { src: imageSrc, alt: imageAlt }) }),
+          children
+        ]
+      }
+    );
   }
 );
 Card.displayName = "Card";
-var CardBody = (0, import_react13.forwardRef)(({ children, className, ...props }, ref) => {
-  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { ref, className: (0, import_clsx13.default)("card-body", className), ...props, children });
-});
+var CardBody = (0, import_react13.forwardRef)(
+  ({ children, className, ...props }, ref) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { ref, className: (0, import_clsx13.default)("card-body", className), ...props, children });
+  }
+);
 CardBody.displayName = "CardBody";
-var CardTitle = (0, import_react13.forwardRef)(({ children, className, ...props }, ref) => {
-  return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h2", { ref, className: (0, import_clsx13.default)("card-title", className), ...props, children });
-});
+var CardTitle = (0, import_react13.forwardRef)(
+  ({ children, className, ...props }, ref) => {
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("h2", { ref, className: (0, import_clsx13.default)("card-title", className), ...props, children });
+  }
+);
 CardTitle.displayName = "CardTitle";
 var CardActions = (0, import_react13.forwardRef)(
   ({ justify = "end", children, className, ...props }, ref) => {
-    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)("div", { ref, className: (0, import_clsx13.default)("card-actions", `justify-${justify}`, className), ...props, children });
+    return /* @__PURE__ */ (0, import_jsx_runtime13.jsx)(
+      "div",
+      {
+        ref,
+        className: (0, import_clsx13.default)("card-actions", `justify-${justify}`, className),
+        ...props,
+        children
+      }
+    );
   }
 );
 CardActions.displayName = "CardActions";
@@ -4570,10 +4623,10 @@ var colors = {
   neutral: "oklch(50% 0.05 240)",
   neutralContent: "oklch(98% 0.01 240)",
   // Base colors
-  base100: "oklch(98% 0.02 240)",
-  base200: "oklch(95% 0.03 240)",
-  base300: "oklch(92% 0.04 240)",
-  baseContent: "oklch(20% 0.05 240)",
+  base100: "oklch(100% 0 0)",
+  base200: "oklch(98% 0 0)",
+  base300: "oklch(95% 0 0)",
+  baseContent: "oklch(21% 0.006 285.885)",
   // Semantic colors
   info: "oklch(70% 0.2 220)",
   infoContent: "oklch(98% 0.01 220)",
