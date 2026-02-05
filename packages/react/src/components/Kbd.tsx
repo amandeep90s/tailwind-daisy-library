@@ -8,8 +8,8 @@ import React, { forwardRef } from "react";
 export type KbdSize = "xs" | "sm" | "md" | "lg";
 
 export interface KbdProps extends React.HTMLAttributes<HTMLElement> {
-	/** Size variant */
-	size?: KbdSize;
+  /** Size variant */
+  size?: KbdSize;
 }
 
 // ============================================================================
@@ -17,10 +17,10 @@ export interface KbdProps extends React.HTMLAttributes<HTMLElement> {
 // ============================================================================
 
 const sizeClasses: Record<KbdSize, string> = {
-	xs: "kbd-xs",
-	sm: "kbd-sm",
-	md: "kbd-md",
-	lg: "kbd-lg",
+  xs: "kbd-xs",
+  sm: "kbd-sm",
+  md: "kbd-md",
+  lg: "kbd-lg",
 };
 
 /**
@@ -32,12 +32,14 @@ const sizeClasses: Record<KbdSize, string> = {
  * <Kbd size="lg">Ctrl</Kbd>
  * ```
  */
-export const Kbd = forwardRef<HTMLElement, KbdProps>(({ size = "md", children, className, ...props }, ref) => {
-	return (
-		<kbd ref={ref} className={clsx("kbd", sizeClasses[size], className)} {...props}>
-			{children}
-		</kbd>
-	);
-});
+export const Kbd = forwardRef<HTMLElement, KbdProps>(
+  ({ size = "md", children, className, ...props }, ref) => {
+    return (
+      <kbd ref={ref} className={clsx("kbd", sizeClasses[size], className)} {...props}>
+        {children}
+      </kbd>
+    );
+  }
+);
 
 Kbd.displayName = "Kbd";

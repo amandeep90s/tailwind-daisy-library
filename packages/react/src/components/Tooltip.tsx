@@ -6,17 +6,24 @@ import React, { forwardRef } from "react";
 // ============================================================================
 
 export type TooltipPosition = "top" | "bottom" | "left" | "right";
-export type TooltipVariant = "primary" | "secondary" | "accent" | "info" | "success" | "warning" | "error";
+export type TooltipVariant =
+  | "primary"
+  | "secondary"
+  | "accent"
+  | "info"
+  | "success"
+  | "warning"
+  | "error";
 
 export interface TooltipProps extends React.HTMLAttributes<HTMLDivElement> {
-	/** Tooltip content */
-	content: string;
-	/** Tooltip position */
-	position?: TooltipPosition;
-	/** Tooltip variant */
-	variant?: TooltipVariant;
-	/** Always show tooltip */
-	open?: boolean;
+  /** Tooltip content */
+  content: string;
+  /** Tooltip position */
+  position?: TooltipPosition;
+  /** Tooltip variant */
+  variant?: TooltipVariant;
+  /** Always show tooltip */
+  open?: boolean;
 }
 
 // ============================================================================
@@ -24,20 +31,20 @@ export interface TooltipProps extends React.HTMLAttributes<HTMLDivElement> {
 // ============================================================================
 
 const positionClasses: Record<TooltipPosition, string> = {
-	top: "tooltip-top",
-	bottom: "tooltip-bottom",
-	left: "tooltip-left",
-	right: "tooltip-right",
+  top: "tooltip-top",
+  bottom: "tooltip-bottom",
+  left: "tooltip-left",
+  right: "tooltip-right",
 };
 
 const variantClasses: Record<TooltipVariant, string> = {
-	primary: "tooltip-primary",
-	secondary: "tooltip-secondary",
-	accent: "tooltip-accent",
-	info: "tooltip-info",
-	success: "tooltip-success",
-	warning: "tooltip-warning",
-	error: "tooltip-error",
+  primary: "tooltip-primary",
+  secondary: "tooltip-secondary",
+  accent: "tooltip-accent",
+  info: "tooltip-info",
+  success: "tooltip-success",
+  warning: "tooltip-warning",
+  error: "tooltip-error",
 };
 
 /**
@@ -51,24 +58,24 @@ const variantClasses: Record<TooltipVariant, string> = {
  * ```
  */
 export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
-	({ content, position = "top", variant, open, children, className, ...props }, ref) => {
-		return (
-			<div
-				ref={ref}
-				className={clsx(
-					"tooltip",
-					positionClasses[position],
-					variant && variantClasses[variant],
-					open && "tooltip-open",
-					className,
-				)}
-				data-tip={content}
-				{...props}
-			>
-				{children}
-			</div>
-		);
-	},
+  ({ content, position = "top", variant, open, children, className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={clsx(
+          "tooltip",
+          positionClasses[position],
+          variant && variantClasses[variant],
+          open && "tooltip-open",
+          className
+        )}
+        data-tip={content}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
 );
 
 Tooltip.displayName = "Tooltip";

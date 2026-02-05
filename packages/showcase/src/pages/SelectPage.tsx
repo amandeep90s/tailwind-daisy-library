@@ -30,18 +30,8 @@ export function SelectPage() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Variants">
-        <Select
-          options={options}
-          variant="bordered"
-          className="w-48"
-          placeholder="Bordered"
-        />
-        <Select
-          options={options}
-          variant="ghost"
-          className="w-48"
-          placeholder="Ghost"
-        />
+        <Select options={options} variant="bordered" className="w-48" placeholder="Bordered" />
+        <Select options={options} variant="ghost" className="w-48" placeholder="Ghost" />
         <Select
           options={options}
           variant="floating"
@@ -55,8 +45,8 @@ export function SelectPage() {
 
       <ShowcaseSection title="Floating Label">
         <p className="text-base-content/70 mb-4">
-          Floating labels provide a modern UX pattern where the label moves up
-          when the input is focused or has value.
+          Floating labels provide a modern UX pattern where the label moves up when the input is
+          focused or has value.
         </p>
         <div className="max-w-sm space-y-4">
           <Select
@@ -91,36 +81,11 @@ export function SelectPage() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Colors">
-        <Select
-          options={options}
-          color="primary"
-          className="w-40"
-          placeholder="Primary"
-        />
-        <Select
-          options={options}
-          color="secondary"
-          className="w-40"
-          placeholder="Secondary"
-        />
-        <Select
-          options={options}
-          color="accent"
-          className="w-40"
-          placeholder="Accent"
-        />
-        <Select
-          options={options}
-          color="success"
-          className="w-40"
-          placeholder="Success"
-        />
-        <Select
-          options={options}
-          color="error"
-          className="w-40"
-          placeholder="Error"
-        />
+        <Select options={options} color="primary" className="w-40" placeholder="Primary" />
+        <Select options={options} color="secondary" className="w-40" placeholder="Secondary" />
+        <Select options={options} color="accent" className="w-40" placeholder="Accent" />
+        <Select options={options} color="success" className="w-40" placeholder="Success" />
+        <Select options={options} color="error" className="w-40" placeholder="Error" />
       </ShowcaseSection>
 
       <ShowcaseSection title="Sizes">
@@ -131,12 +96,7 @@ export function SelectPage() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Disabled">
-        <Select
-          options={options}
-          disabled
-          className="w-48"
-          placeholder="Disabled"
-        />
+        <Select options={options} disabled className="w-48" placeholder="Disabled" />
       </ShowcaseSection>
     </ComponentPage>
   );

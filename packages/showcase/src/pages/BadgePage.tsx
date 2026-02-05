@@ -1,10 +1,6 @@
 import { Badge } from "@shared-ui-library/react";
 import { CodeBlock } from "../components/CodeBlock";
-import {
-  CodeSection,
-  ComponentPage,
-  ShowcaseSection,
-} from "../components/ComponentPage";
+import { CodeSection, ComponentPage, ShowcaseSection } from "../components/ComponentPage";
 import { PropsTable } from "../components/PropsTable";
 
 export function BadgePage() {
@@ -38,10 +34,7 @@ export function BadgePage() {
         <Badge size="lg">Large</Badge>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Outline"
-        description="Outlined badge variant for subtle emphasis."
-      >
+      <ShowcaseSection title="Outline" description="Outlined badge variant for subtle emphasis.">
         <Badge variant="primary">Primary</Badge>
         <Badge variant="secondary">Secondary</Badge>
         <Badge variant="accent">Accent</Badge>
@@ -55,7 +48,7 @@ export function BadgePage() {
         title="In Context"
         description="Badges work great for notifications, counters, and status indicators."
       >
-        <div className="flex flex-col gap-4 w-full">
+        <div className="flex w-full flex-col gap-4">
           <div className="flex items-center gap-2">
             <span className="text-lg">Inbox</span>
             <Badge variant="primary" size="sm">
@@ -89,13 +82,10 @@ export function BadgePage() {
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Badge with Avatar"
-        description="Combine badges with other elements."
-      >
+      <ShowcaseSection title="Badge with Avatar" description="Combine badges with other elements.">
         <div className="flex items-center gap-4">
           <div className="avatar online placeholder">
-            <div className="bg-neutral text-neutral-content rounded-full w-12">
+            <div className="bg-neutral text-neutral-content w-12 rounded-full">
               <span>JD</span>
             </div>
           </div>

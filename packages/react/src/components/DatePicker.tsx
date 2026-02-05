@@ -117,13 +117,10 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
       id,
       ...props
     },
-    ref,
+    ref
   ) => {
     const inputId =
-      id ||
-      (label
-        ? `datepicker-${label.toLowerCase().replace(/\s+/g, "-")}`
-        : undefined);
+      id || (label ? `datepicker-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const date = parseDate(e.target.value);
@@ -135,7 +132,7 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
       variant !== "floating" && variantClasses[variant],
       error ? colorClasses.error : color && colorClasses[color],
       sizeClasses[size],
-      className,
+      className
     );
 
     // Floating label variant
@@ -157,13 +154,9 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
               {...props}
             />
           </label>
-          {error && (
-            <span className="label-text-alt text-xs text-error mt-1">
-              {error}
-            </span>
-          )}
+          {error && <span className="label-text-alt text-error mt-1 text-xs">{error}</span>}
           {!error && helperText && (
-            <span className="label-text-alt text-xs mt-1">{helperText}</span>
+            <span className="label-text-alt mt-1 text-xs">{helperText}</span>
           )}
         </div>
       );
@@ -182,7 +175,7 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
         {...props}
       />
     );
-  },
+  }
 );
 
 DatePicker.displayName = "DatePicker";

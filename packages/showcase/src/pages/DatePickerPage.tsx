@@ -1,11 +1,7 @@
 import { DatePicker } from "@shared-ui-library/react";
 import { useState } from "react";
 import { CodeBlock } from "../components/CodeBlock";
-import {
-  CodeSection,
-  ComponentPage,
-  ShowcaseSection,
-} from "../components/ComponentPage";
+import { CodeSection, ComponentPage, ShowcaseSection } from "../components/ComponentPage";
 import { PropsTable } from "../components/PropsTable";
 
 export function DatePickerPage() {
@@ -14,10 +10,7 @@ export function DatePickerPage() {
   const [floatingDate, setFloatingDate] = useState<Date | undefined>(undefined);
 
   return (
-    <ComponentPage
-      title="Date Picker"
-      description="A date picker component with calendar popup."
-    >
+    <ComponentPage title="Date Picker" description="A date picker component with calendar popup.">
       <ShowcaseSection
         title="Basic Date Picker"
         description="Simple date picker with default styling."
@@ -25,17 +18,14 @@ export function DatePickerPage() {
         <div className="w-full max-w-xs">
           <DatePicker value={date} onChange={(d) => setDate(d ?? undefined)} />
           {date && (
-            <p className="mt-2 text-sm text-base-content/70">
+            <p className="text-base-content/70 mt-2 text-sm">
               Selected: {date.toLocaleDateString()}
             </p>
           )}
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Variants"
-        description="Different style variants for the date picker."
-      >
+      <ShowcaseSection title="Variants" description="Different style variants for the date picker.">
         <div className="max-w-sm space-y-4">
           <DatePicker variant="bordered" placeholder="Bordered (default)" />
           <DatePicker variant="ghost" placeholder="Ghost" />
@@ -66,11 +56,7 @@ export function DatePickerPage() {
             onChange={(d) => setRangeDate(d ?? undefined)}
             helperText="Select the end date for your trip"
           />
-          <DatePicker
-            variant="floating"
-            label="Deadline"
-            error="Deadline is required"
-          />
+          <DatePicker variant="floating" label="Deadline" error="Deadline is required" />
         </div>
       </ShowcaseSection>
 
@@ -112,16 +98,11 @@ export function DatePickerPage() {
       >
         <div className="w-full max-w-xs">
           <DatePicker value={date} onChange={(d) => setDate(d ?? undefined)} />
-          <p className="mt-2 text-sm text-base-content/70">
-            Range: Jan 2024 - Dec 2026
-          </p>
+          <p className="text-base-content/70 mt-2 text-sm">Range: Jan 2024 - Dec 2026</p>
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Disabled"
-        description="Date picker in disabled state."
-      >
+      <ShowcaseSection title="Disabled" description="Date picker in disabled state.">
         <div className="w-full max-w-xs">
           <DatePicker value={new Date()} disabled />
         </div>
@@ -131,7 +112,7 @@ export function DatePickerPage() {
         title="Date Range Selection"
         description="Use two date pickers for range selection."
       >
-        <div className="flex flex-wrap gap-4 w-full">
+        <div className="flex w-full flex-wrap gap-4">
           <div className="w-full max-w-xs">
             <DatePicker
               variant="floating"

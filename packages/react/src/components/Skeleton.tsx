@@ -6,12 +6,12 @@ import React, { forwardRef } from "react";
 // ============================================================================
 
 export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
-	/** Width of skeleton */
-	width?: string | number;
-	/** Height of skeleton */
-	height?: string | number;
-	/** Shape of skeleton */
-	shape?: "rectangle" | "circle";
+  /** Width of skeleton */
+  width?: string | number;
+  /** Height of skeleton */
+  height?: string | number;
+  /** Shape of skeleton */
+  shape?: "rectangle" | "circle";
 }
 
 // ============================================================================
@@ -28,22 +28,22 @@ export interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
  * ```
  */
 export const Skeleton = forwardRef<HTMLDivElement, SkeletonProps>(
-	({ width, height, shape = "rectangle", className, style, ...props }, ref) => {
-		const dimensionStyle = {
-			width: typeof width === "number" ? `${width}px` : width,
-			height: typeof height === "number" ? `${height}px` : height,
-			...style,
-		};
+  ({ width, height, shape = "rectangle", className, style, ...props }, ref) => {
+    const dimensionStyle = {
+      width: typeof width === "number" ? `${width}px` : width,
+      height: typeof height === "number" ? `${height}px` : height,
+      ...style,
+    };
 
-		return (
-			<div
-				ref={ref}
-				className={clsx("skeleton", shape === "circle" && "rounded-full", className)}
-				style={dimensionStyle}
-				{...props}
-			/>
-		);
-	},
+    return (
+      <div
+        ref={ref}
+        className={clsx("skeleton", shape === "circle" && "rounded-full", className)}
+        style={dimensionStyle}
+        {...props}
+      />
+    );
+  }
 );
 
 Skeleton.displayName = "Skeleton";

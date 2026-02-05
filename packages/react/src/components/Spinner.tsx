@@ -6,13 +6,7 @@ import React, { forwardRef } from "react";
 // ============================================================================
 
 export type SpinnerSize = "xs" | "sm" | "md" | "lg" | "xl";
-export type SpinnerType =
-  | "spinner"
-  | "dots"
-  | "ring"
-  | "ball"
-  | "bars"
-  | "infinity";
+export type SpinnerType = "spinner" | "dots" | "ring" | "ball" | "bars" | "infinity";
 export type SpinnerColor =
   | "primary"
   | "secondary"
@@ -83,12 +77,12 @@ export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(
           typeClasses[type],
           sizeClasses[size],
           color && colorClasses[color],
-          className,
+          className
         )}
         {...props}
       />
     );
-  },
+  }
 );
 
 Spinner.displayName = "Spinner";

@@ -1,17 +1,11 @@
 import { Calendar } from "@shared-ui-library/react";
 import { useState } from "react";
 import { CodeBlock } from "../components/CodeBlock";
-import {
-  CodeSection,
-  ComponentPage,
-  ShowcaseSection,
-} from "../components/ComponentPage";
+import { CodeSection, ComponentPage, ShowcaseSection } from "../components/ComponentPage";
 import { PropsTable } from "../components/PropsTable";
 
 export function CalendarPage() {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-    new Date(),
-  );
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [rangeDate, setRangeDate] = useState<Date | undefined>(new Date());
 
   return (
@@ -19,13 +13,10 @@ export function CalendarPage() {
       title="Calendar"
       description="A date field component that allows users to enter and edit date."
     >
-      <ShowcaseSection
-        title="Basic Calendar"
-        description="Simple calendar for date selection."
-      >
+      <ShowcaseSection title="Basic Calendar" description="Simple calendar for date selection.">
         <div className="flex flex-col gap-2">
           <Calendar value={selectedDate} onChange={setSelectedDate} />
-          <p className="text-sm text-base-content/70">
+          <p className="text-base-content/70 text-sm">
             Selected: {selectedDate?.toLocaleDateString() ?? "None"}
           </p>
         </div>
@@ -42,16 +33,11 @@ export function CalendarPage() {
             minDate={new Date(2024, 0, 1)}
             maxDate={new Date(2026, 11, 31)}
           />
-          <p className="text-sm text-base-content/70">
-            Range: Jan 2024 - Dec 2026
-          </p>
+          <p className="text-base-content/70 text-sm">Range: Jan 2024 - Dec 2026</p>
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Disabled"
-        description="Calendar in disabled state."
-      >
+      <ShowcaseSection title="Disabled" description="Calendar in disabled state.">
         <Calendar value={new Date()} />
       </ShowcaseSection>
 
@@ -61,11 +47,11 @@ export function CalendarPage() {
       >
         <div className="flex flex-wrap gap-4">
           <div>
-            <p className="text-sm font-medium mb-2">Start Date</p>
+            <p className="mb-2 text-sm font-medium">Start Date</p>
             <Calendar value={selectedDate} onChange={setSelectedDate} />
           </div>
           <div>
-            <p className="text-sm font-medium mb-2">End Date</p>
+            <p className="mb-2 text-sm font-medium">End Date</p>
             <Calendar value={rangeDate} onChange={setRangeDate} />
           </div>
         </div>

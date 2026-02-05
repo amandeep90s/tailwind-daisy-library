@@ -13,11 +13,7 @@ import {
 } from "@shared-ui-library/react";
 import { useState } from "react";
 import { CodeBlock } from "../components/CodeBlock";
-import {
-  CodeSection,
-  ComponentPage,
-  ShowcaseSection,
-} from "../components/ComponentPage";
+import { CodeSection, ComponentPage, ShowcaseSection } from "../components/ComponentPage";
 import { PropsTable } from "../components/PropsTable";
 
 export function FormPage() {
@@ -62,9 +58,7 @@ export function FormPage() {
                 <FormControl>
                   <Input placeholder="Enter your name" />
                 </FormControl>
-                <FormDescription>
-                  Your full name as it appears on documents.
-                </FormDescription>
+                <FormDescription>Your full name as it appears on documents.</FormDescription>
               </FormItem>
             </FormField>
 
@@ -151,10 +145,7 @@ export function FormPage() {
       >
         <div className="w-full max-w-md">
           <Form>
-            <FormSection
-              title="Personal Information"
-              description="Tell us about yourself."
-            >
+            <FormSection title="Personal Information" description="Tell us about yourself.">
               <div className="grid grid-cols-2 gap-4">
                 <FormField name="firstName">
                   <FormItem>
@@ -189,10 +180,7 @@ export function FormPage() {
               </FormField>
             </FormSection>
 
-            <FormSection
-              title="Contact Details"
-              description="How can we reach you?"
-            >
+            <FormSection title="Contact Details" description="How can we reach you?">
               <FormField name="email">
                 <FormItem>
                   <FormLabel>Email</FormLabel>
@@ -225,10 +213,7 @@ export function FormPage() {
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Login Form"
-        description="Complete login form example."
-      >
+      <ShowcaseSection title="Login Form" description="Complete login form example.">
         <div className="w-full max-w-sm">
           <div className="card bg-base-100 shadow-xl">
             <div className="card-body">
@@ -273,10 +258,7 @@ export function FormPage() {
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Registration Form"
-        description="Multi-field registration form."
-      >
+      <ShowcaseSection title="Registration Form" description="Multi-field registration form.">
         <div className="w-full max-w-md">
           <Form>
             <div className="grid grid-cols-2 gap-4">
@@ -337,11 +319,7 @@ export function FormPage() {
             </FormField>
 
             <div className="flex items-start gap-2 py-2">
-              <input
-                type="checkbox"
-                className="checkbox checkbox-sm mt-1"
-                required
-              />
+              <input type="checkbox" className="checkbox checkbox-sm mt-1" required />
               <span className="text-sm">
                 I agree to the{" "}
                 <a href="#" className="link link-primary">
@@ -414,7 +392,7 @@ export function FormPage() {
         <h2 className="text-2xl font-semibold">Components</h2>
         <div className="space-y-6">
           <div>
-            <h3 className="text-xl font-semibold mb-2">Form</h3>
+            <h3 className="mb-2 text-xl font-semibold">Form</h3>
             <PropsTable
               props={[
                 {
@@ -432,7 +410,7 @@ export function FormPage() {
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-2">FormField</h3>
+            <h3 className="mb-2 text-xl font-semibold">FormField</h3>
             <PropsTable
               props={[
                 {
@@ -450,21 +428,20 @@ export function FormPage() {
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-2">FormItem</h3>
+            <h3 className="mb-2 text-xl font-semibold">FormItem</h3>
             <PropsTable
               props={[
                 {
                   name: "children",
                   type: "React.ReactNode",
-                  description:
-                    "Contains FormLabel, FormControl, FormDescription, FormMessage",
+                  description: "Contains FormLabel, FormControl, FormDescription, FormMessage",
                 },
               ]}
             />
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-2">FormControl</h3>
+            <h3 className="mb-2 text-xl font-semibold">FormControl</h3>
             <PropsTable
               props={[
                 {
@@ -477,7 +454,7 @@ export function FormPage() {
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-2">FormSection</h3>
+            <h3 className="mb-2 text-xl font-semibold">FormSection</h3>
             <PropsTable
               props={[
                 {
@@ -495,7 +472,7 @@ export function FormPage() {
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-2">FormActions</h3>
+            <h3 className="mb-2 text-xl font-semibold">FormActions</h3>
             <PropsTable
               props={[
                 {

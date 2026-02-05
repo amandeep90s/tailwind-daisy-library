@@ -15,21 +15,21 @@ export function TabsPage() {
           <Tab value="tab1" label="Account" />
           <TabPanel value="tab1">
             <div className="bg-base-200 rounded-lg p-4">
-              <h3 className="font-bold mb-2">Account Settings</h3>
+              <h3 className="mb-2 font-bold">Account Settings</h3>
               <p>Manage your account information here.</p>
             </div>
           </TabPanel>
           <Tab value="tab2" label="Password" />
           <TabPanel value="tab2">
             <div className="bg-base-200 rounded-lg p-4">
-              <h3 className="font-bold mb-2">Password Settings</h3>
+              <h3 className="mb-2 font-bold">Password Settings</h3>
               <p>Change your password and security settings.</p>
             </div>
           </TabPanel>
           <Tab value="tab3" label="Settings" />
           <TabPanel value="tab3">
             <div className="bg-base-200 rounded-lg p-4">
-              <h3 className="font-bold mb-2">General Settings</h3>
+              <h3 className="mb-2 font-bold">General Settings</h3>
               <p>Configure general application settings.</p>
             </div>
           </TabPanel>
@@ -37,32 +37,26 @@ export function TabsPage() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Variants">
-        <div className="space-y-6 w-full">
+        <div className="w-full space-y-6">
           <div>
-            <p className="text-sm font-semibold mb-2">Bordered</p>
+            <p className="mb-2 text-sm font-semibold">Bordered</p>
             <Tabs defaultValue="a" variant="bordered">
               <Tab value="a" label="Tab 1" />
               <TabPanel value="a">
-                <p className="text-sm">
-                  Content for Tab 1 with bordered variant.
-                </p>
+                <p className="text-sm">Content for Tab 1 with bordered variant.</p>
               </TabPanel>
               <Tab value="b" label="Tab 2" />
               <TabPanel value="b">
-                <p className="text-sm">
-                  Content for Tab 2 with bordered variant.
-                </p>
+                <p className="text-sm">Content for Tab 2 with bordered variant.</p>
               </TabPanel>
               <Tab value="c" label="Tab 3" />
               <TabPanel value="c">
-                <p className="text-sm">
-                  Content for Tab 3 with bordered variant.
-                </p>
+                <p className="text-sm">Content for Tab 3 with bordered variant.</p>
               </TabPanel>
             </Tabs>
           </div>
           <div>
-            <p className="text-sm font-semibold mb-2">Lifted</p>
+            <p className="mb-2 text-sm font-semibold">Lifted</p>
             <Tabs defaultValue="a" variant="lifted">
               <Tab value="a" label="Tab 1" />
               <TabPanel value="a">
@@ -79,7 +73,7 @@ export function TabsPage() {
             </Tabs>
           </div>
           <div>
-            <p className="text-sm font-semibold mb-2">Boxed</p>
+            <p className="mb-2 text-sm font-semibold">Boxed</p>
             <Tabs defaultValue="a" variant="boxed">
               <Tab value="a" label="Tab 1" />
               <TabPanel value="a">
@@ -99,9 +93,9 @@ export function TabsPage() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Sizes">
-        <div className="space-y-6 w-full">
+        <div className="w-full space-y-6">
           <div>
-            <p className="text-sm font-semibold mb-2">Extra Small (xs)</p>
+            <p className="mb-2 text-sm font-semibold">Extra Small (xs)</p>
             <Tabs defaultValue="a" size="xs">
               <Tab value="a" label="Tab 1" />
               <TabPanel value="a">
@@ -118,7 +112,7 @@ export function TabsPage() {
             </Tabs>
           </div>
           <div>
-            <p className="text-sm font-semibold mb-2">Small (sm)</p>
+            <p className="mb-2 text-sm font-semibold">Small (sm)</p>
             <Tabs defaultValue="a" size="sm">
               <Tab value="a" label="Tab 1" />
               <TabPanel value="a">
@@ -135,7 +129,7 @@ export function TabsPage() {
             </Tabs>
           </div>
           <div>
-            <p className="text-sm font-semibold mb-2">Medium (md) - Default</p>
+            <p className="mb-2 text-sm font-semibold">Medium (md) - Default</p>
             <Tabs defaultValue="a" size="md">
               <Tab value="a" label="Tab 1" />
               <TabPanel value="a">
@@ -152,7 +146,7 @@ export function TabsPage() {
             </Tabs>
           </div>
           <div>
-            <p className="text-sm font-semibold mb-2">Large (lg)</p>
+            <p className="mb-2 text-sm font-semibold">Large (lg)</p>
             <Tabs defaultValue="a" size="lg">
               <Tab value="a" label="Tab 1" />
               <TabPanel value="a">
@@ -169,7 +163,7 @@ export function TabsPage() {
             </Tabs>
           </div>
           <div>
-            <p className="text-sm font-semibold mb-2">Extra Large (xl)</p>
+            <p className="mb-2 text-sm font-semibold">Extra Large (xl)</p>
             <Tabs defaultValue="a" size="xl">
               <Tab value="a" label="Tab 1" />
               <TabPanel value="a">
@@ -196,9 +190,7 @@ export function TabsPage() {
           </TabPanel>
           <Tab value="tab2" label="Disabled" disabled />
           <TabPanel value="tab2">
-            <p className="text-sm">
-              This content won't be accessible because the tab is disabled.
-            </p>
+            <p className="text-sm">This content won't be accessible because the tab is disabled.</p>
           </TabPanel>
           <Tab value="tab3" label="Also Disabled" disabled />
           <TabPanel value="tab3">
@@ -210,30 +202,28 @@ export function TabsPage() {
       </ShowcaseSection>
 
       <ShowcaseSection title="With Tab Content">
-        <div className="space-y-8 w-full">
+        <div className="w-full space-y-8">
           <div>
-            <p className="text-sm font-semibold mb-3">Bordered with Content</p>
+            <p className="mb-3 text-sm font-semibold">Bordered with Content</p>
             <Tabs defaultValue="tab1" variant="bordered">
               <Tab value="tab1" label="Profile" />
               <TabPanel value="tab1">
-                <div className="bg-base-200 p-6 rounded-lg">
-                  <h4 className="text-lg font-bold mb-2">
-                    Profile Information
-                  </h4>
+                <div className="bg-base-200 rounded-lg p-6">
+                  <h4 className="mb-2 text-lg font-bold">Profile Information</h4>
                   <p className="text-sm">View and edit your profile details.</p>
                 </div>
               </TabPanel>
               <Tab value="tab2" label="Documents" />
               <TabPanel value="tab2">
-                <div className="bg-base-200 p-6 rounded-lg">
-                  <h4 className="text-lg font-bold mb-2">Your Documents</h4>
+                <div className="bg-base-200 rounded-lg p-6">
+                  <h4 className="mb-2 text-lg font-bold">Your Documents</h4>
                   <p className="text-sm">Access all your uploaded documents.</p>
                 </div>
               </TabPanel>
               <Tab value="tab3" label="Settings" />
               <TabPanel value="tab3">
-                <div className="bg-base-200 p-6 rounded-lg">
-                  <h4 className="text-lg font-bold mb-2">Settings Panel</h4>
+                <div className="bg-base-200 rounded-lg p-6">
+                  <h4 className="mb-2 text-lg font-bold">Settings Panel</h4>
                   <p className="text-sm">Configure your preferences.</p>
                 </div>
               </TabPanel>
@@ -241,28 +231,26 @@ export function TabsPage() {
           </div>
 
           <div>
-            <p className="text-sm font-semibold mb-3">Lifted with Content</p>
+            <p className="mb-3 text-sm font-semibold">Lifted with Content</p>
             <Tabs defaultValue="tab1" variant="lifted">
               <Tab value="tab1" label="Dashboard" />
               <TabPanel value="tab1">
-                <div className="bg-base-200 p-6 rounded-lg">
-                  <h4 className="text-lg font-bold mb-2">Dashboard Overview</h4>
-                  <p className="text-sm">
-                    View your dashboard metrics and insights.
-                  </p>
+                <div className="bg-base-200 rounded-lg p-6">
+                  <h4 className="mb-2 text-lg font-bold">Dashboard Overview</h4>
+                  <p className="text-sm">View your dashboard metrics and insights.</p>
                 </div>
               </TabPanel>
               <Tab value="tab2" label="Analytics" />
               <TabPanel value="tab2">
-                <div className="bg-base-200 p-6 rounded-lg">
-                  <h4 className="text-lg font-bold mb-2">Analytics Data</h4>
+                <div className="bg-base-200 rounded-lg p-6">
+                  <h4 className="mb-2 text-lg font-bold">Analytics Data</h4>
                   <p className="text-sm">Detailed analytics and statistics.</p>
                 </div>
               </TabPanel>
               <Tab value="tab3" label="Reports" />
               <TabPanel value="tab3">
-                <div className="bg-base-200 p-6 rounded-lg">
-                  <h4 className="text-lg font-bold mb-2">Report Generation</h4>
+                <div className="bg-base-200 rounded-lg p-6">
+                  <h4 className="mb-2 text-lg font-bold">Report Generation</h4>
                   <p className="text-sm">Generate and download reports.</p>
                 </div>
               </TabPanel>
@@ -270,28 +258,26 @@ export function TabsPage() {
           </div>
 
           <div>
-            <p className="text-sm font-semibold mb-3">Boxed with Content</p>
+            <p className="mb-3 text-sm font-semibold">Boxed with Content</p>
             <Tabs defaultValue="tab1" variant="boxed">
               <Tab value="tab1" label="Overview" />
               <TabPanel value="tab1">
-                <div className="bg-base-200 p-6 rounded-lg">
-                  <h4 className="text-lg font-bold mb-2">Overview Section</h4>
+                <div className="bg-base-200 rounded-lg p-6">
+                  <h4 className="mb-2 text-lg font-bold">Overview Section</h4>
                   <p className="text-sm">Quick overview of key information.</p>
                 </div>
               </TabPanel>
               <Tab value="tab2" label="Details" />
               <TabPanel value="tab2">
-                <div className="bg-base-200 p-6 rounded-lg">
-                  <h4 className="text-lg font-bold mb-2">Detailed View</h4>
-                  <p className="text-sm">
-                    Comprehensive details and information.
-                  </p>
+                <div className="bg-base-200 rounded-lg p-6">
+                  <h4 className="mb-2 text-lg font-bold">Detailed View</h4>
+                  <p className="text-sm">Comprehensive details and information.</p>
                 </div>
               </TabPanel>
               <Tab value="tab3" label="History" />
               <TabPanel value="tab3">
-                <div className="bg-base-200 p-6 rounded-lg">
-                  <h4 className="text-lg font-bold mb-2">History Log</h4>
+                <div className="bg-base-200 rounded-lg p-6">
+                  <h4 className="mb-2 text-lg font-bold">History Log</h4>
                   <p className="text-sm">View historical data and changes.</p>
                 </div>
               </TabPanel>
@@ -301,30 +287,28 @@ export function TabsPage() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Position Bottom">
-        <div className="space-y-6 w-full">
+        <div className="w-full space-y-6">
           <div>
-            <p className="text-sm font-semibold mb-3">Tabs at Bottom</p>
+            <p className="mb-3 text-sm font-semibold">Tabs at Bottom</p>
             <Tabs defaultValue="tab1" variant="lifted" position="bottom">
               <Tab value="tab1" label="First" />
               <TabPanel value="tab1">
-                <div className="bg-base-200 p-6 rounded-lg">
-                  <h4 className="text-lg font-bold mb-2">Content First</h4>
-                  <p className="text-sm">
-                    When tabs are at the bottom, content appears first.
-                  </p>
+                <div className="bg-base-200 rounded-lg p-6">
+                  <h4 className="mb-2 text-lg font-bold">Content First</h4>
+                  <p className="text-sm">When tabs are at the bottom, content appears first.</p>
                 </div>
               </TabPanel>
               <Tab value="tab2" label="Second" />
               <TabPanel value="tab2">
-                <div className="bg-base-200 p-6 rounded-lg">
-                  <h4 className="text-lg font-bold mb-2">Second Panel</h4>
+                <div className="bg-base-200 rounded-lg p-6">
+                  <h4 className="mb-2 text-lg font-bold">Second Panel</h4>
                   <p className="text-sm">This is the second tab content.</p>
                 </div>
               </TabPanel>
               <Tab value="tab3" label="Third" />
               <TabPanel value="tab3">
-                <div className="bg-base-200 p-6 rounded-lg">
-                  <h4 className="text-lg font-bold mb-2">Third Panel</h4>
+                <div className="bg-base-200 rounded-lg p-6">
+                  <h4 className="mb-2 text-lg font-bold">Third Panel</h4>
                   <p className="text-sm">This is the third tab content.</p>
                 </div>
               </TabPanel>
@@ -337,22 +321,22 @@ export function TabsPage() {
         <Tabs defaultValue="live" variant="lifted">
           <Tab value="live" label="🎥 Live" />
           <TabPanel value="live">
-            <div className="bg-base-200 p-6 rounded-lg">
-              <h4 className="text-lg font-bold mb-2">Live Content</h4>
+            <div className="bg-base-200 rounded-lg p-6">
+              <h4 className="mb-2 text-lg font-bold">Live Content</h4>
               <p className="text-sm">Watch live streams and broadcasts.</p>
             </div>
           </TabPanel>
           <Tab value="laugh" label="😄 Laugh" />
           <TabPanel value="laugh">
-            <div className="bg-base-200 p-6 rounded-lg">
-              <h4 className="text-lg font-bold mb-2">Comedy Content</h4>
+            <div className="bg-base-200 rounded-lg p-6">
+              <h4 className="mb-2 text-lg font-bold">Comedy Content</h4>
               <p className="text-sm">Enjoy funny videos and entertainment.</p>
             </div>
           </TabPanel>
           <Tab value="love" label="❤️ Love" />
           <TabPanel value="love">
-            <div className="bg-base-200 p-6 rounded-lg">
-              <h4 className="text-lg font-bold mb-2">Favorite Content</h4>
+            <div className="bg-base-200 rounded-lg p-6">
+              <h4 className="mb-2 text-lg font-bold">Favorite Content</h4>
               <p className="text-sm">Your most loved and saved content.</p>
             </div>
           </TabPanel>
@@ -360,7 +344,7 @@ export function TabsPage() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Custom Colors">
-        <div className="space-y-6 w-full">
+        <div className="w-full space-y-6">
           <Tabs defaultValue="tab1" variant="lifted">
             <Tab
               value="tab1"
@@ -368,8 +352,8 @@ export function TabsPage() {
               className="[--tab-bg:hsl(var(--p))] [--tab-border-color:hsl(var(--p))]"
             />
             <TabPanel value="tab1">
-              <div className="bg-primary text-primary-content p-6 rounded-lg">
-                <h4 className="text-lg font-bold mb-2">Primary Theme</h4>
+              <div className="bg-primary text-primary-content rounded-lg p-6">
+                <h4 className="mb-2 text-lg font-bold">Primary Theme</h4>
                 <p className="text-sm">Content with primary color theme.</p>
               </div>
             </TabPanel>
@@ -379,8 +363,8 @@ export function TabsPage() {
               className="[--tab-bg:hsl(var(--s))] [--tab-border-color:hsl(var(--s))]"
             />
             <TabPanel value="tab2">
-              <div className="bg-secondary text-secondary-content p-6 rounded-lg">
-                <h4 className="text-lg font-bold mb-2">Secondary Theme</h4>
+              <div className="bg-secondary text-secondary-content rounded-lg p-6">
+                <h4 className="mb-2 text-lg font-bold">Secondary Theme</h4>
                 <p className="text-sm">Content with secondary color theme.</p>
               </div>
             </TabPanel>
@@ -390,8 +374,8 @@ export function TabsPage() {
               className="[--tab-bg:hsl(var(--a))] [--tab-border-color:hsl(var(--a))]"
             />
             <TabPanel value="tab3">
-              <div className="bg-accent text-accent-content p-6 rounded-lg">
-                <h4 className="text-lg font-bold mb-2">Accent Theme</h4>
+              <div className="bg-accent text-accent-content rounded-lg p-6">
+                <h4 className="mb-2 text-lg font-bold">Accent Theme</h4>
                 <p className="text-sm">Content with accent color theme.</p>
               </div>
             </TabPanel>

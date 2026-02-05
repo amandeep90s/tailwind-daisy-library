@@ -58,13 +58,13 @@ Override the font families in your app's CSS:
 
 ```css
 @layer base {
-	:root {
-		/* Override body font */
-		--font-sans: "Your Custom Font", system-ui, sans-serif;
+  :root {
+    /* Override body font */
+    --font-sans: "Your Custom Font", system-ui, sans-serif;
 
-		/* Override heading font */
-		--font-serif: "Your Custom Heading Font", Georgia, serif;
-	}
+    /* Override heading font */
+    --font-serif: "Your Custom Heading Font", Georgia, serif;
+  }
 }
 ```
 
@@ -84,14 +84,14 @@ Extend your Tailwind configuration:
 ```typescript
 // tailwind.config.ts
 export default {
-	theme: {
-		extend: {
-			fontFamily: {
-				sans: ["Your Font", "system-ui", "sans-serif"],
-				serif: ["Your Heading Font", "Georgia", "serif"],
-			},
-		},
-	},
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ["Your Font", "system-ui", "sans-serif"],
+        serif: ["Your Heading Font", "Georgia", "serif"],
+      },
+    },
+  },
 } satisfies Config;
 ```
 

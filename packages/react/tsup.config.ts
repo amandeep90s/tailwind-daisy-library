@@ -1,12 +1,12 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-	entry: ["src/index.ts", "src/components/index.ts"],
-	format: ["cjs", "esm"],
-	dts: true,
-	splitting: false,
-	sourcemap: true,
-	clean: true,
-	external: ["react", "react-dom"],
-	noExternal: ["@shared-ui-library/tokens", "@shared-ui-library/styles"],
+  entry: ["src/index.ts", "src/components/index.ts"],
+  format: ["cjs", "esm"],
+  dts: true,
+  splitting: false,
+  sourcemap: true,
+  clean: true,
+  external: ["react", "react-dom"],
+  noExternal: ["@shared-ui-library/tokens", "@shared-ui-library/styles"],
 });

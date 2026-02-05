@@ -64,7 +64,7 @@ export function SpinnerPage() {
             <Spinner size="sm" type="dots" />
             Processing...
           </button>
-          <div className="w-full h-32 bg-base-200 rounded-lg flex items-center justify-center">
+          <div className="bg-base-200 flex h-32 w-full items-center justify-center rounded-lg">
             <Spinner size="lg" type="dots" color="primary" />
           </div>
         </div>

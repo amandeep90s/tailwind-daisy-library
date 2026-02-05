@@ -6,14 +6,14 @@ import React, { forwardRef } from "react";
 // ============================================================================
 
 export interface ItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
-	/** Item icon */
-	icon?: React.ReactNode;
-	/** Item title */
-	title?: string;
-	/** Item description */
-	description?: string;
-	/** Right content */
-	rightContent?: React.ReactNode;
+  /** Item icon */
+  icon?: React.ReactNode;
+  /** Item title */
+  title?: string;
+  /** Item description */
+  description?: string;
+  /** Right content */
+  rightContent?: React.ReactNode;
 }
 
 // ============================================================================
@@ -34,19 +34,23 @@ export interface ItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "t
  * ```
  */
 export const Item = forwardRef<HTMLDivElement, ItemProps>(
-	({ icon, title, description, rightContent, children, className, ...props }, ref) => {
-		return (
-			<div ref={ref} className={clsx("flex items-center gap-3 p-3 hover:bg-base-200 rounded-lg", className)} {...props}>
-				{icon && <div className="shrink-0">{icon}</div>}
-				<div className="flex-1 min-w-0">
-					{title && <div className="font-medium">{title}</div>}
-					{description && <div className="text-sm text-base-content/70">{description}</div>}
-					{children}
-				</div>
-				{rightContent && <div className="shrink-0">{rightContent}</div>}
-			</div>
-		);
-	},
+  ({ icon, title, description, rightContent, children, className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={clsx("hover:bg-base-200 flex items-center gap-3 rounded-lg p-3", className)}
+        {...props}
+      >
+        {icon && <div className="shrink-0">{icon}</div>}
+        <div className="min-w-0 flex-1">
+          {title && <div className="font-medium">{title}</div>}
+          {description && <div className="text-base-content/70 text-sm">{description}</div>}
+          {children}
+        </div>
+        {rightContent && <div className="shrink-0">{rightContent}</div>}
+      </div>
+    );
+  }
 );
 
 Item.displayName = "Item";

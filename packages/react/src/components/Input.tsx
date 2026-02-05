@@ -20,10 +20,7 @@ export type InputColor =
 
 export type InputSize = "xs" | "sm" | "md" | "lg" | "xl";
 
-export interface InputProps extends Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  "size"
-> {
+export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
   /** Style variant of the input */
   variant?: InputVariant;
   /** Color variant of the input */
@@ -105,11 +102,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       id,
       ...props
     },
-    ref,
+    ref
   ) => {
-    const inputId =
-      id ||
-      (label ? `input-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined);
+    const inputId = id || (label ? `input-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined);
 
     // Floating label variant
     if (variant === "floating") {
@@ -124,26 +119,18 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                 "input",
                 error ? colorClasses.error : colorClasses[color],
                 sizeClasses[size],
-                className,
+                className
               )}
               aria-invalid={error ? "true" : undefined}
               aria-describedby={
-                error
-                  ? `${inputId}-error`
-                  : helperText
-                    ? `${inputId}-helper`
-                    : undefined
+                error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
               }
               {...props}
             />
           </label>
-          {error && (
-            <span className="label-text-alt text-xs text-error mt-1">
-              {error}
-            </span>
-          )}
+          {error && <span className="label-text-alt text-error mt-1 text-xs">{error}</span>}
           {!error && helperText && (
-            <span className="label-text-alt text-xs mt-1">{helperText}</span>
+            <span className="label-text-alt mt-1 text-xs">{helperText}</span>
           )}
         </div>
       );
@@ -154,7 +141,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       variantClasses[variant],
       error ? colorClasses.error : colorClasses[color],
       sizeClasses[size],
-      className,
+      className
     );
 
     // If we have icons or want wrapper style, use the wrapper approach
@@ -165,27 +152,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         return (
           <label
             className={clsx(
-              "input flex items-center gap-2 w-full",
+              "input flex w-full items-center gap-2",
               variantClasses[variant],
               error ? colorClasses.error : colorClasses[color],
               sizeClasses[size],
-              className,
+              className
             )}
           >
-            {startIcon && (
-              <span className="text-base-content/50">{startIcon}</span>
-            )}
+            {startIcon && <span className="text-base-content/50">{startIcon}</span>}
             <input
               ref={ref}
               id={inputId}
-              className="grow bg-transparent border-none outline-none"
+              className="grow border-none bg-transparent outline-none"
               aria-invalid={error ? "true" : undefined}
               aria-describedby={
-                error
-                  ? `${inputId}-error`
-                  : helperText
-                    ? `${inputId}-helper`
-                    : undefined
+                error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
               }
               {...props}
             />
@@ -201,11 +182,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           className={inputClasses}
           aria-invalid={error ? "true" : undefined}
           aria-describedby={
-            error
-              ? `${inputId}-error`
-              : helperText
-                ? `${inputId}-helper`
-                : undefined
+            error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
           }
           {...props}
         />
@@ -235,7 +212,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
       </div>
     );
-  },
+  }
 );
 
 Input.displayName = "Input";

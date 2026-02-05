@@ -7,17 +7,7 @@ import React, { forwardRef, useEffect, useRef } from "react";
 
 export type DialogVerticalPosition = "top" | "middle" | "bottom";
 export type DialogHorizontalPosition = "start" | "center" | "end";
-export type DialogSize =
-  | "xs"
-  | "sm"
-  | "md"
-  | "lg"
-  | "xl"
-  | "2xl"
-  | "3xl"
-  | "4xl"
-  | "5xl"
-  | "full";
+export type DialogSize = "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "full";
 
 export interface DialogProps extends React.DialogHTMLAttributes<HTMLDialogElement> {
   /** Whether the dialog is open */
@@ -99,11 +89,11 @@ const sizeClasses: Record<DialogSize, string> = {
 export const DialogTitle = forwardRef<HTMLHeadingElement, DialogTitleProps>(
   ({ children, className, ...props }, ref) => {
     return (
-      <h3 ref={ref} className={clsx("font-bold text-lg", className)} {...props}>
+      <h3 ref={ref} className={clsx("text-lg font-bold", className)} {...props}>
         {children}
       </h3>
     );
-  },
+  }
 );
 
 DialogTitle.displayName = "DialogTitle";
@@ -111,16 +101,15 @@ DialogTitle.displayName = "DialogTitle";
 /**
  * Dialog Description component
  */
-export const DialogDescription = forwardRef<
-  HTMLParagraphElement,
-  DialogDescriptionProps
->(({ children, className, ...props }, ref) => {
-  return (
-    <p ref={ref} className={clsx("py-4", className)} {...props}>
-      {children}
-    </p>
-  );
-});
+export const DialogDescription = forwardRef<HTMLParagraphElement, DialogDescriptionProps>(
+  ({ children, className, ...props }, ref) => {
+    return (
+      <p ref={ref} className={clsx("py-4", className)} {...props}>
+        {children}
+      </p>
+    );
+  }
+);
 
 DialogDescription.displayName = "DialogDescription";
 
@@ -134,7 +123,7 @@ export const DialogActions = forwardRef<HTMLDivElement, DialogActionsProps>(
         {children}
       </div>
     );
-  },
+  }
 );
 
 DialogActions.displayName = "DialogActions";
@@ -142,25 +131,21 @@ DialogActions.displayName = "DialogActions";
 /**
  * Dialog Close Button - positioned in the corner
  */
-export const DialogCloseButton = forwardRef<
-  HTMLButtonElement,
-  DialogCloseButtonProps
->(({ children, className, ...props }, ref) => {
-  return (
-    <button
-      ref={ref}
-      type="button"
-      className={clsx(
-        "btn btn-sm btn-circle btn-ghost absolute right-2 top-2",
-        className,
-      )}
-      aria-label="Close dialog"
-      {...props}
-    >
-      {children || "✕"}
-    </button>
-  );
-});
+export const DialogCloseButton = forwardRef<HTMLButtonElement, DialogCloseButtonProps>(
+  ({ children, className, ...props }, ref) => {
+    return (
+      <button
+        ref={ref}
+        type="button"
+        className={clsx("btn btn-sm btn-circle btn-ghost absolute top-2 right-2", className)}
+        aria-label="Close dialog"
+        {...props}
+      >
+        {children || "✕"}
+      </button>
+    );
+  }
+);
 
 DialogCloseButton.displayName = "DialogCloseButton";
 
@@ -185,11 +170,10 @@ export const Dialog = forwardRef<HTMLDialogElement, DialogProps>(
       className,
       ...props
     },
-    ref,
+    ref
   ) => {
     const dialogRef = useRef<HTMLDialogElement>(null);
-    const internalRef =
-      (ref as React.RefObject<HTMLDialogElement>) || dialogRef;
+    const internalRef = (ref as React.RefObject<HTMLDialogElement>) || dialogRef;
 
     useEffect(() => {
       const dialog = internalRef.current;
@@ -240,7 +224,7 @@ export const Dialog = forwardRef<HTMLDialogElement, DialogProps>(
     const modalBoxClasses = clsx(
       "modal-box overflow-x-hidden",
       maxWidth || (size && sizeClasses[size]),
-      responsive && "sm:modal-middle modal-bottom",
+      responsive && "sm:modal-middle modal-bottom"
     );
 
     // Build modal classes
@@ -249,21 +233,14 @@ export const Dialog = forwardRef<HTMLDialogElement, DialogProps>(
       !responsive && verticalPositionClasses[position],
       horizontalPositionClasses[horizontalPosition],
       responsive && "modal-bottom sm:modal-middle",
-      className,
+      className
     );
 
     return (
-      <dialog
-        ref={internalRef}
-        className={modalClasses}
-        onClick={handleBackdropClick}
-        {...props}
-      >
+      <dialog ref={internalRef} className={modalClasses} onClick={handleBackdropClick} {...props}>
         <div className={modalBoxClasses}>
           {showCloseButton && (
-            <DialogCloseButton onClick={onClose}>
-              {closeButtonContent}
-            </DialogCloseButton>
+            <DialogCloseButton onClick={onClose}>{closeButtonContent}</DialogCloseButton>
           )}
           {children}
         </div>
@@ -276,7 +253,7 @@ export const Dialog = forwardRef<HTMLDialogElement, DialogProps>(
         )}
       </dialog>
     );
-  },
+  }
 );
 
 Dialog.displayName = "Dialog";

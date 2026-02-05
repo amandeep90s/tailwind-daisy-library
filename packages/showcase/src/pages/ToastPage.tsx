@@ -1,15 +1,6 @@
-import {
-  Button,
-  ToastItem,
-  ToastProvider,
-  useToast,
-} from "@shared-ui-library/react";
+import { Button, ToastItem, ToastProvider, useToast } from "@shared-ui-library/react";
 import { CodeBlock } from "../components/CodeBlock";
-import {
-  CodeSection,
-  ComponentPage,
-  ShowcaseSection,
-} from "../components/ComponentPage";
+import { CodeSection, ComponentPage, ShowcaseSection } from "../components/ComponentPage";
 import { PropsTable } from "../components/PropsTable";
 
 function ToastDemo() {
@@ -95,10 +86,7 @@ function MultipleToastDemo() {
 
 export function ToastPage() {
   return (
-    <ComponentPage
-      title="Toast"
-      description="Displays a brief, temporary notification."
-    >
+    <ComponentPage title="Toast" description="Displays a brief, temporary notification.">
       <ShowcaseSection
         title="Interactive Demo"
         description="Click buttons to trigger different toast types."
@@ -108,10 +96,7 @@ export function ToastPage() {
         </ToastProvider>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Multiple Toasts"
-        description="Stack multiple toasts at once."
-      >
+      <ShowcaseSection title="Multiple Toasts" description="Stack multiple toasts at once.">
         <ToastProvider position="top-end">
           <MultipleToastDemo />
         </ToastProvider>
@@ -121,28 +106,12 @@ export function ToastPage() {
         title="Toast Variants (Static)"
         description="Visual representation of all toast variants."
       >
-        <div className="space-y-3 w-full max-w-md">
+        <div className="w-full max-w-md space-y-3">
           <ToastItem message="Default toast message" className="relative" />
-          <ToastItem
-            message="Info toast message"
-            variant="info"
-            className="relative"
-          />
-          <ToastItem
-            message="Success toast message"
-            variant="success"
-            className="relative"
-          />
-          <ToastItem
-            message="Warning toast message"
-            variant="warning"
-            className="relative"
-          />
-          <ToastItem
-            message="Error toast message"
-            variant="error"
-            className="relative"
-          />
+          <ToastItem message="Info toast message" variant="info" className="relative" />
+          <ToastItem message="Success toast message" variant="success" className="relative" />
+          <ToastItem message="Warning toast message" variant="warning" className="relative" />
+          <ToastItem message="Error toast message" variant="error" className="relative" />
         </div>
       </ShowcaseSection>
 
@@ -150,17 +119,9 @@ export function ToastPage() {
         title="With Description"
         description="Toasts can include additional description text."
       >
-        <div className="space-y-3 w-full max-w-md">
-          <ToastItem
-            message="File uploaded"
-            variant="success"
-            className="relative"
-          />
-          <ToastItem
-            message="Connection lost"
-            variant="error"
-            className="relative"
-          />
+        <div className="w-full max-w-md space-y-3">
+          <ToastItem message="File uploaded" variant="success" className="relative" />
+          <ToastItem message="Connection lost" variant="error" className="relative" />
         </div>
       </ShowcaseSection>
 
@@ -168,30 +129,16 @@ export function ToastPage() {
         title="Position Options"
         description="Available positions for the toast container."
       >
-        <div className="grid grid-cols-3 gap-4 w-full text-sm">
-          <div className="text-center p-3 bg-base-200 rounded-lg">
-            top-start
-          </div>
-          <div className="text-center p-3 bg-base-200 rounded-lg">
-            top-center
-          </div>
-          <div className="text-center p-3 bg-base-200 rounded-lg">top-end</div>
-          <div className="text-center p-3 bg-base-200 rounded-lg">
-            middle-start
-          </div>
-          <div className="text-center p-3 bg-base-200 rounded-lg">
-            middle-center
-          </div>
-          <div className="text-center p-3 bg-base-200 rounded-lg">
-            middle-end
-          </div>
-          <div className="text-center p-3 bg-base-200 rounded-lg">
-            bottom-start
-          </div>
-          <div className="text-center p-3 bg-base-200 rounded-lg">
-            bottom-center
-          </div>
-          <div className="text-center p-3 bg-base-200 rounded-lg font-medium border-2 border-primary">
+        <div className="grid w-full grid-cols-3 gap-4 text-sm">
+          <div className="bg-base-200 rounded-lg p-3 text-center">top-start</div>
+          <div className="bg-base-200 rounded-lg p-3 text-center">top-center</div>
+          <div className="bg-base-200 rounded-lg p-3 text-center">top-end</div>
+          <div className="bg-base-200 rounded-lg p-3 text-center">middle-start</div>
+          <div className="bg-base-200 rounded-lg p-3 text-center">middle-center</div>
+          <div className="bg-base-200 rounded-lg p-3 text-center">middle-end</div>
+          <div className="bg-base-200 rounded-lg p-3 text-center">bottom-start</div>
+          <div className="bg-base-200 rounded-lg p-3 text-center">bottom-center</div>
+          <div className="bg-base-200 border-primary rounded-lg border-2 p-3 text-center font-medium">
             bottom-end (default)
           </div>
         </div>
@@ -240,7 +187,7 @@ addToast({
         <h2 className="text-2xl font-semibold">Props</h2>
         <div className="space-y-6">
           <div>
-            <h3 className="text-xl font-semibold mb-2">ToastProvider Props</h3>
+            <h3 className="mb-2 text-xl font-semibold">ToastProvider Props</h3>
             <PropsTable
               props={[
                 {
@@ -258,9 +205,7 @@ addToast({
             />
           </div>
           <div>
-            <h3 className="text-xl font-semibold mb-2">
-              Toast Options (addToast)
-            </h3>
+            <h3 className="mb-2 text-xl font-semibold">Toast Options (addToast)</h3>
             <PropsTable
               props={[
                 {

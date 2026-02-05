@@ -70,6 +70,4 @@ console.log("\n✓ Custom Config with Override:", {
   stillHasPrimary: !!(customConfig.theme.extend.colors as any).primary,
 });
 
-console.log(
-  "\n✅ All tests passed! Tailwind config exports are working correctly.",
-);
+console.log("\n✅ All tests passed! Tailwind config exports are working correctly.");

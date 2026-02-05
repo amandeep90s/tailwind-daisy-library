@@ -6,12 +6,12 @@ import React, { forwardRef, useEffect, useRef, useState } from "react";
 // ============================================================================
 
 export interface HoverCardProps extends React.HTMLAttributes<HTMLDivElement> {
-	/** Trigger element */
-	trigger: React.ReactNode;
-	/** Delay before showing (ms) */
-	openDelay?: number;
-	/** Delay before hiding (ms) */
-	closeDelay?: number;
+  /** Trigger element */
+  trigger: React.ReactNode;
+  /** Delay before showing (ms) */
+  openDelay?: number;
+  /** Delay before hiding (ms) */
+  closeDelay?: number;
 }
 
 // ============================================================================
@@ -34,53 +34,53 @@ export interface HoverCardProps extends React.HTMLAttributes<HTMLDivElement> {
  * ```
  */
 export const HoverCard = forwardRef<HTMLDivElement, HoverCardProps>(
-	({ trigger, openDelay = 200, closeDelay = 300, children, className, ...props }, ref) => {
-		const [isOpen, setIsOpen] = useState(false);
-		const openTimeoutRef = useRef<number | undefined>(undefined);
-		const closeTimeoutRef = useRef<number | undefined>(undefined);
+  ({ trigger, openDelay = 200, closeDelay = 300, children, className, ...props }, ref) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const openTimeoutRef = useRef<number | undefined>(undefined);
+    const closeTimeoutRef = useRef<number | undefined>(undefined);
 
-		useEffect(() => {
-			return () => {
-				if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
-				if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-			};
-		}, []);
+    useEffect(() => {
+      return () => {
+        if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
+        if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
+      };
+    }, []);
 
-		const handleMouseEnter = () => {
-			if (closeTimeoutRef.current) {
-				clearTimeout(closeTimeoutRef.current);
-			}
-			openTimeoutRef.current = window.setTimeout(() => {
-				setIsOpen(true);
-			}, openDelay);
-		};
+    const handleMouseEnter = () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+      openTimeoutRef.current = window.setTimeout(() => {
+        setIsOpen(true);
+      }, openDelay);
+    };
 
-		const handleMouseLeave = () => {
-			if (openTimeoutRef.current) {
-				clearTimeout(openTimeoutRef.current);
-			}
-			closeTimeoutRef.current = window.setTimeout(() => {
-				setIsOpen(false);
-			}, closeDelay);
-		};
+    const handleMouseLeave = () => {
+      if (openTimeoutRef.current) {
+        clearTimeout(openTimeoutRef.current);
+      }
+      closeTimeoutRef.current = window.setTimeout(() => {
+        setIsOpen(false);
+      }, closeDelay);
+    };
 
-		return (
-			<div
-				ref={ref}
-				className={clsx("relative inline-block", className)}
-				onMouseEnter={handleMouseEnter}
-				onMouseLeave={handleMouseLeave}
-				{...props}
-			>
-				{trigger}
-				{isOpen && (
-					<div className="absolute z-50 mt-2 left-0 top-full">
-						<div className="animate-in fade-in-0 zoom-in-95">{children}</div>
-					</div>
-				)}
-			</div>
-		);
-	},
+    return (
+      <div
+        ref={ref}
+        className={clsx("relative inline-block", className)}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        {...props}
+      >
+        {trigger}
+        {isOpen && (
+          <div className="absolute top-full left-0 z-50 mt-2">
+            <div className="animate-in fade-in-0 zoom-in-95">{children}</div>
+          </div>
+        )}
+      </div>
+    );
+  }
 );
 
 HoverCard.displayName = "HoverCard";

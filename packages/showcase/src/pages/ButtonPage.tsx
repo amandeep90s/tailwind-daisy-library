@@ -1,17 +1,8 @@
-import {
-  ArrowRightIcon,
-  HomeIcon,
-  PlusIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowRightIcon, HomeIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Button } from "@shared-ui-library/react";
 import { Link } from "react-router-dom";
 import { CodeBlock } from "../components/CodeBlock";
-import {
-  CodeSection,
-  ComponentPage,
-  ShowcaseSection,
-} from "../components/ComponentPage";
+import { CodeSection, ComponentPage, ShowcaseSection } from "../components/ComponentPage";
 import { PropsTable } from "../components/PropsTable";
 
 export function ButtonPage() {
@@ -37,10 +28,7 @@ export function ButtonPage() {
         <Button variant="outline">Outline</Button>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Sizes"
-        description="Buttons come in multiple sizes."
-      >
+      <ShowcaseSection title="Sizes" description="Buttons come in multiple sizes.">
         <Button size="xs" variant="primary">
           Extra Small
         </Button>
@@ -55,10 +43,7 @@ export function ButtonPage() {
         </Button>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Shapes"
-        description="Different button shapes for various layouts."
-      >
+      <ShowcaseSection title="Shapes" description="Different button shapes for various layouts.">
         <Button shape="default" variant="primary">
           Default
         </Button>
@@ -104,7 +89,7 @@ export function ButtonPage() {
         title="Glass Effect"
         description="Glassmorphism effect for buttons over backgrounds."
       >
-        <div className="bg-gradient-to-r from-primary to-secondary p-8 rounded-lg">
+        <div className="from-primary to-secondary rounded-lg bg-gradient-to-r p-8">
           <Button glass>Glass Button</Button>
         </div>
       </ShowcaseSection>
@@ -123,12 +108,12 @@ export function ButtonPage() {
         description="Buttons with icons for better visual communication."
       >
         <Button variant="primary">
-          <PlusIcon className="h-5 w-5 mr-2" />
+          <PlusIcon className="mr-2 h-5 w-5" />
           Add Item
         </Button>
         <Button variant="error">
           Delete
-          <TrashIcon className="h-5 w-5 ml-2" />
+          <TrashIcon className="ml-2 h-5 w-5" />
         </Button>
       </ShowcaseSection>
 
@@ -137,12 +122,12 @@ export function ButtonPage() {
         description="Render button as a Link component for navigation. Uses react-router-dom Link or similar."
       >
         <Button as={Link} to="/button" variant="primary">
-          <HomeIcon className="h-5 w-5 mr-2" />
+          <HomeIcon className="mr-2 h-5 w-5" />
           Current Page
         </Button>
         <Button as={Link} to="/accordion" variant="secondary">
           Go to Accordion
-          <ArrowRightIcon className="h-5 w-5 ml-2" />
+          <ArrowRightIcon className="ml-2 h-5 w-5" />
         </Button>
         <Button as={Link} to="/card" variant="accent">
           View Cards
@@ -155,10 +140,7 @@ export function ButtonPage() {
         </Button>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Link Button Sizes"
-        description="Link buttons in different sizes."
-      >
+      <ShowcaseSection title="Link Button Sizes" description="Link buttons in different sizes.">
         <Button as={Link} to="/button" variant="primary" size="xs">
           Extra Small
         </Button>
@@ -173,10 +155,7 @@ export function ButtonPage() {
         </Button>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Link Button Shapes"
-        description="Link buttons with different shapes."
-      >
+      <ShowcaseSection title="Link Button Shapes" description="Link buttons with different shapes.">
         <Button as={Link} to="/button" variant="primary" shape="wide">
           Wide Link Button
         </Button>

@@ -1,28 +1,12 @@
-import {
-  Button,
-  Card,
-  CardActions,
-  CardBody,
-  CardTitle,
-} from "@shared-ui-library/react";
+import { Button, Card, CardActions, CardBody, CardTitle } from "@shared-ui-library/react";
 import { CodeBlock } from "../components/CodeBlock";
-import {
-  CodeSection,
-  ComponentPage,
-  ShowcaseSection,
-} from "../components/ComponentPage";
+import { CodeSection, ComponentPage, ShowcaseSection } from "../components/ComponentPage";
 import { PropsTable } from "../components/PropsTable";
 
 export function CardPage() {
   return (
-    <ComponentPage
-      title="Card"
-      description="Displays a card with header, content, and footer."
-    >
-      <ShowcaseSection
-        title="Basic Card"
-        description="Simple card with title and content."
-      >
+    <ComponentPage title="Card" description="Displays a card with header, content, and footer.">
+      <ShowcaseSection title="Basic Card" description="Simple card with title and content.">
         <Card className="w-96">
           <CardBody>
             <CardTitle>Card Title</CardTitle>
@@ -38,10 +22,7 @@ export function CardPage() {
         <Card className="w-96">
           <CardBody>
             <CardTitle>Confirm Your Action</CardTitle>
-            <p>
-              This card demonstrates action buttons placed at the bottom for
-              user interactions.
-            </p>
+            <p>This card demonstrates action buttons placed at the bottom for user interactions.</p>
             <CardActions>
               <Button variant="ghost">Cancel</Button>
               <Button variant="primary">Confirm</Button>
@@ -62,10 +43,7 @@ export function CardPage() {
         </Card>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Bordered Card"
-        description="Card with a visible border."
-      >
+      <ShowcaseSection title="Bordered Card" description="Card with a visible border.">
         <Card variant="bordered" className="w-96">
           <CardBody>
             <CardTitle>Bordered Card</CardTitle>
@@ -83,7 +61,7 @@ export function CardPage() {
             <img
               src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=200&fit=crop"
               alt="Shoes"
-              className="w-full h-48 object-cover"
+              className="h-48 w-full object-cover"
             />
           </figure>
           <CardBody>
@@ -100,13 +78,11 @@ export function CardPage() {
         title="Glass Effect"
         description="Beautiful glass effect on colorful backgrounds."
       >
-        <div className="bg-gradient-to-br from-purple-500 to-pink-500 p-8 rounded-lg">
-          <Card className="w-96 glass">
+        <div className="rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 p-8">
+          <Card className="glass w-96">
             <CardBody>
               <CardTitle className="text-white">Glass Card</CardTitle>
-              <p className="text-white/90">
-                Glass cards look great on colorful backgrounds.
-              </p>
+              <p className="text-white/90">Glass cards look great on colorful backgrounds.</p>
             </CardBody>
           </Card>
         </div>
@@ -121,7 +97,7 @@ export function CardPage() {
             <img
               src="https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=200&h=200&fit=crop"
               alt="Breakfast"
-              className="w-full h-full object-cover"
+              className="h-full w-full object-cover"
             />
           </figure>
           <CardBody>
@@ -136,16 +112,13 @@ export function CardPage() {
         </Card>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Card Grid"
-        description="Display multiple cards in a grid layout."
-      >
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+      <ShowcaseSection title="Card Grid" description="Display multiple cards in a grid layout.">
+        <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
           <Card className="shadow-lg">
             <CardBody>
               <CardTitle>Plan A</CardTitle>
               <p>Basic features for small teams</p>
-              <div className="text-2xl font-bold mt-2">$9/mo</div>
+              <div className="mt-2 text-2xl font-bold">$9/mo</div>
               <CardActions justify="start">
                 <Button variant="primary" size="sm">
                   Select
@@ -153,11 +126,11 @@ export function CardPage() {
               </CardActions>
             </CardBody>
           </Card>
-          <Card className="shadow-lg border-2 border-primary">
+          <Card className="border-primary border-2 shadow-lg">
             <CardBody>
               <CardTitle>Plan B</CardTitle>
               <p>Advanced features for growing teams</p>
-              <div className="text-2xl font-bold mt-2">$29/mo</div>
+              <div className="mt-2 text-2xl font-bold">$29/mo</div>
               <CardActions justify="start">
                 <Button variant="primary" size="sm">
                   Select
@@ -169,7 +142,7 @@ export function CardPage() {
             <CardBody>
               <CardTitle>Plan C</CardTitle>
               <p>Enterprise features for large teams</p>
-              <div className="text-2xl font-bold mt-2">$99/mo</div>
+              <div className="mt-2 text-2xl font-bold">$99/mo</div>
               <CardActions justify="start">
                 <Button variant="primary" size="sm">
                   Select
@@ -217,7 +190,7 @@ export function CardPage() {
         <h2 className="text-2xl font-semibold">Props</h2>
         <div className="space-y-6">
           <div>
-            <h3 className="text-xl font-semibold mb-2">Card Props</h3>
+            <h3 className="mb-2 text-xl font-semibold">Card Props</h3>
             <PropsTable
               props={[
                 {
@@ -250,7 +223,7 @@ export function CardPage() {
             />
           </div>
           <div>
-            <h3 className="text-xl font-semibold mb-2">CardActions Props</h3>
+            <h3 className="mb-2 text-xl font-semibold">CardActions Props</h3>
             <PropsTable
               props={[
                 {

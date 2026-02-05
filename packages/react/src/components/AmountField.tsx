@@ -150,15 +150,12 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
       valueAsString = false,
       ...props
     },
-    ref,
+    ref
   ) => {
     const [displayValue, setDisplayValue] = useState("");
     const [isFocused, setIsFocused] = useState(false);
     const inputId =
-      id ||
-      (label
-        ? `amount-${label.toLowerCase().replace(/\s+/g, "-")}`
-        : undefined);
+      id || (label ? `amount-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined);
 
     // Update display value when prop value changes
     useEffect(() => {
@@ -244,16 +241,16 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
       error ? colorClasses.error : colorClasses[color],
       sizeClasses[size],
       disabled && "input-disabled",
-      className,
+      className
     );
 
     const renderInput = () => (
-      <div className="relative w-full flex items-center">
+      <div className="relative flex w-full items-center">
         {currencySymbol && (
           <span
             className={clsx(
-              "absolute left-3 top-1/2 -translate-y-1/2 z-10 text-base-content pointer-events-none font-medium",
-              disabled && "opacity-50",
+              "text-base-content pointer-events-none absolute top-1/2 left-3 z-10 -translate-y-1/2 font-medium",
+              disabled && "opacity-50"
             )}
           >
             {currencySymbol}
@@ -273,11 +270,7 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
           className={clsx(inputClasses, currencySymbol && "pl-8")}
           aria-invalid={error ? "true" : undefined}
           aria-describedby={
-            error
-              ? `${inputId}-error`
-              : helperText
-                ? `${inputId}-helper`
-                : undefined
+            error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
           }
           {...props}
         />
@@ -290,12 +283,12 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
         <div className="form-control w-full">
           <label className="floating-label">
             <span>{label}</span>
-            <div className="relative w-full flex items-center">
+            <div className="relative flex w-full items-center">
               {currencySymbol && (
                 <span
                   className={clsx(
-                    "absolute left-3 top-1/2 -translate-y-1/2 z-10 text-base-content pointer-events-none font-medium",
-                    disabled && "opacity-50",
+                    "text-base-content pointer-events-none absolute top-1/2 left-3 z-10 -translate-y-1/2 font-medium",
+                    disabled && "opacity-50"
                   )}
                 >
                   {currencySymbol}
@@ -315,23 +308,15 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
                 className={clsx(inputClasses, currencySymbol && "pl-8")}
                 aria-invalid={error ? "true" : undefined}
                 aria-describedby={
-                  error
-                    ? `${inputId}-error`
-                    : helperText
-                      ? `${inputId}-helper`
-                      : undefined
+                  error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
                 }
                 {...props}
               />
             </div>
           </label>
-          {error && (
-            <span className="label-text-alt text-xs text-error mt-1">
-              {error}
-            </span>
-          )}
+          {error && <span className="label-text-alt text-error mt-1 text-xs">{error}</span>}
           {!error && helperText && (
-            <span className="label-text-alt text-xs mt-1">{helperText}</span>
+            <span className="label-text-alt mt-1 text-xs">{helperText}</span>
           )}
         </div>
       );
@@ -358,14 +343,12 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
         )}
         {!error && helperText && (
           <label className="label" id={`${inputId}-helper`}>
-            <span className="label-text-alt text-base-content/60">
-              {helperText}
-            </span>
+            <span className="label-text-alt text-base-content/60">{helperText}</span>
           </label>
         )}
       </div>
     );
-  },
+  }
 );
 
 AmountField.displayName = "AmountField";

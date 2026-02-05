@@ -33,15 +33,15 @@ export function InputPage() {
 
   return (
     <div className="max-w-4xl">
-      <h1 className="text-4xl font-bold mb-4">Input</h1>
-      <p className="text-lg text-base-content/70 mb-8">
-        Input fields allow users to enter text. They support labels, validation
-        states, icons, and helper text.
+      <h1 className="mb-4 text-4xl font-bold">Input</h1>
+      <p className="text-base-content/70 mb-8 text-lg">
+        Input fields allow users to enter text. They support labels, validation states, icons, and
+        helper text.
       </p>
 
       {/* Basic Usage */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Basic Usage</h2>
+        <h2 className="mb-4 text-2xl font-semibold">Basic Usage</h2>
         <div className="max-w-sm space-y-4">
           <Input placeholder="Basic input" />
           <Input label="With Label" placeholder="Enter text..." />
@@ -55,32 +55,23 @@ export function InputPage() {
 
       {/* Variants */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Variants</h2>
+        <h2 className="mb-4 text-2xl font-semibold">Variants</h2>
         <div className="max-w-sm space-y-4">
           <Input variant="bordered" placeholder="Bordered (default)" />
           <Input variant="ghost" placeholder="Ghost" />
-          <Input
-            variant="floating"
-            label="Floating Label"
-            placeholder="mail@site.com"
-          />
+          <Input variant="floating" label="Floating Label" placeholder="mail@site.com" />
         </div>
       </section>
 
       {/* Floating Label Examples */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Floating Label</h2>
+        <h2 className="mb-4 text-2xl font-semibold">Floating Label</h2>
         <p className="text-base-content/70 mb-4">
-          Floating labels provide a modern UX pattern where the label moves up
-          when the input is focused or has value.
+          Floating labels provide a modern UX pattern where the label moves up when the input is
+          focused or has value.
         </p>
         <div className="max-w-sm space-y-4">
-          <Input
-            variant="floating"
-            label="Your Email"
-            placeholder="mail@site.com"
-            type="email"
-          />
+          <Input variant="floating" label="Your Email" placeholder="mail@site.com" type="email" />
           <Input variant="floating" label="Full Name" placeholder="John Doe" />
           <Input
             variant="floating"
@@ -112,14 +103,13 @@ export function InputPage() {
 
       {/* With Icons */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">With Icons</h2>
+        <h2 className="mb-4 text-2xl font-semibold">With Icons</h2>
         <p className="text-base-content/70 mb-4">
-          Add icons to the start or end of input fields for better visual
-          context.
+          Add icons to the start or end of input fields for better visual context.
         </p>
         <div className="max-w-sm space-y-4">
           <Input
-            startIcon={<MagnifyingGlassIcon className="w-5 h-5" />}
+            startIcon={<MagnifyingGlassIcon className="h-5 w-5" />}
             placeholder="Search..."
             type="search"
             value={searchValue}
@@ -131,32 +121,29 @@ export function InputPage() {
                   onClick={() => setSearchValue("")}
                   className="hover:text-error"
                 >
-                  <XMarkIcon className="w-5 h-5" />
+                  <XMarkIcon className="h-5 w-5" />
                 </button>
               ) : null
             }
           />
+          <Input startIcon={<UserIcon className="h-5 w-5" />} placeholder="Username" />
           <Input
-            startIcon={<UserIcon className="w-5 h-5" />}
-            placeholder="Username"
-          />
-          <Input
-            startIcon={<EnvelopeIcon className="w-5 h-5" />}
+            startIcon={<EnvelopeIcon className="h-5 w-5" />}
             type="email"
             placeholder="Email address"
           />
           <Input
-            startIcon={<PhoneIcon className="w-5 h-5" />}
+            startIcon={<PhoneIcon className="h-5 w-5" />}
             type="tel"
             placeholder="Phone number"
           />
           <Input
-            startIcon={<GlobeAltIcon className="w-5 h-5" />}
+            startIcon={<GlobeAltIcon className="h-5 w-5" />}
             type="url"
             placeholder="Website URL"
           />
           <Input
-            startIcon={<LockClosedIcon className="w-5 h-5" />}
+            startIcon={<LockClosedIcon className="h-5 w-5" />}
             type={showPassword ? "text" : "password"}
             placeholder="Password"
             endIcon={
@@ -166,9 +153,9 @@ export function InputPage() {
                 className="hover:text-primary"
               >
                 {showPassword ? (
-                  <EyeSlashIcon className="w-5 h-5" />
+                  <EyeSlashIcon className="h-5 w-5" />
                 ) : (
-                  <EyeIcon className="w-5 h-5" />
+                  <EyeIcon className="h-5 w-5" />
                 )}
               </button>
             }
@@ -178,8 +165,8 @@ export function InputPage() {
 
       {/* Colors */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Colors</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+        <h2 className="mb-4 text-2xl font-semibold">Colors</h2>
+        <div className="grid max-w-2xl grid-cols-1 gap-4 md:grid-cols-2">
           {colors.map((color) => (
             <Input
               key={color}
@@ -192,21 +179,17 @@ export function InputPage() {
 
       {/* Sizes */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Sizes</h2>
+        <h2 className="mb-4 text-2xl font-semibold">Sizes</h2>
         <div className="max-w-md space-y-4">
           {sizes.map((size) => (
-            <Input
-              key={size}
-              size={size}
-              placeholder={`Size: ${size.toUpperCase()}`}
-            />
+            <Input key={size} size={size} placeholder={`Size: ${size.toUpperCase()}`} />
           ))}
         </div>
       </section>
 
       {/* Validation States */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Validation States</h2>
+        <h2 className="mb-4 text-2xl font-semibold">Validation States</h2>
         <div className="max-w-sm space-y-4">
           <Input
             label="Success State"
@@ -214,22 +197,18 @@ export function InputPage() {
             defaultValue="Valid input"
             helperText="Looks good!"
           />
-          <Input
-            label="Error State"
-            error="This field is required"
-            placeholder="Enter value"
-          />
+          <Input label="Error State" error="This field is required" placeholder="Enter value" />
         </div>
       </section>
 
       {/* Input Types */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Input Types</h2>
+        <h2 className="mb-4 text-2xl font-semibold">Input Types</h2>
         <p className="text-base-content/70 mb-4">
-          The Input component supports various HTML input types including text,
-          email, password, number, date, time, and more.
+          The Input component supports various HTML input types including text, email, password,
+          number, date, time, and more.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl">
+        <div className="grid max-w-2xl grid-cols-1 gap-4 md:grid-cols-2">
           <Input label="Text" type="text" placeholder="Enter text" />
           <Input label="Email" type="email" placeholder="name@example.com" />
           <Input label="Password" type="password" placeholder="••••••••" />
@@ -247,7 +226,7 @@ export function InputPage() {
 
       {/* States */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">States</h2>
+        <h2 className="mb-4 text-2xl font-semibold">States</h2>
         <div className="max-w-sm space-y-4">
           <Input label="Normal" placeholder="Normal input" />
           <Input label="Disabled" placeholder="Disabled input" disabled />
@@ -257,7 +236,7 @@ export function InputPage() {
 
       {/* Code Example */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Usage</h2>
+        <h2 className="mb-4 text-2xl font-semibold">Usage</h2>
         <div className="mockup-code bg-base-300 text-base-content">
           <pre data-prefix="1">
             <code>{`import { Input } from '@shared-ui-library/react';`}</code>
@@ -321,9 +300,9 @@ export function InputPage() {
 
       {/* Props Table */}
       <section>
-        <h2 className="text-2xl font-semibold mb-4">Props</h2>
+        <h2 className="mb-4 text-2xl font-semibold">Props</h2>
         <div className="overflow-x-auto">
-          <table className="table table-zebra">
+          <table className="table-zebra table">
             <thead>
               <tr>
                 <th>Prop</th>
@@ -351,8 +330,8 @@ export function InputPage() {
                 </td>
                 <td>
                   <code>
-                    "default" | "neutral" | "primary" | "secondary" | "accent" |
-                    "info" | "success" | "warning" | "error"
+                    "default" | "neutral" | "primary" | "secondary" | "accent" | "info" | "success"
+                    | "warning" | "error"
                   </code>
                 </td>
                 <td>

@@ -49,7 +49,7 @@ export const Form = forwardRef<HTMLFormElement, FormProps>(
         {children}
       </form>
     );
-  },
+  }
 );
 
 Form.displayName = "Form";
@@ -77,7 +77,7 @@ export const FormField = forwardRef<HTMLDivElement, FormFieldProps>(
         </div>
       </FormFieldContext.Provider>
     );
-  },
+  }
 );
 
 FormField.displayName = "FormField";
@@ -91,15 +91,11 @@ export interface FormItemProps extends React.HTMLAttributes<HTMLDivElement> {}
 export const FormItem = forwardRef<HTMLDivElement, FormItemProps>(
   ({ children, className, ...props }, ref) => {
     return (
-      <div
-        ref={ref}
-        className={clsx("form-control w-full space-y-2", className)}
-        {...props}
-      >
+      <div ref={ref} className={clsx("form-control w-full space-y-2", className)} {...props}>
         {children}
       </div>
     );
-  },
+  }
 );
 
 FormItem.displayName = "FormItem";
@@ -119,16 +115,16 @@ export const FormLabel = forwardRef<HTMLLabelElement, FormLabelProps>(
         ref={ref}
         htmlFor={context?.id}
         className={clsx(
-          "label-text font-medium text-sm",
+          "label-text text-sm font-medium",
           context?.error && "text-error",
-          className,
+          className
         )}
         {...props}
       >
         {children}
       </label>
     );
-  },
+  }
 );
 
 FormLabel.displayName = "FormLabel";
@@ -147,17 +143,12 @@ export const FormControl = forwardRef<HTMLDivElement, FormControlProps>(
     const child = React.Children.only(children);
 
     const clonedChild = React.isValidElement(child)
-      ? React.cloneElement(
-          child as React.ReactElement<Record<string, unknown>>,
-          {
-            id: context?.id,
-            name: context?.name,
-            "aria-describedby": context?.error
-              ? `${context.id}-error`
-              : undefined,
-            "aria-invalid": context?.error ? true : undefined,
-          },
-        )
+      ? React.cloneElement(child as React.ReactElement<Record<string, unknown>>, {
+          id: context?.id,
+          name: context?.name,
+          "aria-describedby": context?.error ? `${context.id}-error` : undefined,
+          "aria-invalid": context?.error ? true : undefined,
+        })
       : child;
 
     return (
@@ -165,7 +156,7 @@ export const FormControl = forwardRef<HTMLDivElement, FormControlProps>(
         {clonedChild}
       </div>
     );
-  },
+  }
 );
 
 FormControl.displayName = "FormControl";
@@ -176,25 +167,20 @@ FormControl.displayName = "FormControl";
 
 export interface FormDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {}
 
-export const FormDescription = forwardRef<
-  HTMLParagraphElement,
-  FormDescriptionProps
->(({ children, className, ...props }, ref) => {
-  const context = useFormFieldContext();
+export const FormDescription = forwardRef<HTMLParagraphElement, FormDescriptionProps>(
+  ({ children, className, ...props }, ref) => {
+    const context = useFormFieldContext();
 
-  // Don't show description when there's an error
-  if (context?.error) return null;
+    // Don't show description when there's an error
+    if (context?.error) return null;
 
-  return (
-    <p
-      ref={ref}
-      className={clsx("text-sm text-base-content/60", className)}
-      {...props}
-    >
-      {children}
-    </p>
-  );
-});
+    return (
+      <p ref={ref} className={clsx("text-base-content/60 text-sm", className)} {...props}>
+        {children}
+      </p>
+    );
+  }
+);
 
 FormDescription.displayName = "FormDescription";
 
@@ -218,14 +204,14 @@ export const FormMessage = forwardRef<HTMLParagraphElement, FormMessageProps>(
       <p
         ref={ref}
         id={context?.id ? `${context.id}-error` : undefined}
-        className={clsx("text-sm text-error", className)}
+        className={clsx("text-error text-sm", className)}
         role="alert"
         {...props}
       >
         {errorMessage}
       </p>
     );
-  },
+  }
 );
 
 FormMessage.displayName = "FormMessage";
@@ -248,15 +234,13 @@ export const FormSection = forwardRef<HTMLDivElement, FormSectionProps>(
         {(title || description) && (
           <div className="space-y-1">
             {title && <h3 className="text-lg font-semibold">{title}</h3>}
-            {description && (
-              <p className="text-sm text-base-content/60">{description}</p>
-            )}
+            {description && <p className="text-base-content/60 text-sm">{description}</p>}
           </div>
         )}
         <div className="space-y-4">{children}</div>
       </div>
     );
-  },
+  }
 );
 
 FormSection.displayName = "FormSection";
@@ -282,17 +266,13 @@ export const FormActions = forwardRef<HTMLDivElement, FormActionsProps>(
     return (
       <div
         ref={ref}
-        className={clsx(
-          "flex items-center gap-2 pt-4",
-          alignClasses[align],
-          className,
-        )}
+        className={clsx("flex items-center gap-2 pt-4", alignClasses[align], className)}
         {...props}
       >
         {children}
       </div>
     );
-  },
+  }
 );
 
 FormActions.displayName = "FormActions";

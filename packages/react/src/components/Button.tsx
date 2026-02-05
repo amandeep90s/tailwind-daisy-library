@@ -132,86 +132,84 @@ const shapeClasses: Record<ButtonShape, string> = {
  * <Button as={Link} to="/dashboard" variant="primary">Dashboard</Button>
  * ```
  */
-export const Button = forwardRef<
-  HTMLButtonElement | HTMLAnchorElement,
-  ButtonProps
->((props, ref) => {
-  const {
-    children,
-    variant = "default",
-    size = "md",
-    shape = "default",
-    loading = false,
-    active = false,
-    glass = false,
-    noAnimation = false,
-    className,
-    ...restProps
-  } = props;
-
-  const buttonClasses = clsx(
-    "btn",
-    variantClasses[variant],
-    sizeClasses[size],
-    shapeClasses[shape],
-    active && "btn-active",
-    glass && "glass",
-    noAnimation && "no-animation",
-    className,
-  );
-
-  // Check if rendering as a Link component
-  if ("as" in props && props.as && props.as !== "button") {
+export const Button = forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(
+  (props, ref) => {
     const {
-      as: LinkComponent,
-      to,
-      disabled,
-      ...linkRestProps
-    } = props as ButtonAsLinkProps & { disabled?: boolean };
+      children,
+      variant = "default",
+      size = "md",
+      shape = "default",
+      loading = false,
+      active = false,
+      glass = false,
+      noAnimation = false,
+      className,
+      ...restProps
+    } = props;
 
-    const handleClick = (e: React.MouseEvent) => {
-      if (disabled || loading) {
-        e.preventDefault();
-      }
-    };
+    const buttonClasses = clsx(
+      "btn",
+      variantClasses[variant],
+      sizeClasses[size],
+      shapeClasses[shape],
+      active && "btn-active",
+      glass && "glass",
+      noAnimation && "no-animation",
+      className
+    );
+
+    // Check if rendering as a Link component
+    if ("as" in props && props.as && props.as !== "button") {
+      const {
+        as: LinkComponent,
+        to,
+        disabled,
+        ...linkRestProps
+      } = props as ButtonAsLinkProps & { disabled?: boolean };
+
+      const handleClick = (e: React.MouseEvent) => {
+        if (disabled || loading) {
+          e.preventDefault();
+        }
+      };
+
+      return (
+        <LinkComponent
+          to={to}
+          className={clsx(
+            buttonClasses,
+            (disabled || loading) && "btn-disabled pointer-events-auto cursor-not-allowed"
+          )}
+          aria-disabled={disabled || loading}
+          tabIndex={disabled || loading ? -1 : undefined}
+          onClick={handleClick}
+        >
+          {loading && <span className="loading loading-spinner" />}
+          {children}
+        </LinkComponent>
+      );
+    }
+
+    // Render as a regular button
+    const {
+      disabled,
+      type = "button",
+      ...buttonRestProps
+    } = restProps as Omit<ButtonAsButtonProps, keyof BaseButtonProps>;
 
     return (
-      <LinkComponent
-        to={to}
-        className={clsx(
-          buttonClasses,
-          (disabled || loading) &&
-            "btn-disabled pointer-events-auto cursor-not-allowed",
-        )}
-        aria-disabled={disabled || loading}
-        tabIndex={disabled || loading ? -1 : undefined}
-        onClick={handleClick}
+      <button
+        ref={ref as React.Ref<HTMLButtonElement>}
+        type={type}
+        disabled={disabled || loading}
+        className={buttonClasses}
+        {...buttonRestProps}
       >
         {loading && <span className="loading loading-spinner" />}
         {children}
-      </LinkComponent>
+      </button>
     );
   }
-
-  // Render as a regular button
-  const {
-    disabled,
-    type = "button",
-    ...buttonRestProps
-  } = restProps as Omit<ButtonAsButtonProps, keyof BaseButtonProps>;
-
-  return (
-    <button
-      ref={ref as React.Ref<HTMLButtonElement>}
-      type={type}
-      disabled={disabled || loading}
-      className={buttonClasses}
-      {...buttonRestProps}
-    >
-      {loading && <span className="loading loading-spinner" />}
-      {children}
-    </button>
-  );
-});
+);
 
 Button.displayName = "Button";

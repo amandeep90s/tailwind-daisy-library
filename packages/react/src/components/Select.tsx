@@ -23,10 +23,7 @@ export interface SelectOption {
   disabled?: boolean;
 }
 
-export interface SelectProps extends Omit<
-  React.SelectHTMLAttributes<HTMLSelectElement>,
-  "size"
-> {
+export interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "size"> {
   /** Select variant */
   variant?: SelectVariant;
   /** Select color */
@@ -106,13 +103,10 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       id,
       ...props
     },
-    ref,
+    ref
   ) => {
     const selectId =
-      id ||
-      (label
-        ? `select-${label.toLowerCase().replace(/\s+/g, "-")}`
-        : undefined);
+      id || (label ? `select-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined);
     // Calculate right padding based on whether arrow is shown
     const rightPadding = showArrow ? "pr-10" : "pr-4";
 
@@ -122,13 +116,13 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           ref={ref}
           id={selectId}
           className={clsx(
-            "select w-full appearance-none bg-no-repeat bg-position-[right_1rem_center] bg-size-[1.5em_1.5em]",
+            "select w-full appearance-none bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat",
             "bg-none", // Important: Override DaisyUI's default background image
             variant !== "floating" && variantClasses[variant],
             error ? colorClasses.error : color && colorClasses[color],
             sizeClasses[size],
             rightPadding,
-            className,
+            className
           )}
           style={{
             // Ensure no native arrow shows up in any browser
@@ -144,11 +138,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           )}
           {options
             ? options.map((option) => (
-                <option
-                  key={option.value}
-                  value={option.value}
-                  disabled={option.disabled}
-                >
+                <option key={option.value} value={option.value} disabled={option.disabled}>
                   {option.label}
                 </option>
               ))
@@ -156,7 +146,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         </select>
         {showArrow && (
           <ChevronDownIcon
-            className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-base-content/70"
+            className="text-base-content/70 pointer-events-none absolute top-1/2 right-3 h-5 w-5 -translate-y-1/2"
             aria-hidden="true"
           />
         )}
@@ -171,20 +161,16 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             <span>{label}</span>
             {selectElement}
           </label>
-          {error && (
-            <span className="label-text-alt text-xs text-error mt-1">
-              {error}
-            </span>
-          )}
+          {error && <span className="label-text-alt text-error mt-1 text-xs">{error}</span>}
           {!error && helperText && (
-            <span className="label-text-alt text-xs mt-1">{helperText}</span>
+            <span className="label-text-alt mt-1 text-xs">{helperText}</span>
           )}
         </div>
       );
     }
 
     return selectElement;
-  },
+  }
 );
 
 Select.displayName = "Select";

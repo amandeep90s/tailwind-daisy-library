@@ -7,38 +7,25 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button, Empty } from "@shared-ui-library/react";
 import { CodeBlock } from "../components/CodeBlock";
-import {
-  CodeSection,
-  ComponentPage,
-  ShowcaseSection,
-} from "../components/ComponentPage";
+import { CodeSection, ComponentPage, ShowcaseSection } from "../components/ComponentPage";
 import { PropsTable } from "../components/PropsTable";
 
 export function EmptyPage() {
   return (
-    <ComponentPage
-      title="Empty"
-      description="Display a placeholder for empty states."
-    >
+    <ComponentPage title="Empty" description="Display a placeholder for empty states.">
       <ShowcaseSection
         title="Basic Empty State"
         description="Default empty state with simple message."
       >
-        <div className="w-full border border-base-300 rounded-lg">
-          <Empty
-            title="No data"
-            description="There's nothing to display here yet."
-          />
+        <div className="border-base-300 w-full rounded-lg border">
+          <Empty title="No data" description="There's nothing to display here yet." />
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="With Action"
-        description="Empty state with call-to-action button."
-      >
-        <div className="w-full border border-base-300 rounded-lg">
+      <ShowcaseSection title="With Action" description="Empty state with call-to-action button.">
+        <div className="border-base-300 w-full rounded-lg border">
           <Empty
-            icon={<PlusCircleIcon className="w-16 h-16" />}
+            icon={<PlusCircleIcon className="h-16 w-16" />}
             title="No projects found"
             description="Get started by creating your first project."
             action={<Button variant="primary">Create Project</Button>}
@@ -46,13 +33,10 @@ export function EmptyPage() {
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="No Results"
-        description="Empty state for search results."
-      >
-        <div className="w-full border border-base-300 rounded-lg">
+      <ShowcaseSection title="No Results" description="Empty state for search results.">
+        <div className="border-base-300 w-full rounded-lg border">
           <Empty
-            icon={<MagnifyingGlassIcon className="w-16 h-16" />}
+            icon={<MagnifyingGlassIcon className="h-16 w-16" />}
             title="No results"
             description="Try adjusting your search or filter to find what you're looking for."
             action={<Button variant="ghost">Clear filters</Button>}
@@ -60,13 +44,10 @@ export function EmptyPage() {
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Error State"
-        description="Empty state indicating an error occurred."
-      >
-        <div className="w-full border border-base-300 rounded-lg">
+      <ShowcaseSection title="Error State" description="Empty state indicating an error occurred.">
+        <div className="border-base-300 w-full rounded-lg border">
           <Empty
-            icon={<ExclamationTriangleIcon className="w-16 h-16 text-error" />}
+            icon={<ExclamationTriangleIcon className="text-error h-16 w-16" />}
             title="Something went wrong"
             description="We encountered an error while loading your data. Please try again."
             action={<Button variant="error">Retry</Button>}
@@ -78,22 +59,19 @@ export function EmptyPage() {
         title="Empty Inbox"
         description="Empty state for messaging or notifications."
       >
-        <div className="w-full border border-base-300 rounded-lg">
+        <div className="border-base-300 w-full rounded-lg border">
           <Empty
-            icon={<InboxIcon className="w-16 h-16" />}
+            icon={<InboxIcon className="h-16 w-16" />}
             title="Your inbox is empty"
             description="Messages you receive will appear here."
           />
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Empty Folder"
-        description="Empty state for file/folder views."
-      >
-        <div className="w-full border border-base-300 rounded-lg">
+      <ShowcaseSection title="Empty Folder" description="Empty state for file/folder views.">
+        <div className="border-base-300 w-full rounded-lg border">
           <Empty
-            icon={<FolderOpenIcon className="w-16 h-16" />}
+            icon={<FolderOpenIcon className="h-16 w-16" />}
             title="No files"
             description="Upload your first file to get started."
             action={
@@ -110,9 +88,9 @@ export function EmptyPage() {
         title="Compact Size"
         description="Smaller empty state for constrained spaces."
       >
-        <div className="w-full max-w-md border border-base-300 rounded-lg">
+        <div className="border-base-300 w-full max-w-md rounded-lg border">
           <Empty
-            icon={<FolderOpenIcon className="w-12 h-12" />}
+            icon={<FolderOpenIcon className="h-12 w-12" />}
             title="No items"
             description="Nothing here yet."
           />

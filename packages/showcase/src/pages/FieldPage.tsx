@@ -10,11 +10,7 @@ import {
   Input,
 } from "@shared-ui-library/react";
 import { CodeBlock } from "../components/CodeBlock";
-import {
-  CodeSection,
-  ComponentPage,
-  ShowcaseSection,
-} from "../components/ComponentPage";
+import { CodeSection, ComponentPage, ShowcaseSection } from "../components/ComponentPage";
 import { PropsTable } from "../components/PropsTable";
 
 export function FieldPage() {
@@ -23,10 +19,7 @@ export function FieldPage() {
       title="Field"
       description="Composable form field components following shadcn pattern with label, description, and error support."
     >
-      <ShowcaseSection
-        title="Basic Field"
-        description="Field with composable sub-components."
-      >
+      <ShowcaseSection title="Basic Field" description="Field with composable sub-components.">
         <div className="w-full max-w-sm">
           <Field name="username">
             <FieldLabel>Username</FieldLabel>
@@ -36,10 +29,7 @@ export function FieldPage() {
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Required Field"
-        description="Field with required indicator."
-      >
+      <ShowcaseSection title="Required Field" description="Field with required indicator.">
         <div className="w-full max-w-sm">
           <Field name="email" required>
             <FieldLabel>Email Address</FieldLabel>
@@ -48,31 +38,19 @@ export function FieldPage() {
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="With Description"
-        description="Field with helper text."
-      >
+      <ShowcaseSection title="With Description" description="Field with helper text.">
         <div className="w-full max-w-sm">
           <Field name="password">
             <FieldLabel>Password</FieldLabel>
             <Input type="password" placeholder="Enter password" />
-            <FieldDescription>
-              Password must be at least 8 characters long.
-            </FieldDescription>
+            <FieldDescription>Password must be at least 8 characters long.</FieldDescription>
           </Field>
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="With Error"
-        description="Field showing validation error."
-      >
+      <ShowcaseSection title="With Error" description="Field showing validation error.">
         <div className="w-full max-w-sm">
-          <Field
-            name="email"
-            error="Please enter a valid email address."
-            required
-          >
+          <Field name="email" error="Please enter a valid email address." required>
             <FieldLabel>Email</FieldLabel>
             <Input
               type="email"
@@ -85,10 +63,7 @@ export function FieldPage() {
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Field Group"
-        description="Horizontal and vertical field layouts."
-      >
+      <ShowcaseSection title="Field Group" description="Horizontal and vertical field layouts.">
         <div className="w-full max-w-md space-y-6">
           <FieldGroup direction="horizontal">
             <Field name="firstName">
@@ -138,10 +113,7 @@ export function FieldPage() {
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="With Field Separator"
-        description="Separate groups of fields."
-      >
+      <ShowcaseSection title="With Field Separator" description="Separate groups of fields.">
         <div className="w-full max-w-sm space-y-4">
           <Field name="username">
             <FieldLabel>Username</FieldLabel>
@@ -245,7 +217,7 @@ export function FieldPage() {
         <h2 className="text-2xl font-semibold">Components</h2>
         <div className="space-y-6">
           <div>
-            <h3 className="text-xl font-semibold mb-2">Field</h3>
+            <h3 className="mb-2 text-xl font-semibold">Field</h3>
             <PropsTable
               props={[
                 {
@@ -269,7 +241,7 @@ export function FieldPage() {
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-2">FieldLabel</h3>
+            <h3 className="mb-2 text-xl font-semibold">FieldLabel</h3>
             <PropsTable
               props={[
                 {
@@ -282,7 +254,7 @@ export function FieldPage() {
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-2">FieldDescription</h3>
+            <h3 className="mb-2 text-xl font-semibold">FieldDescription</h3>
             <PropsTable
               props={[
                 {
@@ -295,7 +267,7 @@ export function FieldPage() {
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-2">FieldError</h3>
+            <h3 className="mb-2 text-xl font-semibold">FieldError</h3>
             <PropsTable
               props={[
                 {
@@ -308,7 +280,7 @@ export function FieldPage() {
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-2">FieldGroup</h3>
+            <h3 className="mb-2 text-xl font-semibold">FieldGroup</h3>
             <PropsTable
               props={[
                 {
@@ -322,7 +294,7 @@ export function FieldPage() {
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold mb-2">FieldSet</h3>
+            <h3 className="mb-2 text-xl font-semibold">FieldSet</h3>
             <PropsTable
               props={[
                 {

@@ -43,11 +43,7 @@ export default {
 Import only specific configuration pieces you need:
 
 ```js
-import {
-  tailwindColors,
-  tailwindFontFamily,
-  tailwindSpacing,
-} from "@shared-ui-library/tokens";
+import { tailwindColors, tailwindFontFamily, tailwindSpacing } from "@shared-ui-library/tokens";
 
 /** @type {import('tailwindcss').Config} */
 export default {

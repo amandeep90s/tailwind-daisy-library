@@ -31,8 +31,7 @@ export function DialogPage() {
         <Dialog open={basicOpen} onClose={() => setBasicOpen(false)}>
           <DialogTitle>Dialog Title</DialogTitle>
           <DialogDescription>
-            This is the dialog content using the new sub-components. You can put
-            any content here.
+            This is the dialog content using the new sub-components. You can put any content here.
           </DialogDescription>
           <DialogActions>
             <Button onClick={() => setBasicOpen(false)}>Close</Button>
@@ -48,15 +47,11 @@ export function DialogPage() {
         <Button variant="primary" onClick={() => setCloseButtonOpen(true)}>
           Open Dialog with Close Button
         </Button>
-        <Dialog
-          open={closeButtonOpen}
-          onClose={() => setCloseButtonOpen(false)}
-          showCloseButton
-        >
+        <Dialog open={closeButtonOpen} onClose={() => setCloseButtonOpen(false)} showCloseButton>
           <DialogTitle>Dialog with Close Button</DialogTitle>
           <DialogDescription>
-            This dialog has a close button in the top-right corner. Click it or
-            press Escape to close.
+            This dialog has a close button in the top-right corner. Click it or press Escape to
+            close.
           </DialogDescription>
           <DialogActions>
             <Button variant="primary" onClick={() => setCloseButtonOpen(false)}>
@@ -68,7 +63,7 @@ export function DialogPage() {
 
       {/* Vertical Positions */}
       <ShowcaseSection title="Vertical Positions">
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex flex-wrap gap-2">
           <Button variant="secondary" onClick={() => setTopOpen(true)}>
             Top Position
           </Button>
@@ -79,16 +74,9 @@ export function DialogPage() {
             Bottom Position
           </Button>
         </div>
-        <Dialog
-          open={topOpen}
-          onClose={() => setTopOpen(false)}
-          position="top"
-          showCloseButton
-        >
+        <Dialog open={topOpen} onClose={() => setTopOpen(false)} position="top" showCloseButton>
           <DialogTitle>Top Dialog</DialogTitle>
-          <DialogDescription>
-            This dialog appears at the top of the screen.
-          </DialogDescription>
+          <DialogDescription>This dialog appears at the top of the screen.</DialogDescription>
           <DialogActions>
             <Button variant="primary" onClick={() => setTopOpen(false)}>
               Confirm
@@ -102,9 +90,7 @@ export function DialogPage() {
           showCloseButton
         >
           <DialogTitle>Bottom Dialog</DialogTitle>
-          <DialogDescription>
-            This dialog appears at the bottom of the screen.
-          </DialogDescription>
+          <DialogDescription>This dialog appears at the bottom of the screen.</DialogDescription>
           <DialogActions>
             <Button variant="secondary" onClick={() => setBottomOpen(false)}>
               Close
@@ -115,7 +101,7 @@ export function DialogPage() {
 
       {/* Horizontal Positions */}
       <ShowcaseSection title="Horizontal Positions">
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex flex-wrap gap-2">
           <Button variant="accent" onClick={() => setStartOpen(true)}>
             Start Position
           </Button>
@@ -166,8 +152,8 @@ export function DialogPage() {
         >
           <DialogTitle>Responsive Dialog</DialogTitle>
           <DialogDescription>
-            This dialog appears at the bottom on mobile screens and in the
-            middle on larger screens. Try resizing your browser!
+            This dialog appears at the bottom on mobile screens and in the middle on larger screens.
+            Try resizing your browser!
           </DialogDescription>
           <DialogActions>
             <Button variant="info" onClick={() => setResponsiveOpen(false)}>
@@ -179,7 +165,7 @@ export function DialogPage() {
 
       {/* Custom Size */}
       <ShowcaseSection title="Custom Sizes">
-        <div className="flex gap-2 flex-wrap">
+        <div className="flex flex-wrap gap-2">
           <Button variant="success" onClick={() => setLargeOpen(true)}>
             Extra Large Dialog
           </Button>
@@ -187,23 +173,15 @@ export function DialogPage() {
             Full Screen Dialog
           </Button>
         </div>
-        <Dialog
-          open={largeOpen}
-          onClose={() => setLargeOpen(false)}
-          size="xl"
-          showCloseButton
-        >
+        <Dialog open={largeOpen} onClose={() => setLargeOpen(false)} size="xl" showCloseButton>
           <DialogTitle>Extra Large Dialog</DialogTitle>
           <DialogDescription>
-            This dialog uses the "xl" size preset for a wider modal. You can
-            also use "xs", "sm", "md", "lg", or provide a custom maxWidth class.
+            This dialog uses the "xl" size preset for a wider modal. You can also use "xs", "sm",
+            "md", "lg", or provide a custom maxWidth class.
           </DialogDescription>
           <div className="py-4">
-            <div className="bg-base-200 p-4 rounded-lg">
-              <p>
-                This extra space can be used for forms, tables, or other
-                content.
-              </p>
+            <div className="bg-base-200 rounded-lg p-4">
+              <p>This extra space can be used for forms, tables, or other content.</p>
             </div>
           </div>
           <DialogActions>
@@ -213,19 +191,14 @@ export function DialogPage() {
             </Button>
           </DialogActions>
         </Dialog>
-        <Dialog
-          open={fullOpen}
-          onClose={() => setFullOpen(false)}
-          size="full"
-          showCloseButton
-        >
+        <Dialog open={fullOpen} onClose={() => setFullOpen(false)} size="full" showCloseButton>
           <DialogTitle>Full Screen Dialog</DialogTitle>
           <DialogDescription>
-            This dialog takes up the entire screen. Great for complex forms or
-            immersive experiences.
+            This dialog takes up the entire screen. Great for complex forms or immersive
+            experiences.
           </DialogDescription>
           <div className="flex-1 py-4">
-            <div className="bg-base-200 p-4 rounded-lg h-full min-h-[200px] flex items-center justify-center">
+            <div className="bg-base-200 flex h-full min-h-[200px] items-center justify-center rounded-lg p-4">
               <p>Full screen content area</p>
             </div>
           </div>
@@ -250,8 +223,8 @@ export function DialogPage() {
         >
           <DialogTitle>Persistent Dialog</DialogTitle>
           <DialogDescription>
-            This dialog won't close when clicking outside. You must use the
-            close button or press Escape.
+            This dialog won't close when clicking outside. You must use the close button or press
+            Escape.
           </DialogDescription>
           <DialogActions>
             <Button variant="error" onClick={() => setNoOutsideClose(false)}>

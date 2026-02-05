@@ -14,8 +14,8 @@ interface PropsTableProps {
 export function PropsTable({ props, title }: PropsTableProps) {
   return (
     <div className="overflow-x-auto">
-      {title && <h3 className="text-lg font-semibold mb-2">{title}</h3>}
-      <table className="table table-zebra">
+      {title && <h3 className="mb-2 text-lg font-semibold">{title}</h3>}
+      <table className="table-zebra table">
         <thead>
           <tr>
             <th>Prop</th>
@@ -34,13 +34,7 @@ export function PropsTable({ props, title }: PropsTableProps) {
               <td>
                 <code className="text-sm">{prop.type}</code>
               </td>
-              <td>
-                {prop.default ? (
-                  <code className="text-sm">{prop.default}</code>
-                ) : (
-                  "-"
-                )}
-              </td>
+              <td>{prop.default ? <code className="text-sm">{prop.default}</code> : "-"}</td>
               <td>{prop.description}</td>
             </tr>
           ))}

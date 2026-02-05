@@ -66,18 +66,7 @@ const sizeClasses: Record<SwitchSize, string> = {
  * ```
  */
 export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
-  (
-    {
-      variant,
-      size = "md",
-      label,
-      checkedIcon,
-      uncheckedIcon,
-      className,
-      ...props
-    },
-    ref,
-  ) => {
+  ({ variant, size = "md", label, checkedIcon, uncheckedIcon, className, ...props }, ref) => {
     // If icons are provided, we need to wrap in a label with toggle class
     if (checkedIcon || uncheckedIcon) {
       return (
@@ -86,7 +75,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
             "toggle text-base-content",
             variant && variantClasses[variant],
             sizeClasses[size],
-            className,
+            className
           )}
         >
           <input ref={ref} type="checkbox" {...props} />
@@ -100,12 +89,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
       <input
         ref={ref}
         type="checkbox"
-        className={clsx(
-          "toggle",
-          variant && variantClasses[variant],
-          sizeClasses[size],
-          className,
-        )}
+        className={clsx("toggle", variant && variantClasses[variant], sizeClasses[size], className)}
         {...props}
       />
     );
@@ -120,7 +104,7 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
     }
 
     return switchElement;
-  },
+  }
 );
 
 Switch.displayName = "Switch";

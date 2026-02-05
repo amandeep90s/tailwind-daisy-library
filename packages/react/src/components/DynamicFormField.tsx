@@ -102,9 +102,7 @@ export interface DynamicFormFieldProps {
   /** onBlur handler */
   onBlur?: () => void;
   /** Custom ref */
-  inputRef?: React.Ref<
-    HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-  >;
+  inputRef?: React.Ref<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
 }
 
 // ============================================================================
@@ -123,27 +121,24 @@ interface FieldWrapperProps {
 const FieldWrapper = forwardRef<HTMLDivElement, FieldWrapperProps>(
   ({ label, description, error, required, className, children }, ref) => {
     return (
-      <div
-        ref={ref}
-        className={clsx("form-control w-full space-y-1", className)}
-      >
+      <div ref={ref} className={clsx("form-control w-full space-y-1", className)}>
         {label && (
-          <label className="label-text font-medium text-sm">
+          <label className="label-text text-sm font-medium">
             {label}
             {required && <span className="text-error ml-1">*</span>}
           </label>
         )}
         {children}
         {error ? (
-          <p className="text-sm text-error" role="alert">
+          <p className="text-error text-sm" role="alert">
             {error}
           </p>
         ) : description ? (
-          <p className="text-sm text-base-content/60">{description}</p>
+          <p className="text-base-content/60 text-sm">{description}</p>
         ) : null}
       </div>
     );
-  },
+  }
 );
 
 FieldWrapper.displayName = "FieldWrapper";
@@ -208,9 +203,7 @@ export const DynamicFormField: React.FC<DynamicFormFieldProps> = ({
 
   // Handle change for different input types
   const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     if (onChange) {
       onChange(e.target.value);
@@ -233,13 +226,7 @@ export const DynamicFormField: React.FC<DynamicFormFieldProps> = ({
   const renderField = () => {
     switch (type) {
       case "hidden":
-        return (
-          <input
-            type="hidden"
-            name={name}
-            value={value as string | undefined}
-          />
-        );
+        return <input type="hidden" name={name} value={value as string | undefined} />;
 
       case "textarea":
         return (
@@ -346,11 +333,7 @@ export const DynamicFormField: React.FC<DynamicFormFieldProps> = ({
   // Checkbox has its own label handling
   if (type === "checkbox") {
     return (
-      <FieldWrapper
-        description={description}
-        error={error}
-        className={className}
-      >
+      <FieldWrapper description={description} error={error} className={className}>
         {renderField()}
       </FieldWrapper>
     );
@@ -400,9 +383,11 @@ export interface ControlledDynamicFormFieldProps {
  * />
  * ```
  */
-export const ControlledDynamicFormField: React.FC<
-  ControlledDynamicFormFieldProps
-> = ({ field, control, error }) => {
+export const ControlledDynamicFormField: React.FC<ControlledDynamicFormFieldProps> = ({
+  field,
+  control,
+  error,
+}) => {
   return (
     <RHFController
       name={field.name}
@@ -455,7 +440,7 @@ export interface DynamicFormProps extends Omit<
   control?: Control<any>;
   /** HandleSubmit function from react-hook-form */
   handleSubmit?: (
-    onValid: (data: Record<string, unknown>) => void,
+    onValid: (data: Record<string, unknown>) => void
   ) => (e?: React.BaseSyntheticEvent) => Promise<void>;
   /** Gap between fields */
   gap?: "sm" | "md" | "lg";
@@ -531,7 +516,7 @@ export const DynamicForm = forwardRef<HTMLFormElement, DynamicFormProps>(
       children,
       ...props
     },
-    ref,
+    ref
   ) => {
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -548,17 +533,12 @@ export const DynamicForm = forwardRef<HTMLFormElement, DynamicFormProps>(
     };
 
     return (
-      <form
-        ref={ref}
-        onSubmit={handleFormSubmit}
-        className={clsx("w-full", className)}
-        {...props}
-      >
+      <form ref={ref} onSubmit={handleFormSubmit} className={clsx("w-full", className)} {...props}>
         <div
           className={clsx(
             layoutClasses[layout],
             gapClasses[gap],
-            layout === "grid" && columnClasses[columns],
+            layout === "grid" && columnClasses[columns]
           )}
         >
           {fields.map((field) =>
@@ -575,7 +555,7 @@ export const DynamicForm = forwardRef<HTMLFormElement, DynamicFormProps>(
                 field={field}
                 error={errors[field.name]?.message}
               />
-            ),
+            )
           )}
         </div>
 
@@ -584,7 +564,7 @@ export const DynamicForm = forwardRef<HTMLFormElement, DynamicFormProps>(
         {renderActions ? (
           renderActions()
         ) : showSubmitButton ? (
-          <div className="flex justify-end mt-6">
+          <div className="mt-6 flex justify-end">
             <button
               type="submit"
               className={clsx("btn btn-primary", isSubmitting && "loading")}
@@ -596,7 +576,7 @@ export const DynamicForm = forwardRef<HTMLFormElement, DynamicFormProps>(
         ) : null}
       </form>
     );
-  },
+  }
 );
 
 DynamicForm.displayName = "DynamicForm";

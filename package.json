@@ -36,7 +36,9 @@
     "storybook": "npm --workspace=@shared-ui-library/react run storybook",
     "build-storybook": "npm --workspace=@shared-ui-library/react run build-storybook",
     "clean": "rm -rf packages/*/dist packages/*/.turbo node_modules/.cache",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "keywords": [
     "ui-library",
@@ -66,5 +68,9 @@
   "license": "UNLICENSED",
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "prettier": "^3.8.1",
+    "prettier-plugin-tailwindcss": "^0.7.2"
   }
 }

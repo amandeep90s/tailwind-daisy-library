@@ -3,10 +3,7 @@ import { ComponentPage, ShowcaseSection } from "../components/ComponentPage";
 
 export function TextareaPage() {
   return (
-    <ComponentPage
-      title="Textarea"
-      description="A multi-line text input control."
-    >
+    <ComponentPage title="Textarea" description="A multi-line text input control.">
       <ShowcaseSection title="Default">
         <div className="w-full max-w-md">
           <Textarea placeholder="Type your message here..." />
@@ -26,15 +23,11 @@ export function TextareaPage() {
 
       <ShowcaseSection title="Floating Label">
         <p className="text-base-content/70 mb-4">
-          Floating labels provide a modern UX pattern where the label moves up
-          when the input is focused or has value.
+          Floating labels provide a modern UX pattern where the label moves up when the input is
+          focused or has value.
         </p>
         <div className="max-w-md space-y-4">
-          <Textarea
-            variant="floating"
-            label="Description"
-            placeholder="Enter a description..."
-          />
+          <Textarea variant="floating" label="Description" placeholder="Enter a description..." />
           <Textarea
             variant="floating"
             label="Comments"

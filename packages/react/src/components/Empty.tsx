@@ -6,14 +6,14 @@ import React, { forwardRef } from "react";
 // ============================================================================
 
 export interface EmptyProps extends React.HTMLAttributes<HTMLDivElement> {
-	/** Empty state icon */
-	icon?: React.ReactNode;
-	/** Empty state title */
-	title?: string;
-	/** Empty state description */
-	description?: string;
-	/** Action button */
-	action?: React.ReactNode;
+  /** Empty state icon */
+  icon?: React.ReactNode;
+  /** Empty state title */
+  title?: string;
+  /** Empty state description */
+  description?: string;
+  /** Action button */
+  action?: React.ReactNode;
 }
 
 // ============================================================================
@@ -34,17 +34,23 @@ export interface EmptyProps extends React.HTMLAttributes<HTMLDivElement> {
  * ```
  */
 export const Empty = forwardRef<HTMLDivElement, EmptyProps>(
-	({ icon, title, description, action, children, className, ...props }, ref) => {
-		return (
-			<div ref={ref} className={clsx("flex flex-col items-center justify-center py-12 px-4", className)} {...props}>
-				{icon && <div className="mb-4 text-base-content/50">{icon}</div>}
-				{title && <h3 className="text-lg font-semibold mb-2">{title}</h3>}
-				{description && <p className="text-sm text-base-content/70 mb-4 text-center">{description}</p>}
-				{action && <div className="mt-4">{action}</div>}
-				{children}
-			</div>
-		);
-	},
+  ({ icon, title, description, action, children, className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={clsx("flex flex-col items-center justify-center px-4 py-12", className)}
+        {...props}
+      >
+        {icon && <div className="text-base-content/50 mb-4">{icon}</div>}
+        {title && <h3 className="mb-2 text-lg font-semibold">{title}</h3>}
+        {description && (
+          <p className="text-base-content/70 mb-4 text-center text-sm">{description}</p>
+        )}
+        {action && <div className="mt-4">{action}</div>}
+        {children}
+      </div>
+    );
+  }
 );
 
 Empty.displayName = "Empty";

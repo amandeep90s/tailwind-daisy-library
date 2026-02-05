@@ -19,10 +19,7 @@ export interface AccordionProps extends React.HTMLAttributes<HTMLDivElement> {
   onOpenChange?: (open: boolean) => void;
 }
 
-export interface AccordionItemProps extends Omit<
-  React.HTMLAttributes<HTMLDivElement>,
-  "title"
-> {
+export interface AccordionItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   /** Title/summary content */
   title: React.ReactNode;
   /** Whether this item is open */
@@ -75,7 +72,7 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(
         {children}
       </div>
     );
-  },
+  }
 );
 
 Accordion.displayName = "Accordion";
@@ -83,18 +80,12 @@ Accordion.displayName = "Accordion";
 /**
  * Chevron icon for accordion
  */
-const ChevronIcon = ({
-  isOpen,
-  className,
-}: {
-  isOpen: boolean;
-  className?: string;
-}) => (
+const ChevronIcon = ({ isOpen, className }: { isOpen: boolean; className?: string }) => (
   <svg
     className={clsx(
       "h-5 w-5 shrink-0 transition-transform duration-200",
       isOpen && "rotate-180",
-      className,
+      className
     )}
     fill="none"
     viewBox="0 0 24 24"
@@ -138,7 +129,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
       className,
       ...props
     },
-    ref,
+    ref
   ) => {
     // Internal state for uncontrolled mode
     const [internalOpen, setInternalOpen] = useState(defaultOpen);
@@ -163,7 +154,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
         e.stopPropagation();
         handleToggle();
       },
-      [handleToggle],
+      [handleToggle]
     );
 
     // Handle keyboard accessibility
@@ -174,7 +165,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
           handleToggle();
         }
       },
-      [handleToggle],
+      [handleToggle]
     );
 
     // Stop propagation for actions to prevent accordion toggle
@@ -194,7 +185,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
           // Only apply variant classes if not using custom icon
           !useCustomIcon && variantClasses[variant],
           isOpen && "collapse-open",
-          className,
+          className
         )}
         {...props}
       >
@@ -205,8 +196,8 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
         <div
           className={clsx(
             "collapse-title text-xl font-medium",
-            "flex items-center gap-3 cursor-pointer select-none",
-            iconPosition === "right" && "flex-row-reverse justify-between",
+            "flex cursor-pointer items-center gap-3 select-none",
+            iconPosition === "right" && "flex-row-reverse justify-between"
           )}
           onClick={handleTitleClick}
           onKeyDown={handleTitleKeyDown}
@@ -218,11 +209,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
           {useCustomIcon && <ChevronIcon isOpen={isOpen} />}
 
           {/* Title */}
-          <span
-            className={clsx("grow", iconPosition === "right" && "text-left")}
-          >
-            {title}
-          </span>
+          <span className={clsx("grow", iconPosition === "right" && "text-left")}>{title}</span>
 
           {/* Actions slot - stops propagation to prevent toggle */}
           {actions && (
@@ -242,7 +229,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
         <div className="collapse-content">{children}</div>
       </div>
     );
-  },
+  }
 );
 
 AccordionItem.displayName = "AccordionItem";

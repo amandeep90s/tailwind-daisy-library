@@ -56,50 +56,32 @@ export function AccordionPage() {
         <div className="w-full">
           <Accordion className="w-full">
             <AccordionItem title="Is it accessible?" variant="arrow">
-              <p>
-                Yes. It adheres to the WAI-ARIA design pattern and uses semantic
-                HTML elements.
-              </p>
+              <p>Yes. It adheres to the WAI-ARIA design pattern and uses semantic HTML elements.</p>
             </AccordionItem>
             <AccordionItem title="Is it styled?" variant="arrow">
-              <p>
-                Yes. It comes with default styles using DaisyUI that can be
-                customized.
-              </p>
+              <p>Yes. It comes with default styles using DaisyUI that can be customized.</p>
             </AccordionItem>
             <AccordionItem title="Is it animated?" variant="arrow">
-              <p>
-                Yes. It uses smooth animations when expanding and collapsing
-                content.
-              </p>
+              <p>Yes. It uses smooth animations when expanding and collapsing content.</p>
             </AccordionItem>
           </Accordion>
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Plus Variant"
-        description="Accordion with plus/minus indicators."
-      >
+      <ShowcaseSection title="Plus Variant" description="Accordion with plus/minus indicators.">
         <div className="w-full">
           <Accordion className="w-full">
             <AccordionItem title="What is DaisyUI?" variant="plus">
               <p>
-                DaisyUI is a component library for Tailwind CSS that provides
-                ready-to-use components.
+                DaisyUI is a component library for Tailwind CSS that provides ready-to-use
+                components.
               </p>
             </AccordionItem>
             <AccordionItem title="Can I customize it?" variant="plus">
-              <p>
-                Yes. All components can be customized with Tailwind classes and
-                DaisyUI themes.
-              </p>
+              <p>Yes. All components can be customized with Tailwind classes and DaisyUI themes.</p>
             </AccordionItem>
             <AccordionItem title="Is it free?" variant="plus">
-              <p>
-                Yes. DaisyUI is completely free and open source under the MIT
-                license.
-              </p>
+              <p>Yes. DaisyUI is completely free and open source under the MIT license.</p>
             </AccordionItem>
           </Accordion>
         </div>
@@ -130,10 +112,7 @@ export function AccordionPage() {
             <AccordionItem title="Right-aligned icon" iconPosition="right">
               <p>The chevron icon is now on the right side of the title.</p>
             </AccordionItem>
-            <AccordionItem
-              title="Another right-aligned item"
-              iconPosition="right"
-            >
+            <AccordionItem title="Another right-aligned item" iconPosition="right">
               <p>This provides a different visual style for your accordions.</p>
             </AccordionItem>
           </Accordion>
@@ -154,7 +133,7 @@ export function AccordionPage() {
                   <button
                     type="button"
                     onClick={() => handleEdit("Jack Jonas")}
-                    className="p-1 rounded hover:bg-gray-200 transition-colors"
+                    className="rounded p-1 transition-colors hover:bg-gray-200"
                     aria-label="Edit Jack Jonas"
                   >
                     <EditIcon />
@@ -162,7 +141,7 @@ export function AccordionPage() {
                   <button
                     type="button"
                     onClick={() => handleDelete("Jack Jonas")}
-                    className="p-1 rounded hover:bg-red-100 transition-colors"
+                    className="rounded p-1 transition-colors hover:bg-red-100"
                     aria-label="Delete Jack Jonas"
                   >
                     <DeleteIcon />
@@ -190,7 +169,7 @@ export function AccordionPage() {
                   <button
                     type="button"
                     onClick={() => handleEdit("Jimmy Smith")}
-                    className="p-1 rounded hover:bg-gray-200 transition-colors"
+                    className="rounded p-1 transition-colors hover:bg-gray-200"
                     aria-label="Edit Jimmy Smith"
                   >
                     <EditIcon />
@@ -198,7 +177,7 @@ export function AccordionPage() {
                   <button
                     type="button"
                     onClick={() => handleDelete("Jimmy Smith")}
-                    className="p-1 rounded hover:bg-red-100 transition-colors"
+                    className="rounded p-1 transition-colors hover:bg-red-100"
                     aria-label="Delete Jimmy Smith"
                   >
                     <DeleteIcon />
@@ -232,14 +211,9 @@ export function AccordionPage() {
               title="Controlled Item"
               iconPosition="right"
               defaultOpen={true}
-              onOpenChange={(open) =>
-                console.log("Accordion open state:", open)
-              }
+              onOpenChange={(open) => console.log("Accordion open state:", open)}
             >
-              <p>
-                This accordion logs its open state to the console. Check the
-                developer tools!
-              </p>
+              <p>This accordion logs its open state to the console. Check the developer tools!</p>
             </AccordionItem>
           </Accordion>
         </div>

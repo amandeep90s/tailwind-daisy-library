@@ -24,7 +24,10 @@ export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "o
   onChange?: (value: string) => void;
 }
 
-export interface TabProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "type"> {
+export interface TabProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "value" | "type"
+> {
   /** Tab value/id */
   value: string;
   /** Tab label */
@@ -136,7 +139,13 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
       >
         <div
           ref={ref}
-          className={clsx("tabs", variantClasses[variant], sizeClasses[size], positionClasses[position], className)}
+          className={clsx(
+            "tabs",
+            variantClasses[variant],
+            sizeClasses[size],
+            positionClasses[position],
+            className
+          )}
           {...props}
         >
           {children}
@@ -171,19 +180,25 @@ export const Tab = forwardRef<HTMLInputElement, TabProps>(
 
 Tab.displayName = "Tab";
 
-export const TabPanel = forwardRef<HTMLDivElement, TabPanelProps>(({ value, children, className, ...props }, ref) => {
-  const { activeTab } = useTabs();
+export const TabPanel = forwardRef<HTMLDivElement, TabPanelProps>(
+  ({ value, children, className, ...props }, ref) => {
+    const { activeTab } = useTabs();
 
-  return (
-    <div
-      ref={ref}
-      role="tabpanel"
-      className={clsx("tab-content bg-base-100 border-base-300 p-6", activeTab !== value && "hidden", className)}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-});
+    return (
+      <div
+        ref={ref}
+        role="tabpanel"
+        className={clsx(
+          "tab-content bg-base-100 border-base-300 p-6",
+          activeTab !== value && "hidden",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);
 
 TabPanel.displayName = "TabPanel";

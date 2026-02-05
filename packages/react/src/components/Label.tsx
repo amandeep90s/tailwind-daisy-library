@@ -6,12 +6,12 @@ import React, { forwardRef } from "react";
 // ============================================================================
 
 export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
-	/** The content of the label */
-	children: React.ReactNode;
-	/** Whether this label is required (shows asterisk) */
-	required?: boolean;
-	/** Alternative/helper text style */
-	alt?: boolean;
+  /** The content of the label */
+  children: React.ReactNode;
+  /** Whether this label is required (shows asterisk) */
+  required?: boolean;
+  /** Alternative/helper text style */
+  alt?: boolean;
 }
 
 // ============================================================================
@@ -29,16 +29,16 @@ export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> 
  * ```
  */
 export const Label = forwardRef<HTMLLabelElement, LabelProps>(
-	({ children, required = false, alt = false, className, ...props }, ref) => {
-		return (
-			<label ref={ref} className={clsx("label", className)} {...props}>
-				<span className={clsx(alt ? "label-text-alt" : "label-text", "font-medium")}>
-					{children}
-					{required && <span className="text-error ml-1">*</span>}
-				</span>
-			</label>
-		);
-	},
+  ({ children, required = false, alt = false, className, ...props }, ref) => {
+    return (
+      <label ref={ref} className={clsx("label", className)} {...props}>
+        <span className={clsx(alt ? "label-text-alt" : "label-text", "font-medium")}>
+          {children}
+          {required && <span className="text-error ml-1">*</span>}
+        </span>
+      </label>
+    );
+  }
 );
 
 Label.displayName = "Label";

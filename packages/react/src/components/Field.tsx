@@ -50,16 +50,12 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(
 
     return (
       <FieldContext.Provider value={{ id, error, required }}>
-        <div
-          ref={ref}
-          className={clsx("form-control w-full space-y-2", className)}
-          {...props}
-        >
+        <div ref={ref} className={clsx("form-control w-full space-y-2", className)} {...props}>
           {children}
         </div>
       </FieldContext.Provider>
     );
-  },
+  }
 );
 
 Field.displayName = "Field";
@@ -78,14 +74,14 @@ export const FieldLabel = forwardRef<HTMLLabelElement, FieldLabelProps>(
       <label
         ref={ref}
         htmlFor={context?.id}
-        className={clsx("label-text font-medium text-sm", className)}
+        className={clsx("label-text text-sm font-medium", className)}
         {...props}
       >
         {children}
         {context?.required && <span className="text-error ml-1">*</span>}
       </label>
     );
-  },
+  }
 );
 
 FieldLabel.displayName = "FieldLabel";
@@ -96,25 +92,20 @@ FieldLabel.displayName = "FieldLabel";
 
 export interface FieldDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {}
 
-export const FieldDescription = forwardRef<
-  HTMLParagraphElement,
-  FieldDescriptionProps
->(({ children, className, ...props }, ref) => {
-  const context = useFieldContext();
+export const FieldDescription = forwardRef<HTMLParagraphElement, FieldDescriptionProps>(
+  ({ children, className, ...props }, ref) => {
+    const context = useFieldContext();
 
-  // Don't render description if there's an error (error takes precedence)
-  if (context?.error) return null;
+    // Don't render description if there's an error (error takes precedence)
+    if (context?.error) return null;
 
-  return (
-    <p
-      ref={ref}
-      className={clsx("text-sm text-base-content/60", className)}
-      {...props}
-    >
-      {children}
-    </p>
-  );
-});
+    return (
+      <p ref={ref} className={clsx("text-base-content/60 text-sm", className)} {...props}>
+        {children}
+      </p>
+    );
+  }
+);
 
 FieldDescription.displayName = "FieldDescription";
 
@@ -135,16 +126,11 @@ export const FieldError = forwardRef<HTMLParagraphElement, FieldErrorProps>(
     if (!errorMessage) return null;
 
     return (
-      <p
-        ref={ref}
-        className={clsx("text-sm text-error", className)}
-        role="alert"
-        {...props}
-      >
+      <p ref={ref} className={clsx("text-error text-sm", className)} role="alert" {...props}>
         {errorMessage}
       </p>
     );
-  },
+  }
 );
 
 FieldError.displayName = "FieldError";
@@ -166,14 +152,14 @@ export const FieldGroup = forwardRef<HTMLDivElement, FieldGroupProps>(
         className={clsx(
           "space-y-4",
           direction === "horizontal" && "flex flex-row gap-4 space-y-0",
-          className,
+          className
         )}
         {...props}
       >
         {children}
       </div>
     );
-  },
+  }
 );
 
 FieldGroup.displayName = "FieldGroup";
@@ -187,7 +173,7 @@ export interface FieldSeparatorProps extends React.HTMLAttributes<HTMLDivElement
 export const FieldSeparator = forwardRef<HTMLDivElement, FieldSeparatorProps>(
   ({ className, ...props }, ref) => {
     return <div ref={ref} className={clsx("divider", className)} {...props} />;
-  },
+  }
 );
 
 FieldSeparator.displayName = "FieldSeparator";
@@ -203,16 +189,13 @@ export const FieldSet = forwardRef<HTMLFieldSetElement, FieldSetProps>(
     return (
       <fieldset
         ref={ref}
-        className={clsx(
-          "space-y-4 border border-base-300 rounded-lg p-4",
-          className,
-        )}
+        className={clsx("border-base-300 space-y-4 rounded-lg border p-4", className)}
         {...props}
       >
         {children}
       </fieldset>
     );
-  },
+  }
 );
 
 FieldSet.displayName = "FieldSet";
@@ -226,15 +209,11 @@ export interface FieldLegendProps extends React.HTMLAttributes<HTMLLegendElement
 export const FieldLegend = forwardRef<HTMLLegendElement, FieldLegendProps>(
   ({ children, className, ...props }, ref) => {
     return (
-      <legend
-        ref={ref}
-        className={clsx("text-lg font-semibold px-2", className)}
-        {...props}
-      >
+      <legend ref={ref} className={clsx("px-2 text-lg font-semibold", className)} {...props}>
         {children}
       </legend>
     );
-  },
+  }
 );
 
 FieldLegend.displayName = "FieldLegend";

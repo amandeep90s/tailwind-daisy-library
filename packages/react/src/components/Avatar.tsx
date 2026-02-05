@@ -157,7 +157,11 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
             isPlaceholder && placeholderClasses
           )}
         >
-          {src ? <img src={src} alt={alt} /> : <span className={sizeFontClasses[size]}>{fallback || "?"}</span>}
+          {src ? (
+            <img src={src} alt={alt} />
+          ) : (
+            <span className={sizeFontClasses[size]}>{fallback || "?"}</span>
+          )}
         </div>
       </div>
     );
@@ -189,11 +193,21 @@ export const AvatarGroup = forwardRef<HTMLDivElement, AvatarGroupProps>(
     const remaining = max && childArray.length > max ? childArray.length - max : 0;
 
     return (
-      <div ref={ref} className={clsx("avatar-group -space-x-6 rtl:space-x-reverse", className)} {...props}>
+      <div
+        ref={ref}
+        className={clsx("avatar-group -space-x-6 rtl:space-x-reverse", className)}
+        {...props}
+      >
         {displayChildren}
         {remaining > 0 && (
           <div className="avatar avatar-placeholder">
-            <div className={clsx(sizeClasses[size], shapeClasses[shape], "bg-neutral text-neutral-content")}>
+            <div
+              className={clsx(
+                sizeClasses[size],
+                shapeClasses[shape],
+                "bg-neutral text-neutral-content"
+              )}
+            >
               <span className={sizeFontClasses[size]}>+{remaining}</span>
             </div>
           </div>

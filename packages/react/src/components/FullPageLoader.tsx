@@ -6,13 +6,7 @@ import React, { forwardRef } from "react";
 // ============================================================================
 
 export type FullPageLoaderSize = "xs" | "sm" | "md" | "lg" | "xl";
-export type FullPageLoaderType =
-  | "spinner"
-  | "dots"
-  | "ring"
-  | "ball"
-  | "bars"
-  | "infinity";
+export type FullPageLoaderType = "spinner" | "dots" | "ring" | "ball" | "bars" | "infinity";
 export type FullPageLoaderVariant =
   | "default"
   | "primary"
@@ -100,7 +94,7 @@ export const FullPageLoader = forwardRef<HTMLDivElement, FullPageLoaderProps>(
       style,
       ...props
     },
-    ref,
+    ref
   ) => {
     if (!visible) return null;
 
@@ -121,33 +115,26 @@ export const FullPageLoader = forwardRef<HTMLDivElement, FullPageLoaderProps>(
       >
         {/* Backdrop layer */}
         <div
-          className={clsx(
-            "absolute inset-0 bg-base-100",
-            blur && "backdrop-blur-sm",
-          )}
+          className={clsx("bg-base-100 absolute inset-0", blur && "backdrop-blur-sm")}
           style={{
             opacity: opacityValue / 100,
           }}
         />
         {/* Content layer - centered */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="flex flex-col items-center justify-center gap-0">
             <span
               className={clsx(
                 "loading",
                 typeClasses[type],
                 sizeClasses[size],
-                variantClasses[variant],
+                variantClasses[variant]
               )}
               aria-hidden="true"
             />
             {text && (
               <p
-                className={clsx(
-                  "mt-4 font-medium",
-                  textSizeClasses[size],
-                  variantClasses[variant],
-                )}
+                className={clsx("mt-4 font-medium", textSizeClasses[size], variantClasses[variant])}
               >
                 {text}
               </p>
@@ -158,7 +145,7 @@ export const FullPageLoader = forwardRef<HTMLDivElement, FullPageLoaderProps>(
         <span className="sr-only">{text || "Loading..."}</span>
       </div>
     );
-  },
+  }
 );
 
 FullPageLoader.displayName = "FullPageLoader";

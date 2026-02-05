@@ -165,10 +165,7 @@ Then import the compiled CSS in your HTML or main entry file:
 
 ```html
 <!-- Import CSS -->
-<link
-  rel="stylesheet"
-  href="node_modules/@shared-ui-library/styles/dist/index.css"
-/>
+<link rel="stylesheet" href="node_modules/@shared-ui-library/styles/dist/index.css" />
 
 <!-- Use DaisyUI classes -->
 <button class="btn btn-primary btn-md">Click me</button>

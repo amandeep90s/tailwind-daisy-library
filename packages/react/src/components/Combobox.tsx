@@ -83,7 +83,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
       error,
       helperText,
     },
-    ref,
+    ref
   ) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
@@ -92,11 +92,10 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
     const triggerRef = useRef<HTMLButtonElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
-    const comboboxId =
-      id || `combobox-${Math.random().toString(36).substr(2, 9)}`;
+    const comboboxId = id || `combobox-${Math.random().toString(36).substr(2, 9)}`;
 
     const filteredOptions = options.filter((option) =>
-      option.label.toLowerCase().includes(searchTerm.toLowerCase()),
+      option.label.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const selectedOption = options.find((opt) => opt.value === value);
@@ -143,18 +142,14 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
     // Handle click outside to close dropdown
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
-        if (
-          containerRef.current &&
-          !containerRef.current.contains(event.target as Node)
-        ) {
+        if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
           setIsOpen(false);
           setSearchTerm("");
         }
       };
 
       document.addEventListener("mousedown", handleClickOutside);
-      return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     // Handle keyboard navigation
@@ -195,7 +190,7 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
         className={clsx(
           "dropdown w-full",
           isOpen && "dropdown-open",
-          variant !== "floating" && className,
+          variant !== "floating" && className
         )}
       >
         {/* Trigger Button */}
@@ -221,16 +216,14 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             "btn btn-outline w-full justify-between font-normal",
             !selectedOption && "text-base-content/50",
             disabled && "btn-disabled",
-            error && "btn-error",
+            error && "btn-error"
           )}
         >
-          <span className="truncate">
-            {selectedOption?.label || placeholder}
-          </span>
+          <span className="truncate">{selectedOption?.label || placeholder}</span>
           <ChevronDownIcon
             className={clsx(
               "h-5 w-5 shrink-0 transition-transform duration-200",
-              isOpen && "rotate-180",
+              isOpen && "rotate-180"
             )}
           />
         </button>
@@ -240,15 +233,13 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
           <div
             ref={dropdownRef}
             className={clsx(
-              "dropdown-content bg-base-100 rounded-box z-50 w-full shadow-lg border border-base-300",
-              position === "bottom" ? "mt-1" : "mb-1 bottom-full",
+              "dropdown-content bg-base-100 rounded-box border-base-300 z-50 w-full border shadow-lg",
+              position === "bottom" ? "mt-1" : "bottom-full mb-1"
             )}
-            style={
-              position === "top" ? { bottom: "100%", top: "auto" } : undefined
-            }
+            style={position === "top" ? { bottom: "100%", top: "auto" } : undefined}
           >
             {/* Search Input */}
-            <div className="p-2 border-b border-base-300">
+            <div className="border-base-300 border-b p-2">
               <input
                 ref={searchInputRef}
                 type="text"
@@ -261,14 +252,12 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
 
             {/* Options List */}
             <ul
-              className="menu p-2 max-h-60 overflow-y-auto flex-col flex-nowrap w-full"
+              className="menu max-h-60 w-full flex-col flex-nowrap overflow-y-auto p-2"
               role="listbox"
             >
               {filteredOptions.length === 0 ? (
                 <li className="disabled w-full">
-                  <span className="text-base-content/50 text-center w-full">
-                    {emptyText}
-                  </span>
+                  <span className="text-base-content/50 w-full text-center">{emptyText}</span>
                 </li>
               ) : (
                 filteredOptions.map((option) => (
@@ -283,14 +272,12 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
                       onClick={() => handleSelect(option.value)}
                       disabled={option.disabled}
                       className={clsx(
-                        "flex items-center justify-between w-full",
-                        option.value === value && "active",
+                        "flex w-full items-center justify-between",
+                        option.value === value && "active"
                       )}
                     >
                       <span className="truncate">{option.label}</span>
-                      {option.value === value && (
-                        <CheckIcon className="w-4 h-4" />
-                      )}
+                      {option.value === value && <CheckIcon className="h-4 w-4" />}
                     </button>
                   </li>
                 ))
@@ -309,20 +296,16 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             <span>{label}</span>
             {dropdownContent}
           </label>
-          {error && (
-            <span className="label-text-alt text-xs text-error mt-1">
-              {error}
-            </span>
-          )}
+          {error && <span className="label-text-alt text-error mt-1 text-xs">{error}</span>}
           {!error && helperText && (
-            <span className="label-text-alt text-xs mt-1">{helperText}</span>
+            <span className="label-text-alt mt-1 text-xs">{helperText}</span>
           )}
         </div>
       );
     }
 
     return dropdownContent;
-  },
+  }
 );
 
 Combobox.displayName = "Combobox";

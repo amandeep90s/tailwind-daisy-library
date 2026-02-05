@@ -6,14 +6,14 @@ import React, { forwardRef, useState } from "react";
 // ============================================================================
 
 export interface CollapsibleProps extends React.HTMLAttributes<HTMLDivElement> {
-	/** Whether the collapsible is open by default */
-	defaultOpen?: boolean;
-	/** Controlled open state */
-	open?: boolean;
-	/** Callback when open state changes */
-	onOpenChange?: (open: boolean) => void;
-	/** Trigger element */
-	trigger: React.ReactNode;
+  /** Whether the collapsible is open by default */
+  defaultOpen?: boolean;
+  /** Controlled open state */
+  open?: boolean;
+  /** Callback when open state changes */
+  onOpenChange?: (open: boolean) => void;
+  /** Trigger element */
+  trigger: React.ReactNode;
 }
 
 // ============================================================================
@@ -31,27 +31,38 @@ export interface CollapsibleProps extends React.HTMLAttributes<HTMLDivElement> {
  * ```
  */
 export const Collapsible = forwardRef<HTMLDivElement, CollapsibleProps>(
-	({ defaultOpen = false, open: controlledOpen, onOpenChange, trigger, children, className, ...props }, ref) => {
-		const [internalOpen, setInternalOpen] = useState(defaultOpen);
-		const isOpen = controlledOpen !== undefined ? controlledOpen : internalOpen;
+  (
+    {
+      defaultOpen = false,
+      open: controlledOpen,
+      onOpenChange,
+      trigger,
+      children,
+      className,
+      ...props
+    },
+    ref
+  ) => {
+    const [internalOpen, setInternalOpen] = useState(defaultOpen);
+    const isOpen = controlledOpen !== undefined ? controlledOpen : internalOpen;
 
-		const handleToggle = () => {
-			const newOpen = !isOpen;
-			if (controlledOpen === undefined) {
-				setInternalOpen(newOpen);
-			}
-			onOpenChange?.(newOpen);
-		};
+    const handleToggle = () => {
+      const newOpen = !isOpen;
+      if (controlledOpen === undefined) {
+        setInternalOpen(newOpen);
+      }
+      onOpenChange?.(newOpen);
+    };
 
-		return (
-			<div ref={ref} className={clsx("collapse", isOpen && "collapse-open", className)} {...props}>
-				<div className="collapse-title" onClick={handleToggle} role="button" tabIndex={0}>
-					{trigger}
-				</div>
-				<div className="collapse-content">{children}</div>
-			</div>
-		);
-	},
+    return (
+      <div ref={ref} className={clsx("collapse", isOpen && "collapse-open", className)} {...props}>
+        <div className="collapse-title" onClick={handleToggle} role="button" tabIndex={0}>
+          {trigger}
+        </div>
+        <div className="collapse-content">{children}</div>
+      </div>
+    );
+  }
 );
 
 Collapsible.displayName = "Collapsible";

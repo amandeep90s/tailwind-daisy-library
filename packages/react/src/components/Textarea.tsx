@@ -70,31 +70,18 @@ const sizeClasses: Record<TextareaSize, string> = {
  */
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
-    {
-      variant = "bordered",
-      color,
-      size = "md",
-      label,
-      error,
-      helperText,
-      className,
-      id,
-      ...props
-    },
-    ref,
+    { variant = "bordered", color, size = "md", label, error, helperText, className, id, ...props },
+    ref
   ) => {
     const textareaId =
-      id ||
-      (label
-        ? `textarea-${label.toLowerCase().replace(/\s+/g, "-")}`
-        : undefined);
+      id || (label ? `textarea-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined);
 
     const textareaClasses = clsx(
       "textarea w-full",
       variant !== "floating" && variantClasses[variant],
       error ? colorClasses.error : color && colorClasses[color],
       sizeClasses[size],
-      className,
+      className
     );
 
     // Floating label variant
@@ -111,27 +98,16 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
               {...props}
             />
           </label>
-          {error && (
-            <span className="label-text-alt text-xs text-error mt-1">
-              {error}
-            </span>
-          )}
+          {error && <span className="label-text-alt text-error mt-1 text-xs">{error}</span>}
           {!error && helperText && (
-            <span className="label-text-alt text-xs mt-1">{helperText}</span>
+            <span className="label-text-alt mt-1 text-xs">{helperText}</span>
           )}
         </div>
       );
     }
 
-    return (
-      <textarea
-        ref={ref}
-        id={textareaId}
-        className={textareaClasses}
-        {...props}
-      />
-    );
-  },
+    return <textarea ref={ref} id={textareaId} className={textareaClasses} {...props} />;
+  }
 );
 
 Textarea.displayName = "Textarea";

@@ -70,7 +70,7 @@ The library now exports two CSS files:
 /* Your custom app styles */
 @layer components {
   .my-custom-button {
-    @apply px-4 py-2 rounded;
+    @apply rounded px-4 py-2;
   }
 }
 ```
@@ -86,7 +86,7 @@ import App from "./App";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>,
+  </React.StrictMode>
 );
 ```
 
@@ -213,9 +213,7 @@ function TestComponent() {
   return (
     <div className="container mx-auto p-4">
       {/* Test responsive utilities */}
-      <div className="hidden md:block bg-blue-500 p-4">
-        Visible on medium screens and up
-      </div>
+      <div className="hidden bg-blue-500 p-4 md:block">Visible on medium screens and up</div>
 
       {/* Test flexbox utilities */}
       <div className="flex items-center justify-between">

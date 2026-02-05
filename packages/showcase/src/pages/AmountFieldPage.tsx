@@ -1,7 +1,4 @@
-import type {
-  AmountFieldColor,
-  AmountFieldSize,
-} from "@shared-ui-library/react";
+import type { AmountFieldColor, AmountFieldSize } from "@shared-ui-library/react";
 import { AmountField } from "@shared-ui-library/react";
 import { useState } from "react";
 import { ComponentPage, ShowcaseSection } from "../components/ComponentPage";
@@ -35,16 +32,9 @@ export function AmountFieldPage() {
       {/* Basic Usage */}
       <ShowcaseSection title="Basic Usage">
         <div className="max-w-sm space-y-4">
-          <AmountField
-            placeholder="0.00"
-            value={basicAmount}
-            onChange={setBasicAmount}
-          />
-          <p className="text-sm text-base-content/70">
-            Value:{" "}
-            <strong>
-              {basicAmount !== null ? `$${basicAmount.toFixed(2)}` : "null"}
-            </strong>
+          <AmountField placeholder="0.00" value={basicAmount} onChange={setBasicAmount} />
+          <p className="text-base-content/70 text-sm">
+            Value: <strong>{basicAmount !== null ? `$${basicAmount.toFixed(2)}` : "null"}</strong>
           </p>
         </div>
       </ShowcaseSection>
@@ -99,8 +89,8 @@ export function AmountFieldPage() {
       {/* Floating Label */}
       <ShowcaseSection title="Floating Label">
         <p className="text-base-content/70 mb-4">
-          Floating labels provide a modern UX pattern where the label moves up
-          when the input is focused or has value.
+          Floating labels provide a modern UX pattern where the label moves up when the input is
+          focused or has value.
         </p>
         <div className="max-w-sm space-y-4">
           <AmountField
@@ -172,13 +162,9 @@ export function AmountFieldPage() {
             max={10000}
             helperText="Amount must be between $1,000 and $10,000"
           />
-          <p className="text-sm text-base-content/70">
+          <p className="text-base-content/70 text-sm">
             Current Value:{" "}
-            <strong>
-              {budgetAmount !== null
-                ? `$${budgetAmount.toLocaleString()}`
-                : "null"}
-            </strong>
+            <strong>{budgetAmount !== null ? `$${budgetAmount.toLocaleString()}` : "null"}</strong>
           </p>
         </div>
       </ShowcaseSection>
@@ -275,7 +261,7 @@ export function AmountFieldPage() {
 
       {/* Real-world Examples */}
       <ShowcaseSection title="Real-world Examples">
-        <div className="max-w-2xl grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid max-w-2xl grid-cols-1 gap-6 md:grid-cols-2">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">E-commerce Pricing</h3>
             <AmountField
@@ -284,18 +270,8 @@ export function AmountFieldPage() {
               value={29.99}
               onChange={() => {}}
             />
-            <AmountField
-              label="Shipping Cost"
-              placeholder="0.00"
-              value={5.0}
-              onChange={() => {}}
-            />
-            <AmountField
-              label="Tax"
-              placeholder="0.00"
-              value={2.8}
-              onChange={() => {}}
-            />
+            <AmountField label="Shipping Cost" placeholder="0.00" value={5.0} onChange={() => {}} />
+            <AmountField label="Tax" placeholder="0.00" value={2.8} onChange={() => {}} />
             <AmountField
               label="Total"
               placeholder="0.00"
@@ -342,34 +318,30 @@ export function AmountFieldPage() {
       {/* Features */}
       <ShowcaseSection title="Features">
         <div className="prose max-w-2xl">
-          <ul className="text-sm text-base-content/70 space-y-2">
+          <ul className="text-base-content/70 space-y-2 text-sm">
             <li>
-              <strong>Automatic Formatting:</strong> Displays comma-separated
-              thousands and fixed decimal places when not focused
+              <strong>Automatic Formatting:</strong> Displays comma-separated thousands and fixed
+              decimal places when not focused
             </li>
             <li>
-              <strong>Raw Input While Typing:</strong> Shows unformatted number
-              while focused for easy editing
+              <strong>Raw Input While Typing:</strong> Shows unformatted number while focused for
+              easy editing
             </li>
             <li>
-              <strong>Currency Symbol:</strong> Displays currency symbol
-              (default: $) at the start of the input
+              <strong>Currency Symbol:</strong> Displays currency symbol (default: $) at the start
+              of the input
             </li>
             <li>
-              <strong>Decimal Control:</strong> Configure decimal places
-              (default: 2)
+              <strong>Decimal Control:</strong> Configure decimal places (default: 2)
             </li>
             <li>
-              <strong>Validation:</strong> Supports min/max values and optional
-              negative numbers
+              <strong>Validation:</strong> Supports min/max values and optional negative numbers
             </li>
             <li>
-              <strong>Mobile-Friendly:</strong> Uses numeric keyboard on mobile
-              devices
+              <strong>Mobile-Friendly:</strong> Uses numeric keyboard on mobile devices
             </li>
             <li>
-              <strong>Type-Safe:</strong> Returns numeric values, handles null
-              for empty inputs
+              <strong>Type-Safe:</strong> Returns numeric values, handles null for empty inputs
             </li>
           </ul>
         </div>

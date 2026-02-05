@@ -51,17 +51,7 @@ const variantClasses: Record<CardVariant, string> = {
  * ```
  */
 export const Card = forwardRef<HTMLDivElement, CardProps>(
-  (
-    {
-      variant = "default",
-      imageSrc,
-      imageAlt = "",
-      children,
-      className,
-      ...props
-    },
-    ref,
-  ) => {
+  ({ variant = "default", imageSrc, imageAlt = "", children, className, ...props }, ref) => {
     return (
       <div
         ref={ref}
@@ -76,7 +66,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
         {children}
       </div>
     );
-  },
+  }
 );
 
 Card.displayName = "Card";
@@ -88,7 +78,7 @@ export const CardBody = forwardRef<HTMLDivElement, CardBodyProps>(
         {children}
       </div>
     );
-  },
+  }
 );
 
 CardBody.displayName = "CardBody";
@@ -100,7 +90,7 @@ export const CardTitle = forwardRef<HTMLHeadingElement, CardTitleProps>(
         {children}
       </h2>
     );
-  },
+  }
 );
 
 CardTitle.displayName = "CardTitle";
@@ -108,15 +98,11 @@ CardTitle.displayName = "CardTitle";
 export const CardActions = forwardRef<HTMLDivElement, CardActionsProps>(
   ({ justify = "end", children, className, ...props }, ref) => {
     return (
-      <div
-        ref={ref}
-        className={clsx("card-actions", `justify-${justify}`, className)}
-        {...props}
-      >
+      <div ref={ref} className={clsx("card-actions", `justify-${justify}`, className)} {...props}>
         {children}
       </div>
     );
-  },
+  }
 );
 
 CardActions.displayName = "CardActions";

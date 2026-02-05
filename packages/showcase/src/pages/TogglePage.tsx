@@ -12,11 +12,7 @@ import {
 import { Toggle } from "@shared-ui-library/react";
 import { useState } from "react";
 import { CodeBlock } from "../components/CodeBlock";
-import {
-  CodeSection,
-  ComponentPage,
-  ShowcaseSection,
-} from "../components/ComponentPage";
+import { CodeSection, ComponentPage, ShowcaseSection } from "../components/ComponentPage";
 import { PropsTable } from "../components/PropsTable";
 
 export function TogglePage() {
@@ -26,26 +22,17 @@ export function TogglePage() {
   const [isUnderline, setIsUnderline] = useState(false);
 
   return (
-    <ComponentPage
-      title="Toggle"
-      description="A two-state button that can be either on or off."
-    >
-      <ShowcaseSection
-        title="Basic Toggle"
-        description="Interactive toggle with controlled state."
-      >
+    <ComponentPage title="Toggle" description="A two-state button that can be either on or off.">
+      <ShowcaseSection title="Basic Toggle" description="Interactive toggle with controlled state.">
         <Toggle pressed={isPressed} onPressedChange={setIsPressed}>
           Toggle
         </Toggle>
-        <p className="text-sm text-base-content/70 mt-2">
+        <p className="text-base-content/70 mt-2 text-sm">
           State: {isPressed ? "Pressed" : "Not pressed"}
         </p>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Default Pressed"
-        description="Toggle can start in pressed state."
-      >
+      <ShowcaseSection title="Default Pressed" description="Toggle can start in pressed state.">
         <Toggle pressed={true} onPressedChange={() => {}}>
           Default On
         </Toggle>
@@ -83,10 +70,7 @@ export function TogglePage() {
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Outline Style"
-        description="Outline variant for subtle emphasis."
-      >
+      <ShowcaseSection title="Outline Style" description="Outline variant for subtle emphasis.">
         <div className="flex flex-wrap gap-4">
           <Toggle>Default</Toggle>
           <Toggle variant="primary" pressed={true} onPressedChange={() => {}}>
@@ -97,10 +81,7 @@ export function TogglePage() {
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Sizes"
-        description="Toggle comes in multiple sizes."
-      >
+      <ShowcaseSection title="Sizes" description="Toggle comes in multiple sizes.">
         <div className="flex flex-wrap items-center gap-4">
           <Toggle size="xs">Extra Small</Toggle>
           <Toggle size="sm">Small</Toggle>
@@ -109,10 +90,7 @@ export function TogglePage() {
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Disabled State"
-        description="Toggles can be disabled."
-      >
+      <ShowcaseSection title="Disabled State" description="Toggles can be disabled.">
         <div className="flex flex-wrap gap-4">
           <Toggle disabled>Disabled Off</Toggle>
           <Toggle disabled pressed={true} onPressedChange={() => {}}>
@@ -125,7 +103,7 @@ export function TogglePage() {
         title="Text Formatting Example"
         description="Using toggles for text formatting controls."
       >
-        <div className="space-y-4 w-full">
+        <div className="w-full space-y-4">
           <div className="flex gap-2">
             <Toggle
               pressed={isBold}
@@ -163,10 +141,7 @@ export function TogglePage() {
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="With Icons"
-        description="Toggles work great with icon-only content."
-      >
+      <ShowcaseSection title="With Icons" description="Toggles work great with icon-only content.">
         <div className="flex gap-2">
           <Toggle variant="primary" aria-label="Star">
             <StarIcon className="h-5 w-5" />
@@ -184,7 +159,7 @@ export function TogglePage() {
         title="View Toggle Example"
         description="Toggle between different view modes."
       >
-        <div className="flex gap-1 bg-base-200 p-1 rounded-lg">
+        <div className="bg-base-200 flex gap-1 rounded-lg p-1">
           <Toggle
             variant="primary"
             pressed={true}
@@ -202,20 +177,15 @@ export function TogglePage() {
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection
-        title="Feature Toggle Card"
-        description="Toggle settings within a card."
-      >
-        <div className="card bg-base-100 shadow-lg w-full max-w-md">
+      <ShowcaseSection title="Feature Toggle Card" description="Toggle settings within a card.">
+        <div className="card bg-base-100 w-full max-w-md shadow-lg">
           <div className="card-body">
             <h3 className="card-title">Feature Toggles</h3>
-            <div className="space-y-4 mt-2">
+            <div className="mt-2 space-y-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Dark Mode</p>
-                  <p className="text-sm text-base-content/70">
-                    Enable dark theme
-                  </p>
+                  <p className="text-base-content/70 text-sm">Enable dark theme</p>
                 </div>
                 <Toggle variant="primary" aria-label="Toggle dark mode">
                   <MoonIcon className="h-5 w-5" />
@@ -225,7 +195,7 @@ export function TogglePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Notifications</p>
-                  <p className="text-sm text-base-content/70">Receive alerts</p>
+                  <p className="text-base-content/70 text-sm">Receive alerts</p>
                 </div>
                 <Toggle
                   variant="primary"
@@ -240,7 +210,7 @@ export function TogglePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Sound</p>
-                  <p className="text-sm text-base-content/70">Play sounds</p>
+                  <p className="text-base-content/70 text-sm">Play sounds</p>
                 </div>
                 <Toggle variant="primary" aria-label="Toggle sound">
                   <SpeakerWaveIcon className="h-5 w-5" />

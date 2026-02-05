@@ -67,10 +67,7 @@ export function Layout() {
         {/* Navbar */}
         <div className="navbar bg-base-200 lg:hidden">
           <div className="flex-none">
-            <label
-              htmlFor="sidebar"
-              className="btn btn-square btn-ghost drawer-button"
-            >
+            <label htmlFor="sidebar" className="btn btn-square btn-ghost drawer-button">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -101,18 +98,15 @@ export function Layout() {
       <div className="drawer-side">
         <label htmlFor="sidebar" className="drawer-overlay"></label>
         <aside className="bg-base-200 min-h-screen w-64">
-          <div className="p-4 sticky top-0 bg-base-200 z-10">
-            <NavLink to="/" className="btn btn-ghost text-xl w-full">
+          <div className="bg-base-200 sticky top-0 z-10 p-4">
+            <NavLink to="/" className="btn btn-ghost w-full text-xl">
               🎨 Shared UI Library
             </NavLink>
-            <div className="flex gap-2 mt-2">
+            <div className="mt-2 flex gap-2">
               <button
                 className="btn btn-xs"
                 onClick={() =>
-                  document.documentElement.setAttribute(
-                    "data-theme",
-                    "shared-ui-theme",
-                  )
+                  document.documentElement.setAttribute("data-theme", "shared-ui-theme")
                 }
               >
                 Light
@@ -120,10 +114,7 @@ export function Layout() {
               <button
                 className="btn btn-xs"
                 onClick={() =>
-                  document.documentElement.setAttribute(
-                    "data-theme",
-                    "shared-ui-dark",
-                  )
+                  document.documentElement.setAttribute("data-theme", "shared-ui-dark")
                 }
               >
                 Dark

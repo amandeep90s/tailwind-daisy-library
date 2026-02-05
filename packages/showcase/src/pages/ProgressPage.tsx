@@ -3,7 +3,10 @@ import { ComponentPage, ShowcaseSection } from "../components/ComponentPage";
 
 export function ProgressPage() {
   return (
-    <ComponentPage title="Progress" description="Displays an indicator showing the completion progress of a task.">
+    <ComponentPage
+      title="Progress"
+      description="Displays an indicator showing the completion progress of a task."
+    >
       <ShowcaseSection title="Default">
         <div className="w-full space-y-4">
           <Progress value={0} />

@@ -5,13 +5,20 @@ import React, { forwardRef } from "react";
 // TYPES
 // ============================================================================
 
-export type ProgressVariant = "primary" | "secondary" | "accent" | "info" | "success" | "warning" | "error";
+export type ProgressVariant =
+  | "primary"
+  | "secondary"
+  | "accent"
+  | "info"
+  | "success"
+  | "warning"
+  | "error";
 
 export interface ProgressProps extends React.ProgressHTMLAttributes<HTMLProgressElement> {
-	/** Progress variant */
-	variant?: ProgressVariant;
-	/** Current value (0-100) */
-	value?: number;
+  /** Progress variant */
+  variant?: ProgressVariant;
+  /** Current value (0-100) */
+  value?: number;
 }
 
 // ============================================================================
@@ -19,13 +26,13 @@ export interface ProgressProps extends React.ProgressHTMLAttributes<HTMLProgress
 // ============================================================================
 
 const variantClasses: Record<ProgressVariant, string> = {
-	primary: "progress-primary",
-	secondary: "progress-secondary",
-	accent: "progress-accent",
-	info: "progress-info",
-	success: "progress-success",
-	warning: "progress-warning",
-	error: "progress-error",
+  primary: "progress-primary",
+  secondary: "progress-secondary",
+  accent: "progress-accent",
+  info: "progress-info",
+  success: "progress-success",
+  warning: "progress-warning",
+  error: "progress-error",
 };
 
 /**
@@ -38,17 +45,17 @@ const variantClasses: Record<ProgressVariant, string> = {
  * ```
  */
 export const Progress = forwardRef<HTMLProgressElement, ProgressProps>(
-	({ variant = "primary", value, className, ...props }, ref) => {
-		return (
-			<progress
-				ref={ref}
-				className={clsx("progress w-full", variantClasses[variant], className)}
-				value={value}
-				max={100}
-				{...props}
-			/>
-		);
-	},
+  ({ variant = "primary", value, className, ...props }, ref) => {
+    return (
+      <progress
+        ref={ref}
+        className={clsx("progress w-full", variantClasses[variant], className)}
+        value={value}
+        max={100}
+        {...props}
+      />
+    );
+  }
 );
 
 Progress.displayName = "Progress";

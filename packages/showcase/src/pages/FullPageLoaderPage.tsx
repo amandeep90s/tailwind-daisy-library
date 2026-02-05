@@ -21,9 +21,7 @@ export function FullPageLoaderPage() {
       description="A full-screen loading overlay with customizable spinner, text, and background options."
     >
       <ShowcaseSection title="Basic Usage">
-        <Button onClick={() => showLoader(setBasicOpen)}>
-          Show Full Page Loader (2s)
-        </Button>
+        <Button onClick={() => showLoader(setBasicOpen)}>Show Full Page Loader (2s)</Button>
         <FullPageLoader visible={basicOpen} />
       </ShowcaseSection>
 
@@ -78,7 +76,7 @@ export function FullPageLoaderPage() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Animation Types Preview (Inline)">
-        <div className="flex flex-wrap gap-8 items-center justify-center p-8 bg-base-200 rounded-lg">
+        <div className="bg-base-200 flex flex-wrap items-center justify-center gap-8 rounded-lg p-8">
           <div className="flex flex-col items-center gap-2">
             <span className="loading loading-spinner loading-lg text-primary" />
             <span className="text-sm">spinner</span>
@@ -107,7 +105,7 @@ export function FullPageLoaderPage() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Sizes Preview (Inline)">
-        <div className="flex flex-wrap gap-8 items-end justify-center p-8 bg-base-200 rounded-lg">
+        <div className="bg-base-200 flex flex-wrap items-end justify-center gap-8 rounded-lg p-8">
           <div className="flex flex-col items-center gap-2">
             <span className="loading loading-spinner loading-xs text-primary" />
             <span className="text-sm">xs</span>
@@ -125,7 +123,7 @@ export function FullPageLoaderPage() {
             <span className="text-sm">lg</span>
           </div>
           <div className="flex flex-col items-center gap-2">
-            <span className="loading loading-spinner w-16 h-16 text-primary" />
+            <span className="loading loading-spinner text-primary h-16 w-16" />
             <span className="text-sm">xl</span>
           </div>
         </div>

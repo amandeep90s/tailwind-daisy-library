@@ -8,11 +8,7 @@ import {
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { CodeBlock } from "../components/CodeBlock";
-import {
-  CodeSection,
-  ComponentPage,
-  ShowcaseSection,
-} from "../components/ComponentPage";
+import { CodeSection, ComponentPage, ShowcaseSection } from "../components/ComponentPage";
 import { PropsTable } from "../components/PropsTable";
 
 // ============================================================================
@@ -207,14 +203,8 @@ const contactFormFields: DynamicFieldConfig[] = [
 // ============================================================================
 
 export function DynamicFormPage() {
-  const [basicResult, setBasicResult] = useState<Record<
-    string,
-    unknown
-  > | null>(null);
-  const [advancedResult, setAdvancedResult] = useState<Record<
-    string,
-    unknown
-  > | null>(null);
+  const [basicResult, setBasicResult] = useState<Record<string, unknown> | null>(null);
+  const [advancedResult, setAdvancedResult] = useState<Record<string, unknown> | null>(null);
 
   // React Hook Form for individual field example (using Controller)
   const {
@@ -267,10 +257,7 @@ export function DynamicFormPage() {
         description="Individual DynamicFormField components with react-hook-form Controller."
       >
         <div className="w-full max-w-md">
-          <form
-            onSubmit={handleSubmitBasic(onBasicSubmit)}
-            className="space-y-4"
-          >
+          <form onSubmit={handleSubmitBasic(onBasicSubmit)} className="space-y-4">
             {basicFormFields.map((fieldConfig) => (
               <Controller
                 key={fieldConfig.name}
@@ -284,21 +271,13 @@ export function DynamicFormPage() {
                     value={field.value}
                     onChange={field.onChange}
                     onBlur={field.onBlur}
-                    error={
-                      errorsBasic[fieldConfig.name]?.message as
-                        | string
-                        | undefined
-                    }
+                    error={errorsBasic[fieldConfig.name]?.message as string | undefined}
                   />
                 )}
               />
             ))}
             <div className="flex gap-2 pt-4">
-              <Button
-                type="submit"
-                variant="primary"
-                loading={isSubmittingBasic}
-              >
+              <Button type="submit" variant="primary" loading={isSubmittingBasic}>
                 {isSubmittingBasic ? "Submitting..." : "Submit"}
               </Button>
               <Button
@@ -315,13 +294,9 @@ export function DynamicFormPage() {
           </form>
 
           {basicResult && (
-            <div className="mt-4 p-4 bg-success/10 border border-success rounded-lg">
-              <h4 className="font-semibold text-success mb-2">
-                Form Submitted!
-              </h4>
-              <pre className="text-sm overflow-auto">
-                {JSON.stringify(basicResult, null, 2)}
-              </pre>
+            <div className="bg-success/10 border-success mt-4 rounded-lg border p-4">
+              <h4 className="text-success mb-2 font-semibold">Form Submitted!</h4>
+              <pre className="overflow-auto text-sm">{JSON.stringify(basicResult, null, 2)}</pre>
             </div>
           )}
         </div>
@@ -404,11 +379,9 @@ function MyForm() {
           />
 
           {advancedResult && (
-            <div className="mt-4 p-4 bg-success/10 border border-success rounded-lg">
-              <h4 className="font-semibold text-success mb-2">
-                Form Submitted!
-              </h4>
-              <pre className="text-sm overflow-auto max-h-48">
+            <div className="bg-success/10 border-success mt-4 rounded-lg border p-4">
+              <h4 className="text-success mb-2 font-semibold">Form Submitted!</h4>
+              <pre className="max-h-48 overflow-auto text-sm">
                 {JSON.stringify(advancedResult, null, 2)}
               </pre>
             </div>
@@ -479,9 +452,7 @@ function MyForm() {
                 key={fieldConfig.name}
                 field={fieldConfig}
                 control={controlBasic}
-                error={
-                  errorsBasic[fieldConfig.name]?.message as string | undefined
-                }
+                error={errorsBasic[fieldConfig.name]?.message as string | undefined}
               />
             ))}
           </form>
@@ -623,8 +594,7 @@ type DynamicFieldType =
             {
               name: "onChange",
               type: "(value) => void",
-              description:
-                "Controlled onChange handler (from Controller field.onChange)",
+              description: "Controlled onChange handler (from Controller field.onChange)",
             },
             {
               name: "onBlur",

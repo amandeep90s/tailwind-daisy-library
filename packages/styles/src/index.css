@@ -16,7 +16,7 @@
 
 /* Custom utility classes */
 @layer utilities {
-	.text-balance {
-		text-wrap: balance;
-	}
+  .text-balance {
+    text-wrap: balance;
+  }
 }

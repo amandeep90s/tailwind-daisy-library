@@ -9,12 +9,12 @@ export type SeparatorOrientation = "horizontal" | "vertical";
 export type SeparatorVariant = "default" | "primary" | "secondary" | "accent";
 
 export interface SeparatorProps extends React.HTMLAttributes<HTMLDivElement> {
-	/** Separator orientation */
-	orientation?: SeparatorOrientation;
-	/** Separator variant */
-	variant?: SeparatorVariant;
-	/** Text to display in separator */
-	text?: string;
+  /** Separator orientation */
+  orientation?: SeparatorOrientation;
+  /** Separator variant */
+  variant?: SeparatorVariant;
+  /** Text to display in separator */
+  text?: string;
 }
 
 // ============================================================================
@@ -22,10 +22,10 @@ export interface SeparatorProps extends React.HTMLAttributes<HTMLDivElement> {
 // ============================================================================
 
 const variantClasses: Record<SeparatorVariant, string> = {
-	default: "",
-	primary: "divider-primary",
-	secondary: "divider-secondary",
-	accent: "divider-accent",
+  default: "",
+  primary: "divider-primary",
+  secondary: "divider-secondary",
+  accent: "divider-accent",
 };
 
 /**
@@ -39,22 +39,25 @@ const variantClasses: Record<SeparatorVariant, string> = {
  * ```
  */
 export const Separator = forwardRef<HTMLDivElement, SeparatorProps>(
-	({ orientation = "horizontal", variant = "default", text, className, children, ...props }, ref) => {
-		return (
-			<div
-				ref={ref}
-				className={clsx(
-					"divider",
-					orientation === "vertical" && "divider-horizontal",
-					variantClasses[variant],
-					className,
-				)}
-				{...props}
-			>
-				{text || children}
-			</div>
-		);
-	},
+  (
+    { orientation = "horizontal", variant = "default", text, className, children, ...props },
+    ref
+  ) => {
+    return (
+      <div
+        ref={ref}
+        className={clsx(
+          "divider",
+          orientation === "vertical" && "divider-horizontal",
+          variantClasses[variant],
+          className
+        )}
+        {...props}
+      >
+        {text || children}
+      </div>
+    );
+  }
 );
 
 Separator.displayName = "Separator";

@@ -118,11 +118,7 @@ export default {
 ### Granular Imports
 
 ```js
-import {
-  tailwindColors,
-  tailwindSpacing,
-  tailwindFontFamily,
-} from "@shared-ui-library/tokens";
+import { tailwindColors, tailwindSpacing, tailwindFontFamily } from "@shared-ui-library/tokens";
 
 export default {
   theme: {

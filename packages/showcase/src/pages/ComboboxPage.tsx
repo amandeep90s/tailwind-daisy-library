@@ -52,7 +52,7 @@ export function ComboboxPage() {
             searchPlaceholder="Search frameworks..."
           />
         </div>
-        <p className="text-sm mt-2 text-base-content/70">
+        <p className="text-base-content/70 mt-2 text-sm">
           Selected: <strong>{framework || "None"}</strong>
         </p>
       </ShowcaseSection>
@@ -68,7 +68,7 @@ export function ComboboxPage() {
             emptyText="No countries found."
           />
         </div>
-        <p className="text-sm mt-2 text-base-content/70">
+        <p className="text-base-content/70 mt-2 text-sm">
           Selected: <strong>{country || "None"}</strong>
         </p>
       </ShowcaseSection>
@@ -83,12 +83,10 @@ export function ComboboxPage() {
             searchPlaceholder="Filter status..."
           />
         </div>
-        <p className="text-sm mt-2 text-base-content/70">
+        <p className="text-base-content/70 mt-2 text-sm">
           Selected: <strong>{status || "None"}</strong>
         </p>
-        <p className="text-xs mt-1 text-base-content/50">
-          Note: "Canceled" status is disabled
-        </p>
+        <p className="text-base-content/50 mt-1 text-xs">Note: "Canceled" status is disabled</p>
       </ShowcaseSection>
 
       <ShowcaseSection title="Disabled Combobox">
@@ -105,8 +103,8 @@ export function ComboboxPage() {
 
       <ShowcaseSection title="Floating Label">
         <p className="text-base-content/70 mb-4">
-          Floating labels provide a modern UX pattern where the label moves up
-          when the input is focused or has value.
+          Floating labels provide a modern UX pattern where the label moves up when the input is
+          focused or has value.
         </p>
         <div className="max-w-sm space-y-4">
           <Combobox
@@ -148,7 +146,7 @@ export function ComboboxPage() {
             placeholder="Select framework..."
           />
         </div>
-        <p className="text-sm mt-2 text-base-content/70">
+        <p className="text-base-content/70 mt-2 text-sm">
           Click the same option again to deselect it.
         </p>
       </ShowcaseSection>

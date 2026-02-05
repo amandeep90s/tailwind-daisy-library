@@ -3,11 +3,7 @@ import { useState } from "react";
 import { ComponentPage, ShowcaseSection } from "../components/ComponentPage";
 
 const CheckIcon = () => (
-  <svg
-    aria-label="enabled"
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-  >
+  <svg aria-label="enabled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <g
       strokeLinejoin="round"
       strokeLinecap="round"
@@ -46,10 +42,7 @@ export function SwitchPage() {
     >
       <ShowcaseSection title="Default">
         <div className="flex items-center gap-4">
-          <Switch
-            checked={checked}
-            onChange={(e) => setChecked(e.target.checked)}
-          />
+          <Switch checked={checked} onChange={(e) => setChecked(e.target.checked)} />
           <span>Enabled: {checked ? "Yes" : "No"}</span>
         </div>
       </ShowcaseSection>
@@ -86,11 +79,7 @@ export function SwitchPage() {
 
       <ShowcaseSection title="With Icons">
         <div className="flex items-center gap-4">
-          <Switch
-            checkedIcon={<CheckIcon />}
-            uncheckedIcon={<XIcon />}
-            defaultChecked
-          />
+          <Switch checkedIcon={<CheckIcon />} uncheckedIcon={<XIcon />} defaultChecked />
           <Switch checkedIcon={<CheckIcon />} uncheckedIcon={<XIcon />} />
         </div>
       </ShowcaseSection>
@@ -120,24 +109,9 @@ export function SwitchPage() {
 
       <ShowcaseSection title="With Icons - Different Sizes">
         <div className="flex items-center gap-4">
-          <Switch
-            checkedIcon={<CheckIcon />}
-            uncheckedIcon={<XIcon />}
-            size="sm"
-            defaultChecked
-          />
-          <Switch
-            checkedIcon={<CheckIcon />}
-            uncheckedIcon={<XIcon />}
-            size="md"
-            defaultChecked
-          />
-          <Switch
-            checkedIcon={<CheckIcon />}
-            uncheckedIcon={<XIcon />}
-            size="lg"
-            defaultChecked
-          />
+          <Switch checkedIcon={<CheckIcon />} uncheckedIcon={<XIcon />} size="sm" defaultChecked />
+          <Switch checkedIcon={<CheckIcon />} uncheckedIcon={<XIcon />} size="md" defaultChecked />
+          <Switch checkedIcon={<CheckIcon />} uncheckedIcon={<XIcon />} size="lg" defaultChecked />
         </div>
       </ShowcaseSection>
 
