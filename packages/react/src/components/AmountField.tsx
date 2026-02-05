@@ -5,7 +5,7 @@ import React, { forwardRef, useEffect, useState } from "react";
 // TYPES
 // ============================================================================
 
-export type AmountFieldVariant = "bordered" | "ghost";
+export type AmountFieldVariant = "bordered" | "ghost" | "floating";
 
 export type AmountFieldColor =
   | "default"
@@ -61,6 +61,7 @@ export interface AmountFieldProps extends Omit<
 const variantClasses: Record<AmountFieldVariant, string> = {
   bordered: "input-bordered",
   ghost: "input-ghost",
+  floating: "",
 };
 
 const colorClasses: Record<AmountFieldColor, string> = {
@@ -153,7 +154,11 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
   ) => {
     const [displayValue, setDisplayValue] = useState("");
     const [isFocused, setIsFocused] = useState(false);
-    const inputId = id || (label ? `amount-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined);
+    const inputId =
+      id ||
+      (label
+        ? `amount-${label.toLowerCase().replace(/\s+/g, "-")}`
+        : undefined);
 
     // Update display value when prop value changes
     useEffect(() => {
@@ -235,10 +240,9 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
 
     const inputClasses = clsx(
       "input w-full",
-      variantClasses[variant],
-      colorClasses[color],
+      variant !== "floating" && variantClasses[variant],
+      error ? colorClasses.error : colorClasses[color],
       sizeClasses[size],
-      error && "input-error",
       disabled && "input-disabled",
       className,
     );
@@ -248,7 +252,7 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
         {currencySymbol && (
           <span
             className={clsx(
-              "absolute left-3 z-10 text-base-content pointer-events-none font-medium",
+              "absolute left-3 top-1/2 -translate-y-1/2 z-10 text-base-content pointer-events-none font-medium",
               disabled && "opacity-50",
             )}
           >
@@ -268,11 +272,70 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
           placeholder={placeholder}
           className={clsx(inputClasses, currencySymbol && "pl-8")}
           aria-invalid={error ? "true" : undefined}
-          aria-describedby={error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
+          aria-describedby={
+            error
+              ? `${inputId}-error`
+              : helperText
+                ? `${inputId}-helper`
+                : undefined
+          }
           {...props}
         />
       </div>
     );
+
+    // Floating label variant
+    if (variant === "floating") {
+      return (
+        <div className="form-control w-full">
+          <label className="floating-label">
+            <span>{label}</span>
+            <div className="relative w-full flex items-center">
+              {currencySymbol && (
+                <span
+                  className={clsx(
+                    "absolute left-3 top-1/2 -translate-y-1/2 z-10 text-base-content pointer-events-none font-medium",
+                    disabled && "opacity-50",
+                  )}
+                >
+                  {currencySymbol}
+                </span>
+              )}
+              <input
+                ref={ref}
+                id={inputId}
+                type="text"
+                inputMode="decimal"
+                value={displayValue}
+                onChange={handleChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                disabled={disabled}
+                placeholder={placeholder}
+                className={clsx(inputClasses, currencySymbol && "pl-8")}
+                aria-invalid={error ? "true" : undefined}
+                aria-describedby={
+                  error
+                    ? `${inputId}-error`
+                    : helperText
+                      ? `${inputId}-helper`
+                      : undefined
+                }
+                {...props}
+              />
+            </div>
+          </label>
+          {error && (
+            <span className="label-text-alt text-xs text-error mt-1">
+              {error}
+            </span>
+          )}
+          {!error && helperText && (
+            <span className="label-text-alt text-xs mt-1">{helperText}</span>
+          )}
+        </div>
+      );
+    }
 
     // If no label, error, or helperText, return just the input
     if (!label && !error && !helperText) {

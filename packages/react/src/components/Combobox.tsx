@@ -6,6 +6,8 @@ import { forwardRef, useCallback, useEffect, useRef, useState } from "react";
 // TYPES
 // ============================================================================
 
+export type ComboboxVariant = "bordered" | "ghost" | "floating";
+
 export interface ComboboxOption {
   value: string;
   label: string;
@@ -13,6 +15,8 @@ export interface ComboboxOption {
 }
 
 export interface ComboboxProps {
+  /** Style variant */
+  variant?: ComboboxVariant;
   /** Available options */
   options: ComboboxOption[];
   /** Selected value */
@@ -31,6 +35,12 @@ export interface ComboboxProps {
   disabled?: boolean;
   /** Unique identifier for the combobox */
   id?: string;
+  /** Label for floating variant */
+  label?: string;
+  /** Error message */
+  error?: string;
+  /** Helper text */
+  helperText?: string;
 }
 
 type DropdownPosition = "bottom" | "top";
@@ -59,6 +69,7 @@ type DropdownPosition = "bottom" | "top";
 export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
   (
     {
+      variant = "bordered",
       options,
       value,
       onChange,
@@ -68,6 +79,9 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
       className,
       disabled = false,
       id,
+      label,
+      error,
+      helperText,
     },
     ref,
   ) => {
@@ -78,7 +92,8 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
     const triggerRef = useRef<HTMLButtonElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const searchInputRef = useRef<HTMLInputElement>(null);
-    const comboboxId = id || `combobox-${Math.random().toString(36).substr(2, 9)}`;
+    const comboboxId =
+      id || `combobox-${Math.random().toString(36).substr(2, 9)}`;
 
     const filteredOptions = options.filter((option) =>
       option.label.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -174,13 +189,13 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
       }
     };
 
-    return (
+    const dropdownContent = (
       <div
         ref={containerRef}
         className={clsx(
           "dropdown w-full",
           isOpen && "dropdown-open",
-          className,
+          variant !== "floating" && className,
         )}
       >
         {/* Trigger Button */}
@@ -206,12 +221,18 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
             "btn btn-outline w-full justify-between font-normal",
             !selectedOption && "text-base-content/50",
             disabled && "btn-disabled",
+            error && "btn-error",
           )}
         >
           <span className="truncate">
             {selectedOption?.label || placeholder}
           </span>
-          <ChevronDownIcon className={clsx("h-5 w-5 shrink-0 transition-transform duration-200", isOpen && "rotate-180")} />
+          <ChevronDownIcon
+            className={clsx(
+              "h-5 w-5 shrink-0 transition-transform duration-200",
+              isOpen && "rotate-180",
+            )}
+          />
         </button>
 
         {/* Dropdown Content */}
@@ -279,6 +300,28 @@ export const Combobox = forwardRef<HTMLButtonElement, ComboboxProps>(
         )}
       </div>
     );
+
+    // Floating label variant
+    if (variant === "floating") {
+      return (
+        <div className={clsx("form-control w-full", className)}>
+          <label className="floating-label">
+            <span>{label}</span>
+            {dropdownContent}
+          </label>
+          {error && (
+            <span className="label-text-alt text-xs text-error mt-1">
+              {error}
+            </span>
+          )}
+          {!error && helperText && (
+            <span className="label-text-alt text-xs mt-1">{helperText}</span>
+          )}
+        </div>
+      );
+    }
+
+    return dropdownContent;
   },
 );
 

@@ -103,6 +103,42 @@ export function ComboboxPage() {
         </div>
       </ShowcaseSection>
 
+      <ShowcaseSection title="Floating Label">
+        <p className="text-base-content/70 mb-4">
+          Floating labels provide a modern UX pattern where the label moves up
+          when the input is focused or has value.
+        </p>
+        <div className="max-w-sm space-y-4">
+          <Combobox
+            variant="floating"
+            label="Framework"
+            options={frameworks}
+            value={framework}
+            onChange={setFramework}
+            placeholder="Select framework..."
+            searchPlaceholder="Search frameworks..."
+          />
+          <Combobox
+            variant="floating"
+            label="Country"
+            options={countries}
+            value={country}
+            onChange={setCountry}
+            placeholder="Select country..."
+            helperText="Choose your country of residence"
+          />
+          <Combobox
+            variant="floating"
+            label="Status"
+            options={statuses}
+            value={status}
+            onChange={setStatus}
+            placeholder="Set status..."
+            error="Status is required"
+          />
+        </div>
+      </ShowcaseSection>
+
       <ShowcaseSection title="Toggle Selection">
         <div className="w-72">
           <Combobox

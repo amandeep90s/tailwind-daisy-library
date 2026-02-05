@@ -2,15 +2,16 @@ import { DatePicker } from "@shared-ui-library/react";
 import { useState } from "react";
 import { CodeBlock } from "../components/CodeBlock";
 import {
-	CodeSection,
-	ComponentPage,
-	ShowcaseSection,
+  CodeSection,
+  ComponentPage,
+  ShowcaseSection,
 } from "../components/ComponentPage";
 import { PropsTable } from "../components/PropsTable";
 
 export function DatePickerPage() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [rangeDate, setRangeDate] = useState<Date | undefined>(undefined);
+  const [floatingDate, setFloatingDate] = useState<Date | undefined>(undefined);
 
   return (
     <ComponentPage
@@ -28,6 +29,67 @@ export function DatePickerPage() {
               Selected: {date.toLocaleDateString()}
             </p>
           )}
+        </div>
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Variants"
+        description="Different style variants for the date picker."
+      >
+        <div className="max-w-sm space-y-4">
+          <DatePicker variant="bordered" placeholder="Bordered (default)" />
+          <DatePicker variant="ghost" placeholder="Ghost" />
+          <DatePicker
+            variant="floating"
+            label="Date of Birth"
+            value={floatingDate}
+            onChange={(d) => setFloatingDate(d ?? undefined)}
+          />
+        </div>
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="Floating Label"
+        description="Floating labels provide a modern UX pattern where the label moves up when the input is focused or has value."
+      >
+        <div className="max-w-sm space-y-4">
+          <DatePicker
+            variant="floating"
+            label="Start Date"
+            value={date}
+            onChange={(d) => setDate(d ?? undefined)}
+          />
+          <DatePicker
+            variant="floating"
+            label="End Date"
+            value={rangeDate}
+            onChange={(d) => setRangeDate(d ?? undefined)}
+            helperText="Select the end date for your trip"
+          />
+          <DatePicker
+            variant="floating"
+            label="Deadline"
+            error="Deadline is required"
+          />
+        </div>
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Colors" description="Different color variants.">
+        <div className="max-w-sm space-y-4">
+          <DatePicker color="primary" placeholder="Primary" />
+          <DatePicker color="secondary" placeholder="Secondary" />
+          <DatePicker color="success" placeholder="Success" />
+          <DatePicker color="error" placeholder="Error" />
+        </div>
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Sizes" description="Different size options.">
+        <div className="max-w-sm space-y-4">
+          <DatePicker size="xs" placeholder="Extra Small" />
+          <DatePicker size="sm" placeholder="Small" />
+          <DatePicker size="md" placeholder="Medium (default)" />
+          <DatePicker size="lg" placeholder="Large" />
+          <DatePicker size="xl" placeholder="Extra Large" />
         </div>
       </ShowcaseSection>
 
@@ -57,21 +119,6 @@ export function DatePickerPage() {
       </ShowcaseSection>
 
       <ShowcaseSection
-        title="Date Selection"
-        description="Select a date from the calendar."
-      >
-        <div className="w-full max-w-xs">
-          <DatePicker
-            value={date}
-            onChange={(d) => setDate(d ?? undefined)}
-          />
-          <p className="mt-2 text-sm text-base-content/70">
-            {date ? `Selected: ${date.toLocaleDateString()}` : "No date selected"}
-          </p>
-        </div>
-      </ShowcaseSection>
-
-      <ShowcaseSection
         title="Disabled"
         description="Date picker in disabled state."
       >
@@ -86,23 +133,19 @@ export function DatePickerPage() {
       >
         <div className="flex flex-wrap gap-4 w-full">
           <div className="w-full max-w-xs">
-            <label className="label">
-              <span className="label-text">Start Date</span>
-            </label>
             <DatePicker
+              variant="floating"
+              label="Start Date"
               value={date}
               onChange={(d) => setDate(d ?? undefined)}
-              placeholder="Start date"
             />
           </div>
           <div className="w-full max-w-xs">
-            <label className="label">
-              <span className="label-text">End Date</span>
-            </label>
             <DatePicker
+              variant="floating"
+              label="End Date"
               value={rangeDate}
               onChange={(d) => setRangeDate(d ?? undefined)}
-              placeholder="End date"
               min={date}
             />
           </div>

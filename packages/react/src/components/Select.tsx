@@ -6,8 +6,15 @@ import React, { forwardRef } from "react";
 // TYPES
 // ============================================================================
 
-export type SelectVariant = "bordered" | "ghost";
-export type SelectColor = "primary" | "secondary" | "accent" | "info" | "success" | "warning" | "error";
+export type SelectVariant = "bordered" | "ghost" | "floating";
+export type SelectColor =
+  | "primary"
+  | "secondary"
+  | "accent"
+  | "info"
+  | "success"
+  | "warning"
+  | "error";
 export type SelectSize = "xs" | "sm" | "md" | "lg";
 
 export interface SelectOption {
@@ -16,7 +23,10 @@ export interface SelectOption {
   disabled?: boolean;
 }
 
-export interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, "size"> {
+export interface SelectProps extends Omit<
+  React.SelectHTMLAttributes<HTMLSelectElement>,
+  "size"
+> {
   /** Select variant */
   variant?: SelectVariant;
   /** Select color */
@@ -29,6 +39,12 @@ export interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectE
   placeholder?: string;
   /** Show custom arrow (default: true) */
   showArrow?: boolean;
+  /** Label for floating variant */
+  label?: string;
+  /** Error message */
+  error?: string;
+  /** Helper text */
+  helperText?: string;
 }
 
 // ============================================================================
@@ -38,6 +54,7 @@ export interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectE
 const variantClasses: Record<SelectVariant, string> = {
   bordered: "select-bordered",
   ghost: "select-ghost",
+  floating: "",
 };
 
 const colorClasses: Record<SelectColor, string> = {
@@ -83,30 +100,41 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       children,
       className,
       showArrow = true,
+      label,
+      error,
+      helperText,
+      id,
       ...props
     },
-    ref
+    ref,
   ) => {
+    const selectId =
+      id ||
+      (label
+        ? `select-${label.toLowerCase().replace(/\s+/g, "-")}`
+        : undefined);
     // Calculate right padding based on whether arrow is shown
     const rightPadding = showArrow ? "pr-10" : "pr-4";
 
-    return (
+    const selectElement = (
       <div className="relative w-full">
         <select
           ref={ref}
+          id={selectId}
           className={clsx(
             "select w-full appearance-none bg-no-repeat bg-position-[right_1rem_center] bg-size-[1.5em_1.5em]",
             "bg-none", // Important: Override DaisyUI's default background image
-            variantClasses[variant],
-            color && colorClasses[color],
+            variant !== "floating" && variantClasses[variant],
+            error ? colorClasses.error : color && colorClasses[color],
             sizeClasses[size],
             rightPadding,
-            className
+            className,
           )}
           style={{
             // Ensure no native arrow shows up in any browser
             backgroundImage: "none !important",
           }}
+          aria-invalid={error ? "true" : undefined}
           {...props}
         >
           {placeholder && (
@@ -116,7 +144,11 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           )}
           {options
             ? options.map((option) => (
-                <option key={option.value} value={option.value} disabled={option.disabled}>
+                <option
+                  key={option.value}
+                  value={option.value}
+                  disabled={option.disabled}
+                >
                   {option.label}
                 </option>
               ))
@@ -130,7 +162,29 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         )}
       </div>
     );
-  }
+
+    // Floating label variant
+    if (variant === "floating") {
+      return (
+        <div className="form-control w-full">
+          <label className="floating-label">
+            <span>{label}</span>
+            {selectElement}
+          </label>
+          {error && (
+            <span className="label-text-alt text-xs text-error mt-1">
+              {error}
+            </span>
+          )}
+          {!error && helperText && (
+            <span className="label-text-alt text-xs mt-1">{helperText}</span>
+          )}
+        </div>
+      );
+    }
+
+    return selectElement;
+  },
 );
 
 Select.displayName = "Select";

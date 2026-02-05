@@ -86,6 +86,46 @@ export function AmountFieldPage() {
             value={null}
             onChange={() => {}}
           />
+          <AmountField
+            variant="floating"
+            placeholder="0.00"
+            label="Floating Label"
+            value={null}
+            onChange={() => {}}
+          />
+        </div>
+      </ShowcaseSection>
+
+      {/* Floating Label */}
+      <ShowcaseSection title="Floating Label">
+        <p className="text-base-content/70 mb-4">
+          Floating labels provide a modern UX pattern where the label moves up
+          when the input is focused or has value.
+        </p>
+        <div className="max-w-sm space-y-4">
+          <AmountField
+            variant="floating"
+            label="Product Price"
+            placeholder="0.00"
+            value={priceAmount}
+            onChange={setPriceAmount}
+          />
+          <AmountField
+            variant="floating"
+            label="Annual Budget"
+            placeholder="0.00"
+            value={budgetAmount}
+            onChange={setBudgetAmount}
+            helperText="Enter your annual budget"
+          />
+          <AmountField
+            variant="floating"
+            label="Donation"
+            placeholder="0.00"
+            value={donationAmount}
+            onChange={setDonationAmount}
+            error="Minimum donation is $10"
+          />
         </div>
       </ShowcaseSection>
 

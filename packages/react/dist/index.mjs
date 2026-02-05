@@ -4,7 +4,8 @@ import { forwardRef, useEffect, useState } from "react";
 import { jsx, jsxs } from "react/jsx-runtime";
 var variantClasses = {
   bordered: "input-bordered",
-  ghost: "input-ghost"
+  ghost: "input-ghost",
+  floating: ""
 };
 var colorClasses = {
   default: "",
@@ -119,10 +120,9 @@ var AmountField = forwardRef(
     };
     const inputClasses = clsx(
       "input w-full",
-      variantClasses[variant],
-      colorClasses[color],
+      variant !== "floating" && variantClasses[variant],
+      error ? colorClasses.error : colorClasses[color],
       sizeClasses[size],
-      error && "input-error",
       disabled && "input-disabled",
       className
     );
@@ -131,7 +131,7 @@ var AmountField = forwardRef(
         "span",
         {
           className: clsx(
-            "absolute left-3 z-10 text-base-content pointer-events-none font-medium",
+            "absolute left-3 top-1/2 -translate-y-1/2 z-10 text-base-content pointer-events-none font-medium",
             disabled && "opacity-50"
           ),
           children: currencySymbol
@@ -157,6 +157,46 @@ var AmountField = forwardRef(
         }
       )
     ] });
+    if (variant === "floating") {
+      return /* @__PURE__ */ jsxs("div", { className: "form-control w-full", children: [
+        /* @__PURE__ */ jsxs("label", { className: "floating-label", children: [
+          /* @__PURE__ */ jsx("span", { children: label }),
+          /* @__PURE__ */ jsxs("div", { className: "relative w-full flex items-center", children: [
+            currencySymbol && /* @__PURE__ */ jsx(
+              "span",
+              {
+                className: clsx(
+                  "absolute left-3 top-1/2 -translate-y-1/2 z-10 text-base-content pointer-events-none font-medium",
+                  disabled && "opacity-50"
+                ),
+                children: currencySymbol
+              }
+            ),
+            /* @__PURE__ */ jsx(
+              "input",
+              {
+                ref,
+                id: inputId,
+                type: "text",
+                inputMode: "decimal",
+                value: displayValue,
+                onChange: handleChange,
+                onFocus: handleFocus,
+                onBlur: handleBlur,
+                disabled,
+                placeholder,
+                className: clsx(inputClasses, currencySymbol && "pl-8"),
+                "aria-invalid": error ? "true" : void 0,
+                "aria-describedby": error ? `${inputId}-error` : helperText ? `${inputId}-helper` : void 0,
+                ...props
+              }
+            )
+          ] })
+        ] }),
+        error && /* @__PURE__ */ jsx("span", { className: "label-text-alt text-xs text-error mt-1", children: error }),
+        !error && helperText && /* @__PURE__ */ jsx("span", { className: "label-text-alt text-xs mt-1", children: helperText })
+      ] });
+    }
     if (!label && !error && !helperText) {
       return renderInput();
     }
@@ -1045,6 +1085,7 @@ import { forwardRef as forwardRef16, useCallback as useCallback2, useEffect as u
 import { jsx as jsx16, jsxs as jsxs13 } from "react/jsx-runtime";
 var Combobox = forwardRef16(
   ({
+    variant = "bordered",
     options,
     value,
     onChange,
@@ -1053,7 +1094,10 @@ var Combobox = forwardRef16(
     emptyText = "No results found.",
     className,
     disabled = false,
-    id
+    id,
+    label,
+    error,
+    helperText
   }, ref) => {
     const [isOpen, setIsOpen] = useState5(false);
     const [searchTerm, setSearchTerm] = useState5("");
@@ -1130,14 +1174,14 @@ var Combobox = forwardRef16(
         }
       }
     };
-    return /* @__PURE__ */ jsxs13(
+    const dropdownContent = /* @__PURE__ */ jsxs13(
       "div",
       {
         ref: containerRef,
         className: clsx16(
           "dropdown w-full",
           isOpen && "dropdown-open",
-          className
+          variant !== "floating" && className
         ),
         children: [
           /* @__PURE__ */ jsxs13(
@@ -1162,11 +1206,20 @@ var Combobox = forwardRef16(
               className: clsx16(
                 "btn btn-outline w-full justify-between font-normal",
                 !selectedOption && "text-base-content/50",
-                disabled && "btn-disabled"
+                disabled && "btn-disabled",
+                error && "btn-error"
               ),
               children: [
                 /* @__PURE__ */ jsx16("span", { className: "truncate", children: selectedOption?.label || placeholder }),
-                /* @__PURE__ */ jsx16(ChevronDownIcon, { className: clsx16("h-5 w-5 shrink-0 transition-transform duration-200", isOpen && "rotate-180") })
+                /* @__PURE__ */ jsx16(
+                  ChevronDownIcon,
+                  {
+                    className: clsx16(
+                      "h-5 w-5 shrink-0 transition-transform duration-200",
+                      isOpen && "rotate-180"
+                    )
+                  }
+                )
               ]
             }
           ),
@@ -1229,6 +1282,17 @@ var Combobox = forwardRef16(
         ]
       }
     );
+    if (variant === "floating") {
+      return /* @__PURE__ */ jsxs13("div", { className: clsx16("form-control w-full", className), children: [
+        /* @__PURE__ */ jsxs13("label", { className: "floating-label", children: [
+          /* @__PURE__ */ jsx16("span", { children: label }),
+          dropdownContent
+        ] }),
+        error && /* @__PURE__ */ jsx16("span", { className: "label-text-alt text-xs text-error mt-1", children: error }),
+        !error && helperText && /* @__PURE__ */ jsx16("span", { className: "label-text-alt text-xs mt-1", children: helperText })
+      ] });
+    }
+    return dropdownContent;
   }
 );
 Combobox.displayName = "Combobox";
@@ -1794,7 +1858,29 @@ SortableDataTable.displayName = "SortableDataTable";
 // src/components/DatePicker.tsx
 import clsx21 from "clsx";
 import { forwardRef as forwardRef21 } from "react";
-import { jsx as jsx21 } from "react/jsx-runtime";
+import { jsx as jsx21, jsxs as jsxs18 } from "react/jsx-runtime";
+var variantClasses9 = {
+  bordered: "input-bordered",
+  ghost: "input-ghost",
+  floating: ""
+};
+var colorClasses3 = {
+  default: "",
+  primary: "input-primary",
+  secondary: "input-secondary",
+  accent: "input-accent",
+  info: "input-info",
+  success: "input-success",
+  warning: "input-warning",
+  error: "input-error"
+};
+var sizeClasses8 = {
+  xs: "input-xs",
+  sm: "input-sm",
+  md: "input-md",
+  lg: "input-lg",
+  xl: "input-xl"
+};
 function formatDate(date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -1806,21 +1892,68 @@ function parseDate(dateString) {
   return isNaN(date.getTime()) ? null : date;
 }
 var DatePicker = forwardRef21(
-  ({ value, onChange, min, max, className, ...props }, ref) => {
+  ({
+    variant = "bordered",
+    color,
+    size = "md",
+    value,
+    onChange,
+    min,
+    max,
+    label,
+    error,
+    helperText,
+    className,
+    id,
+    ...props
+  }, ref) => {
+    const inputId = id || (label ? `datepicker-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
     const handleChange = (e) => {
       const date = parseDate(e.target.value);
       onChange?.(date);
     };
+    const inputClasses = clsx21(
+      "input w-full",
+      variant !== "floating" && variantClasses9[variant],
+      error ? colorClasses3.error : color && colorClasses3[color],
+      sizeClasses8[size],
+      className
+    );
+    if (variant === "floating") {
+      return /* @__PURE__ */ jsxs18("div", { className: "form-control w-full", children: [
+        /* @__PURE__ */ jsxs18("label", { className: "floating-label", children: [
+          /* @__PURE__ */ jsx21("span", { children: label }),
+          /* @__PURE__ */ jsx21(
+            "input",
+            {
+              ref,
+              id: inputId,
+              type: "date",
+              value: value ? formatDate(value) : "",
+              onChange: handleChange,
+              min: min ? formatDate(min) : void 0,
+              max: max ? formatDate(max) : void 0,
+              className: inputClasses,
+              "aria-invalid": error ? "true" : void 0,
+              ...props
+            }
+          )
+        ] }),
+        error && /* @__PURE__ */ jsx21("span", { className: "label-text-alt text-xs text-error mt-1", children: error }),
+        !error && helperText && /* @__PURE__ */ jsx21("span", { className: "label-text-alt text-xs mt-1", children: helperText })
+      ] });
+    }
     return /* @__PURE__ */ jsx21(
       "input",
       {
         ref,
+        id: inputId,
         type: "date",
         value: value ? formatDate(value) : "",
         onChange: handleChange,
         min: min ? formatDate(min) : void 0,
         max: max ? formatDate(max) : void 0,
-        className: clsx21("input input-bordered w-full", className),
+        className: inputClasses,
         ...props
       }
     );
@@ -1831,7 +1964,7 @@ DatePicker.displayName = "DatePicker";
 // src/components/Dialog.tsx
 import clsx22 from "clsx";
 import { forwardRef as forwardRef22, useEffect as useEffect5, useRef as useRef4 } from "react";
-import { jsx as jsx22, jsxs as jsxs18 } from "react/jsx-runtime";
+import { jsx as jsx22, jsxs as jsxs19 } from "react/jsx-runtime";
 var verticalPositionClasses = {
   top: "modal-top",
   middle: "modal-middle",
@@ -1842,7 +1975,7 @@ var horizontalPositionClasses = {
   center: "",
   end: "modal-end"
 };
-var sizeClasses8 = {
+var sizeClasses9 = {
   xs: "max-w-xs",
   sm: "max-w-sm",
   md: "max-w-md",
@@ -1940,7 +2073,7 @@ var Dialog = forwardRef22(
     };
     const modalBoxClasses = clsx22(
       "modal-box overflow-x-hidden",
-      maxWidth || size && sizeClasses8[size],
+      maxWidth || size && sizeClasses9[size],
       responsive && "sm:modal-middle modal-bottom"
     );
     const modalClasses = clsx22(
@@ -1950,7 +2083,7 @@ var Dialog = forwardRef22(
       responsive && "modal-bottom sm:modal-middle",
       className
     );
-    return /* @__PURE__ */ jsxs18(
+    return /* @__PURE__ */ jsxs19(
       "dialog",
       {
         ref: internalRef,
@@ -1958,7 +2091,7 @@ var Dialog = forwardRef22(
         onClick: handleBackdropClick,
         ...props,
         children: [
-          /* @__PURE__ */ jsxs18("div", { className: modalBoxClasses, children: [
+          /* @__PURE__ */ jsxs19("div", { className: modalBoxClasses, children: [
             showCloseButton && /* @__PURE__ */ jsx22(DialogCloseButton, { onClick: onClose, children: closeButtonContent }),
             children
           ] }),
@@ -1973,10 +2106,10 @@ Dialog.displayName = "Dialog";
 // src/components/Drawer.tsx
 import clsx23 from "clsx";
 import { forwardRef as forwardRef23 } from "react";
-import { jsx as jsx23, jsxs as jsxs19 } from "react/jsx-runtime";
+import { jsx as jsx23, jsxs as jsxs20 } from "react/jsx-runtime";
 var Drawer = forwardRef23(
   ({ open, onClose, position = "left", content, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsxs19("div", { ref, className: clsx23("drawer", position === "right" && "drawer-end", className), ...props, children: [
+    return /* @__PURE__ */ jsxs20("div", { ref, className: clsx23("drawer", position === "right" && "drawer-end", className), ...props, children: [
       /* @__PURE__ */ jsx23(
         "input",
         {
@@ -1992,7 +2125,7 @@ var Drawer = forwardRef23(
         }
       ),
       /* @__PURE__ */ jsx23("div", { className: "drawer-content", children }),
-      /* @__PURE__ */ jsxs19("div", { className: "drawer-side z-40", children: [
+      /* @__PURE__ */ jsxs20("div", { className: "drawer-side z-40", children: [
         /* @__PURE__ */ jsx23("label", { className: "drawer-overlay", onClick: onClose }),
         content
       ] })
@@ -2004,7 +2137,7 @@ Drawer.displayName = "Drawer";
 // src/components/DropdownMenu.tsx
 import clsx24 from "clsx";
 import { forwardRef as forwardRef24, useEffect as useEffect6, useRef as useRef5, useState as useState9 } from "react";
-import { jsx as jsx24, jsxs as jsxs20 } from "react/jsx-runtime";
+import { jsx as jsx24, jsxs as jsxs21 } from "react/jsx-runtime";
 var positionClasses = {
   top: "dropdown-top",
   bottom: "dropdown-bottom",
@@ -2040,7 +2173,7 @@ var Dropdown = forwardRef24(
         onOpenChange?.(newOpen);
       }
     };
-    return /* @__PURE__ */ jsxs20(
+    return /* @__PURE__ */ jsxs21(
       "div",
       {
         ref: dropdownRef,
@@ -2450,7 +2583,7 @@ var defaultOptions = {
 // src/components/RadioGroup.tsx
 import clsx25 from "clsx";
 import { createContext, forwardRef as forwardRef25, useContext } from "react";
-import { jsx as jsx25, jsxs as jsxs21 } from "react/jsx-runtime";
+import { jsx as jsx25, jsxs as jsxs22 } from "react/jsx-runtime";
 var RadioGroupContext = createContext(null);
 var useRadioGroup = () => {
   const context = useContext(RadioGroupContext);
@@ -2459,7 +2592,7 @@ var useRadioGroup = () => {
   }
   return context;
 };
-var variantClasses9 = {
+var variantClasses10 = {
   primary: "radio-primary",
   secondary: "radio-secondary",
   accent: "radio-accent",
@@ -2468,7 +2601,7 @@ var variantClasses9 = {
   warning: "radio-warning",
   error: "radio-error"
 };
-var sizeClasses9 = {
+var sizeClasses10 = {
   xs: "radio-xs",
   sm: "radio-sm",
   md: "radio-md",
@@ -2505,12 +2638,12 @@ var Radio = forwardRef25(({ value, label, className, id, ...props }, ref) => {
       value,
       checked: groupValue === value,
       onChange: handleChange,
-      className: clsx25("radio", variant && variantClasses9[variant], size && sizeClasses9[size], className),
+      className: clsx25("radio", variant && variantClasses10[variant], size && sizeClasses10[size], className),
       ...props
     }
   );
   if (label) {
-    return /* @__PURE__ */ jsxs21("label", { htmlFor: radioId, className: "label cursor-pointer justify-start gap-2", children: [
+    return /* @__PURE__ */ jsxs22("label", { htmlFor: radioId, className: "label cursor-pointer justify-start gap-2", children: [
       radio,
       /* @__PURE__ */ jsx25("span", { className: "label-text", children: label })
     ] });
@@ -2523,12 +2656,13 @@ Radio.displayName = "Radio";
 import { ChevronDownIcon as ChevronDownIcon2 } from "@heroicons/react/20/solid";
 import clsx26 from "clsx";
 import { forwardRef as forwardRef26 } from "react";
-import { jsx as jsx26, jsxs as jsxs22 } from "react/jsx-runtime";
-var variantClasses10 = {
+import { jsx as jsx26, jsxs as jsxs23 } from "react/jsx-runtime";
+var variantClasses11 = {
   bordered: "select-bordered",
-  ghost: "select-ghost"
+  ghost: "select-ghost",
+  floating: ""
 };
-var colorClasses3 = {
+var colorClasses4 = {
   primary: "select-primary",
   secondary: "select-secondary",
   accent: "select-accent",
@@ -2537,7 +2671,7 @@ var colorClasses3 = {
   warning: "select-warning",
   error: "select-error"
 };
-var sizeClasses10 = {
+var sizeClasses11 = {
   xs: "select-xs",
   sm: "select-sm",
   md: "select-md",
@@ -2553,21 +2687,27 @@ var Select = forwardRef26(
     children,
     className,
     showArrow = true,
+    label,
+    error,
+    helperText,
+    id,
     ...props
   }, ref) => {
+    const selectId = id || (label ? `select-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
     const rightPadding = showArrow ? "pr-10" : "pr-4";
-    return /* @__PURE__ */ jsxs22("div", { className: "relative w-full", children: [
-      /* @__PURE__ */ jsxs22(
+    const selectElement = /* @__PURE__ */ jsxs23("div", { className: "relative w-full", children: [
+      /* @__PURE__ */ jsxs23(
         "select",
         {
           ref,
+          id: selectId,
           className: clsx26(
             "select w-full appearance-none bg-no-repeat bg-position-[right_1rem_center] bg-size-[1.5em_1.5em]",
             "bg-none",
             // Important: Override DaisyUI's default background image
-            variantClasses10[variant],
-            color && colorClasses3[color],
-            sizeClasses10[size],
+            variant !== "floating" && variantClasses11[variant],
+            error ? colorClasses4.error : color && colorClasses4[color],
+            sizeClasses11[size],
             rightPadding,
             className
           ),
@@ -2575,10 +2715,19 @@ var Select = forwardRef26(
             // Ensure no native arrow shows up in any browser
             backgroundImage: "none !important"
           },
+          "aria-invalid": error ? "true" : void 0,
           ...props,
           children: [
             placeholder && /* @__PURE__ */ jsx26("option", { value: "", disabled: true, children: placeholder }),
-            options ? options.map((option) => /* @__PURE__ */ jsx26("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
+            options ? options.map((option) => /* @__PURE__ */ jsx26(
+              "option",
+              {
+                value: option.value,
+                disabled: option.disabled,
+                children: option.label
+              },
+              option.value
+            )) : children
           ]
         }
       ),
@@ -2590,6 +2739,17 @@ var Select = forwardRef26(
         }
       )
     ] });
+    if (variant === "floating") {
+      return /* @__PURE__ */ jsxs23("div", { className: "form-control w-full", children: [
+        /* @__PURE__ */ jsxs23("label", { className: "floating-label", children: [
+          /* @__PURE__ */ jsx26("span", { children: label }),
+          selectElement
+        ] }),
+        error && /* @__PURE__ */ jsx26("span", { className: "label-text-alt text-xs text-error mt-1", children: error }),
+        !error && helperText && /* @__PURE__ */ jsx26("span", { className: "label-text-alt text-xs mt-1", children: helperText })
+      ] });
+    }
+    return selectElement;
   }
 );
 Select.displayName = "Select";
@@ -2597,12 +2757,13 @@ Select.displayName = "Select";
 // src/components/Textarea.tsx
 import clsx27 from "clsx";
 import { forwardRef as forwardRef27 } from "react";
-import { jsx as jsx27 } from "react/jsx-runtime";
-var variantClasses11 = {
+import { jsx as jsx27, jsxs as jsxs24 } from "react/jsx-runtime";
+var variantClasses12 = {
   bordered: "textarea-bordered",
-  ghost: "textarea-ghost"
+  ghost: "textarea-ghost",
+  floating: ""
 };
-var colorClasses4 = {
+var colorClasses5 = {
   primary: "textarea-primary",
   secondary: "textarea-secondary",
   accent: "textarea-accent",
@@ -2611,25 +2772,57 @@ var colorClasses4 = {
   warning: "textarea-warning",
   error: "textarea-error"
 };
-var sizeClasses11 = {
+var sizeClasses12 = {
   xs: "textarea-xs",
   sm: "textarea-sm",
   md: "textarea-md",
   lg: "textarea-lg"
 };
 var Textarea = forwardRef27(
-  ({ variant = "bordered", color, size = "md", className, ...props }, ref) => {
+  ({
+    variant = "bordered",
+    color,
+    size = "md",
+    label,
+    error,
+    helperText,
+    className,
+    id,
+    ...props
+  }, ref) => {
+    const textareaId = id || (label ? `textarea-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
+    const textareaClasses = clsx27(
+      "textarea w-full",
+      variant !== "floating" && variantClasses12[variant],
+      error ? colorClasses5.error : color && colorClasses5[color],
+      sizeClasses12[size],
+      className
+    );
+    if (variant === "floating") {
+      return /* @__PURE__ */ jsxs24("div", { className: "form-control w-full", children: [
+        /* @__PURE__ */ jsxs24("label", { className: "floating-label", children: [
+          /* @__PURE__ */ jsx27("span", { children: label }),
+          /* @__PURE__ */ jsx27(
+            "textarea",
+            {
+              ref,
+              id: textareaId,
+              className: textareaClasses,
+              "aria-invalid": error ? "true" : void 0,
+              ...props
+            }
+          )
+        ] }),
+        error && /* @__PURE__ */ jsx27("span", { className: "label-text-alt text-xs text-error mt-1", children: error }),
+        !error && helperText && /* @__PURE__ */ jsx27("span", { className: "label-text-alt text-xs mt-1", children: helperText })
+      ] });
+    }
     return /* @__PURE__ */ jsx27(
       "textarea",
       {
         ref,
-        className: clsx27(
-          "textarea w-full",
-          variantClasses11[variant],
-          color && colorClasses4[color],
-          sizeClasses11[size],
-          className
-        ),
+        id: textareaId,
+        className: textareaClasses,
         ...props
       }
     );
@@ -2638,16 +2831,16 @@ var Textarea = forwardRef27(
 Textarea.displayName = "Textarea";
 
 // src/components/DynamicFormField.tsx
-import { jsx as jsx28, jsxs as jsxs23 } from "react/jsx-runtime";
+import { jsx as jsx28, jsxs as jsxs25 } from "react/jsx-runtime";
 var FieldWrapper = forwardRef28(
   ({ label, description, error, required, className, children }, ref) => {
-    return /* @__PURE__ */ jsxs23(
+    return /* @__PURE__ */ jsxs25(
       "div",
       {
         ref,
         className: clsx28("form-control w-full space-y-1", className),
         children: [
-          label && /* @__PURE__ */ jsxs23("label", { className: "label-text font-medium text-sm", children: [
+          label && /* @__PURE__ */ jsxs25("label", { className: "label-text font-medium text-sm", children: [
             label,
             required && /* @__PURE__ */ jsx28("span", { className: "text-error ml-1", children: "*" })
           ] }),
@@ -2917,7 +3110,7 @@ var DynamicForm = forwardRef28(
         onSubmit(data);
       }
     };
-    return /* @__PURE__ */ jsxs23(
+    return /* @__PURE__ */ jsxs25(
       "form",
       {
         ref,
@@ -2973,10 +3166,10 @@ DynamicForm.displayName = "DynamicForm";
 // src/components/Empty.tsx
 import clsx29 from "clsx";
 import { forwardRef as forwardRef29 } from "react";
-import { jsx as jsx29, jsxs as jsxs24 } from "react/jsx-runtime";
+import { jsx as jsx29, jsxs as jsxs26 } from "react/jsx-runtime";
 var Empty = forwardRef29(
   ({ icon, title, description, action, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsxs24("div", { ref, className: clsx29("flex flex-col items-center justify-center py-12 px-4", className), ...props, children: [
+    return /* @__PURE__ */ jsxs26("div", { ref, className: clsx29("flex flex-col items-center justify-center py-12 px-4", className), ...props, children: [
       icon && /* @__PURE__ */ jsx29("div", { className: "mb-4 text-base-content/50", children: icon }),
       title && /* @__PURE__ */ jsx29("h3", { className: "text-lg font-semibold mb-2", children: title }),
       description && /* @__PURE__ */ jsx29("p", { className: "text-sm text-base-content/70 mb-4 text-center", children: description }),
@@ -2990,7 +3183,7 @@ Empty.displayName = "Empty";
 // src/components/Field.tsx
 import clsx30 from "clsx";
 import { createContext as createContext2, forwardRef as forwardRef30, useContext as useContext2, useId } from "react";
-import { jsx as jsx30, jsxs as jsxs25 } from "react/jsx-runtime";
+import { jsx as jsx30, jsxs as jsxs27 } from "react/jsx-runtime";
 var FieldContext = createContext2(null);
 function useFieldContext() {
   return useContext2(FieldContext);
@@ -3014,7 +3207,7 @@ Field.displayName = "Field";
 var FieldLabel = forwardRef30(
   ({ children, className, ...props }, ref) => {
     const context = useFieldContext();
-    return /* @__PURE__ */ jsxs25(
+    return /* @__PURE__ */ jsxs27(
       "label",
       {
         ref,
@@ -3121,7 +3314,7 @@ FieldLegend.displayName = "FieldLegend";
 // src/components/Form.tsx
 import clsx31 from "clsx";
 import React31, { createContext as createContext3, forwardRef as forwardRef31, useContext as useContext3, useId as useId2 } from "react";
-import { jsx as jsx31, jsxs as jsxs26 } from "react/jsx-runtime";
+import { jsx as jsx31, jsxs as jsxs28 } from "react/jsx-runtime";
 var FormFieldContext = createContext3(null);
 function useFormFieldContext() {
   return useContext3(FormFieldContext);
@@ -3226,8 +3419,8 @@ var FormMessage = forwardRef31(
 FormMessage.displayName = "FormMessage";
 var FormSection = forwardRef31(
   ({ title, description, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsxs26("div", { ref, className: clsx31("space-y-4", className), ...props, children: [
-      (title || description) && /* @__PURE__ */ jsxs26("div", { className: "space-y-1", children: [
+    return /* @__PURE__ */ jsxs28("div", { ref, className: clsx31("space-y-4", className), ...props, children: [
+      (title || description) && /* @__PURE__ */ jsxs28("div", { className: "space-y-1", children: [
         title && /* @__PURE__ */ jsx31("h3", { className: "text-lg font-semibold", children: title }),
         description && /* @__PURE__ */ jsx31("p", { className: "text-sm text-base-content/60", children: description })
       ] }),
@@ -3264,8 +3457,8 @@ FormActions.displayName = "FormActions";
 // src/components/FullPageLoader.tsx
 import clsx32 from "clsx";
 import { forwardRef as forwardRef32 } from "react";
-import { jsx as jsx32, jsxs as jsxs27 } from "react/jsx-runtime";
-var sizeClasses12 = {
+import { jsx as jsx32, jsxs as jsxs29 } from "react/jsx-runtime";
+var sizeClasses13 = {
   xs: "loading-xs",
   sm: "loading-sm",
   md: "loading-md",
@@ -3280,7 +3473,7 @@ var typeClasses = {
   bars: "loading-bars",
   infinity: "loading-infinity"
 };
-var variantClasses12 = {
+var variantClasses13 = {
   default: "",
   primary: "text-primary",
   secondary: "text-secondary",
@@ -3313,7 +3506,7 @@ var FullPageLoader = forwardRef32(
   }, ref) => {
     if (!visible) return null;
     const opacityValue = Math.min(100, Math.max(0, backgroundOpacity));
-    return /* @__PURE__ */ jsxs27(
+    return /* @__PURE__ */ jsxs29(
       "div",
       {
         ref,
@@ -3339,15 +3532,15 @@ var FullPageLoader = forwardRef32(
               }
             }
           ),
-          /* @__PURE__ */ jsx32("div", { className: "absolute inset-0 flex items-center justify-center pointer-events-none", children: /* @__PURE__ */ jsxs27("div", { className: "flex flex-col items-center justify-center gap-0", children: [
+          /* @__PURE__ */ jsx32("div", { className: "absolute inset-0 flex items-center justify-center pointer-events-none", children: /* @__PURE__ */ jsxs29("div", { className: "flex flex-col items-center justify-center gap-0", children: [
             /* @__PURE__ */ jsx32(
               "span",
               {
                 className: clsx32(
                   "loading",
                   typeClasses[type],
-                  sizeClasses12[size],
-                  variantClasses12[variant]
+                  sizeClasses13[size],
+                  variantClasses13[variant]
                 ),
                 "aria-hidden": "true"
               }
@@ -3358,7 +3551,7 @@ var FullPageLoader = forwardRef32(
                 className: clsx32(
                   "mt-4 font-medium",
                   textSizeClasses[size],
-                  variantClasses12[variant]
+                  variantClasses13[variant]
                 ),
                 children: text
               }
@@ -3375,7 +3568,7 @@ FullPageLoader.displayName = "FullPageLoader";
 // src/components/HoverCard.tsx
 import clsx33 from "clsx";
 import { forwardRef as forwardRef33, useEffect as useEffect7, useRef as useRef6, useState as useState10 } from "react";
-import { jsx as jsx33, jsxs as jsxs28 } from "react/jsx-runtime";
+import { jsx as jsx33, jsxs as jsxs30 } from "react/jsx-runtime";
 var HoverCard = forwardRef33(
   ({ trigger, openDelay = 200, closeDelay = 300, children, className, ...props }, ref) => {
     const [isOpen, setIsOpen] = useState10(false);
@@ -3403,7 +3596,7 @@ var HoverCard = forwardRef33(
         setIsOpen(false);
       }, closeDelay);
     };
-    return /* @__PURE__ */ jsxs28(
+    return /* @__PURE__ */ jsxs30(
       "div",
       {
         ref,
@@ -3424,10 +3617,10 @@ HoverCard.displayName = "HoverCard";
 // src/components/InputGroup.tsx
 import clsx34 from "clsx";
 import { forwardRef as forwardRef34 } from "react";
-import { jsx as jsx34, jsxs as jsxs29 } from "react/jsx-runtime";
+import { jsx as jsx34, jsxs as jsxs31 } from "react/jsx-runtime";
 var InputGroup = forwardRef34(
   ({ left, right, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsxs29("label", { ref, className: clsx34("input input-bordered flex items-center gap-2", className), ...props, children: [
+    return /* @__PURE__ */ jsxs31("label", { ref, className: clsx34("input input-bordered flex items-center gap-2", className), ...props, children: [
       left && /* @__PURE__ */ jsx34("span", { className: "text-base-content/70", children: left }),
       children,
       right && /* @__PURE__ */ jsx34("span", { className: "text-base-content/70", children: right })
@@ -3509,12 +3702,12 @@ InputOTP.displayName = "InputOTP";
 // src/components/Item.tsx
 import clsx36 from "clsx";
 import { forwardRef as forwardRef36 } from "react";
-import { jsx as jsx36, jsxs as jsxs30 } from "react/jsx-runtime";
+import { jsx as jsx36, jsxs as jsxs32 } from "react/jsx-runtime";
 var Item = forwardRef36(
   ({ icon, title, description, rightContent, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsxs30("div", { ref, className: clsx36("flex items-center gap-3 p-3 hover:bg-base-200 rounded-lg", className), ...props, children: [
+    return /* @__PURE__ */ jsxs32("div", { ref, className: clsx36("flex items-center gap-3 p-3 hover:bg-base-200 rounded-lg", className), ...props, children: [
       icon && /* @__PURE__ */ jsx36("div", { className: "shrink-0", children: icon }),
-      /* @__PURE__ */ jsxs30("div", { className: "flex-1 min-w-0", children: [
+      /* @__PURE__ */ jsxs32("div", { className: "flex-1 min-w-0", children: [
         title && /* @__PURE__ */ jsx36("div", { className: "font-medium", children: title }),
         description && /* @__PURE__ */ jsx36("div", { className: "text-sm text-base-content/70", children: description }),
         children
@@ -3529,14 +3722,14 @@ Item.displayName = "Item";
 import clsx37 from "clsx";
 import { forwardRef as forwardRef37 } from "react";
 import { jsx as jsx37 } from "react/jsx-runtime";
-var sizeClasses13 = {
+var sizeClasses14 = {
   xs: "kbd-xs",
   sm: "kbd-sm",
   md: "kbd-md",
   lg: "kbd-lg"
 };
 var Kbd = forwardRef37(({ size = "md", children, className, ...props }, ref) => {
-  return /* @__PURE__ */ jsx37("kbd", { ref, className: clsx37("kbd", sizeClasses13[size], className), ...props, children });
+  return /* @__PURE__ */ jsx37("kbd", { ref, className: clsx37("kbd", sizeClasses14[size], className), ...props, children });
 });
 Kbd.displayName = "Kbd";
 
@@ -3544,7 +3737,7 @@ Kbd.displayName = "Kbd";
 import clsx38 from "clsx";
 import { forwardRef as forwardRef38 } from "react";
 import { jsx as jsx38 } from "react/jsx-runtime";
-var sizeClasses14 = {
+var sizeClasses15 = {
   xs: "menu-xs",
   sm: "menu-sm",
   md: "menu-md",
@@ -3560,7 +3753,7 @@ var Menubar = forwardRef38(
           "menu",
           orientation === "horizontal" && "menu-horizontal",
           orientation === "vertical" && "menu-vertical",
-          sizeClasses14[size],
+          sizeClasses15[size],
           compact2 && "menu-compact",
           "bg-base-100",
           className
@@ -3584,11 +3777,11 @@ MenubarItem.displayName = "MenubarItem";
 import clsx39 from "clsx";
 import { forwardRef as forwardRef39 } from "react";
 import { jsx as jsx39 } from "react/jsx-runtime";
-var variantClasses13 = {
+var variantClasses14 = {
   bordered: "select-bordered",
   ghost: "select-ghost"
 };
-var colorClasses5 = {
+var colorClasses6 = {
   primary: "select-primary",
   secondary: "select-secondary",
   accent: "select-accent",
@@ -3597,7 +3790,7 @@ var colorClasses5 = {
   warning: "select-warning",
   error: "select-error"
 };
-var sizeClasses15 = {
+var sizeClasses16 = {
   xs: "select-xs",
   sm: "select-sm",
   md: "select-md",
@@ -3611,9 +3804,9 @@ var NativeSelect = forwardRef39(
         ref,
         className: clsx39(
           "select w-full",
-          variantClasses13[variant],
-          color && colorClasses5[color],
-          sizeClasses15[size],
+          variantClasses14[variant],
+          color && colorClasses6[color],
+          sizeClasses16[size],
           className
         ),
         ...props,
@@ -3628,7 +3821,7 @@ NativeSelect.displayName = "NativeSelect";
 import clsx40 from "clsx";
 import { forwardRef as forwardRef40 } from "react";
 import { jsx as jsx40 } from "react/jsx-runtime";
-var colorClasses6 = {
+var colorClasses7 = {
   default: "bg-base-100",
   neutral: "bg-neutral text-neutral-content",
   primary: "bg-primary text-primary-content",
@@ -3656,7 +3849,7 @@ var Navbar = forwardRef40(
         ref,
         className: clsx40(
           "navbar",
-          colorClasses6[color],
+          colorClasses7[color],
           shadow && "shadow-lg",
           bordered && "border-b border-base-300",
           sticky && "sticky top-0 z-50",
@@ -3701,7 +3894,7 @@ NavigationMenuItem.displayName = "NavigationMenuItem";
 // src/components/Popover.tsx
 import clsx42 from "clsx";
 import { forwardRef as forwardRef42, useEffect as useEffect8, useRef as useRef8, useState as useState12 } from "react";
-import { jsx as jsx42, jsxs as jsxs31 } from "react/jsx-runtime";
+import { jsx as jsx42, jsxs as jsxs33 } from "react/jsx-runtime";
 var Popover = forwardRef42(
   ({ trigger, open, onOpenChange, children, className, ...props }, ref) => {
     const [internalOpen, setInternalOpen] = useState12(false);
@@ -3728,7 +3921,7 @@ var Popover = forwardRef42(
       }
       onOpenChange?.(newOpen);
     };
-    return /* @__PURE__ */ jsxs31("div", { ref: popoverRef, className: clsx42("relative inline-block", className), ...props, children: [
+    return /* @__PURE__ */ jsxs33("div", { ref: popoverRef, className: clsx42("relative inline-block", className), ...props, children: [
       /* @__PURE__ */ jsx42("div", { onClick: handleTriggerClick, children: trigger }),
       isOpen && /* @__PURE__ */ jsx42("div", { className: "absolute z-50 mt-2 min-w-50", children: /* @__PURE__ */ jsx42("div", { className: "bg-base-100 rounded-lg shadow-lg border border-base-300 p-4", children }) })
     ] });
@@ -3740,7 +3933,7 @@ Popover.displayName = "Popover";
 import clsx43 from "clsx";
 import { forwardRef as forwardRef43 } from "react";
 import { jsx as jsx43 } from "react/jsx-runtime";
-var variantClasses14 = {
+var variantClasses15 = {
   primary: "progress-primary",
   secondary: "progress-secondary",
   accent: "progress-accent",
@@ -3755,7 +3948,7 @@ var Progress = forwardRef43(
       "progress",
       {
         ref,
-        className: clsx43("progress w-full", variantClasses14[variant], className),
+        className: clsx43("progress w-full", variantClasses15[variant], className),
         value,
         max: 100,
         ...props
@@ -3769,7 +3962,7 @@ Progress.displayName = "Progress";
 import clsx44 from "clsx";
 import { forwardRef as forwardRef44 } from "react";
 import { jsx as jsx44 } from "react/jsx-runtime";
-var variantClasses15 = {
+var variantClasses16 = {
   default: "",
   primary: "divider-primary",
   secondary: "divider-secondary",
@@ -3784,7 +3977,7 @@ var Separator = forwardRef44(
         className: clsx44(
           "divider",
           orientation === "vertical" && "divider-horizontal",
-          variantClasses15[variant],
+          variantClasses16[variant],
           className
         ),
         ...props,
@@ -3798,7 +3991,7 @@ Separator.displayName = "Separator";
 // src/components/Sheet.tsx
 import clsx45 from "clsx";
 import { forwardRef as forwardRef45, useEffect as useEffect9, useRef as useRef9 } from "react";
-import { jsx as jsx45, jsxs as jsxs32 } from "react/jsx-runtime";
+import { jsx as jsx45, jsxs as jsxs34 } from "react/jsx-runtime";
 var Sheet = forwardRef45(
   ({ open, onClose, position = "right", title, children, className, ...props }, ref) => {
     const dialogRef = useRef9(null);
@@ -3838,9 +4031,9 @@ var Sheet = forwardRef45(
           return "h-full max-h-full w-96 max-w-[90vw]";
       }
     };
-    return /* @__PURE__ */ jsxs32("dialog", { ref: internalRef, className: clsx45("modal", getPositionClasses(), className), ...props, children: [
-      /* @__PURE__ */ jsxs32("div", { className: clsx45("modal-box", getBoxClasses(), "rounded-none"), children: [
-        title && /* @__PURE__ */ jsxs32("div", { className: "flex items-center justify-between mb-4", children: [
+    return /* @__PURE__ */ jsxs34("dialog", { ref: internalRef, className: clsx45("modal", getPositionClasses(), className), ...props, children: [
+      /* @__PURE__ */ jsxs34("div", { className: clsx45("modal-box", getBoxClasses(), "rounded-none"), children: [
+        title && /* @__PURE__ */ jsxs34("div", { className: "flex items-center justify-between mb-4", children: [
           /* @__PURE__ */ jsx45("h3", { className: "font-bold text-lg", children: title }),
           /* @__PURE__ */ jsx45("button", { onClick: onClose, className: "btn btn-sm btn-circle btn-ghost", children: "\u2715" })
         ] }),
@@ -3855,7 +4048,7 @@ Sheet.displayName = "Sheet";
 // src/components/Sidebar.tsx
 import clsx46 from "clsx";
 import { forwardRef as forwardRef46 } from "react";
-import { Fragment, jsx as jsx46, jsxs as jsxs33 } from "react/jsx-runtime";
+import { Fragment, jsx as jsx46, jsxs as jsxs35 } from "react/jsx-runtime";
 var Sidebar = forwardRef46(({ collapsed, children, className, ...props }, ref) => {
   return /* @__PURE__ */ jsx46(
     "div",
@@ -3870,7 +4063,7 @@ var Sidebar = forwardRef46(({ collapsed, children, className, ...props }, ref) =
 Sidebar.displayName = "Sidebar";
 var SidebarItem = forwardRef46(
   ({ icon, href, active, children, className, ...props }, ref) => {
-    const content = /* @__PURE__ */ jsxs33(Fragment, { children: [
+    const content = /* @__PURE__ */ jsxs35(Fragment, { children: [
       icon && /* @__PURE__ */ jsx46("span", { className: "shrink-0", children: icon }),
       /* @__PURE__ */ jsx46("span", { children })
     ] });
@@ -3907,7 +4100,7 @@ Skeleton.displayName = "Skeleton";
 import clsx48 from "clsx";
 import { forwardRef as forwardRef48 } from "react";
 import { jsx as jsx48 } from "react/jsx-runtime";
-var variantClasses16 = {
+var variantClasses17 = {
   primary: "range-primary",
   secondary: "range-secondary",
   accent: "range-accent",
@@ -3916,7 +4109,7 @@ var variantClasses16 = {
   warning: "range-warning",
   error: "range-error"
 };
-var sizeClasses16 = {
+var sizeClasses17 = {
   xs: "range-xs",
   sm: "range-sm",
   md: "range-md",
@@ -3929,7 +4122,7 @@ var Slider = forwardRef48(
       {
         ref,
         type: "range",
-        className: clsx48("range", variantClasses16[variant], sizeClasses16[size], className),
+        className: clsx48("range", variantClasses17[variant], sizeClasses17[size], className),
         ...props
       }
     );
@@ -3941,7 +4134,7 @@ Slider.displayName = "Slider";
 import clsx49 from "clsx";
 import { forwardRef as forwardRef49 } from "react";
 import { jsx as jsx49 } from "react/jsx-runtime";
-var sizeClasses17 = {
+var sizeClasses18 = {
   xs: "loading-xs",
   sm: "loading-sm",
   md: "loading-md",
@@ -3956,7 +4149,7 @@ var typeClasses2 = {
   bars: "loading-bars",
   infinity: "loading-infinity"
 };
-var colorClasses7 = {
+var colorClasses8 = {
   primary: "text-primary",
   secondary: "text-secondary",
   accent: "text-accent",
@@ -3975,8 +4168,8 @@ var Spinner = forwardRef49(
         className: clsx49(
           "loading",
           typeClasses2[type],
-          sizeClasses17[size],
-          color && colorClasses7[color],
+          sizeClasses18[size],
+          color && colorClasses8[color],
           className
         ),
         ...props
@@ -3989,8 +4182,8 @@ Spinner.displayName = "Spinner";
 // src/components/Switch.tsx
 import clsx50 from "clsx";
 import { forwardRef as forwardRef50 } from "react";
-import { jsx as jsx50, jsxs as jsxs34 } from "react/jsx-runtime";
-var variantClasses17 = {
+import { jsx as jsx50, jsxs as jsxs36 } from "react/jsx-runtime";
+var variantClasses18 = {
   primary: "toggle-primary",
   secondary: "toggle-secondary",
   accent: "toggle-accent",
@@ -4000,7 +4193,7 @@ var variantClasses17 = {
   warning: "toggle-warning",
   error: "toggle-error"
 };
-var sizeClasses18 = {
+var sizeClasses19 = {
   xs: "toggle-xs",
   sm: "toggle-sm",
   md: "toggle-md",
@@ -4018,13 +4211,13 @@ var Switch = forwardRef50(
     ...props
   }, ref) => {
     if (checkedIcon || uncheckedIcon) {
-      return /* @__PURE__ */ jsxs34(
+      return /* @__PURE__ */ jsxs36(
         "label",
         {
           className: clsx50(
             "toggle text-base-content",
-            variant && variantClasses17[variant],
-            sizeClasses18[size],
+            variant && variantClasses18[variant],
+            sizeClasses19[size],
             className
           ),
           children: [
@@ -4042,15 +4235,15 @@ var Switch = forwardRef50(
         type: "checkbox",
         className: clsx50(
           "toggle",
-          variant && variantClasses17[variant],
-          sizeClasses18[size],
+          variant && variantClasses18[variant],
+          sizeClasses19[size],
           className
         ),
         ...props
       }
     );
     if (label) {
-      return /* @__PURE__ */ jsxs34("label", { className: "label cursor-pointer justify-start gap-2", children: [
+      return /* @__PURE__ */ jsxs36("label", { className: "label cursor-pointer justify-start gap-2", children: [
         switchElement,
         /* @__PURE__ */ jsx50("span", { className: "label-text", children: label })
       ] });
@@ -4063,8 +4256,8 @@ Switch.displayName = "Switch";
 // src/components/Table.tsx
 import clsx51 from "clsx";
 import { forwardRef as forwardRef51 } from "react";
-import { jsx as jsx51, jsxs as jsxs35 } from "react/jsx-runtime";
-var sizeClasses19 = {
+import { jsx as jsx51, jsxs as jsxs37 } from "react/jsx-runtime";
+var sizeClasses20 = {
   xs: "table-xs",
   sm: "table-sm",
   md: "table-md",
@@ -4078,7 +4271,7 @@ var Table = forwardRef51(
         ref,
         className: clsx51(
           "table",
-          sizeClasses19[size],
+          sizeClasses20[size],
           zebra && "table-zebra",
           pinRows && "table-pin-rows",
           pinCols && "table-pin-cols",
@@ -4097,7 +4290,7 @@ function DataTable({
   getRowKey,
   ...tableProps
 }) {
-  return /* @__PURE__ */ jsxs35(Table, { ...tableProps, children: [
+  return /* @__PURE__ */ jsxs37(Table, { ...tableProps, children: [
     /* @__PURE__ */ jsx51("thead", { children: /* @__PURE__ */ jsx51("tr", { children: columns.map((column) => /* @__PURE__ */ jsx51("th", { children: column.header }, column.key)) }) }),
     /* @__PURE__ */ jsx51("tbody", { children: data.map((item) => /* @__PURE__ */ jsx51("tr", { children: columns.map((column) => /* @__PURE__ */ jsx51("td", { children: column.render ? column.render(item) : item[column.key] }, column.key)) }, getRowKey(item))) })
   ] });
@@ -4115,12 +4308,12 @@ var useTabs = () => {
   }
   return context;
 };
-var variantClasses18 = {
+var variantClasses19 = {
   bordered: "tabs-border",
   lifted: "tabs-lift",
   boxed: "tabs-box"
 };
-var sizeClasses20 = {
+var sizeClasses21 = {
   xs: "tabs-xs",
   sm: "tabs-sm",
   md: "tabs-md",
@@ -4167,7 +4360,7 @@ var Tabs = forwardRef52(
           "div",
           {
             ref,
-            className: clsx52("tabs", variantClasses18[variant], sizeClasses20[size], positionClasses2[position], className),
+            className: clsx52("tabs", variantClasses19[variant], sizeClasses21[size], positionClasses2[position], className),
             ...props,
             children
           }
@@ -4223,7 +4416,7 @@ import {
 } from "@heroicons/react/24/outline";
 import clsx53 from "clsx";
 import { createContext as createContext5, forwardRef as forwardRef53, useContext as useContext5, useEffect as useEffect10, useState as useState14 } from "react";
-import { jsx as jsx53, jsxs as jsxs36 } from "react/jsx-runtime";
+import { jsx as jsx53, jsxs as jsxs38 } from "react/jsx-runtime";
 var ToastContext = createContext5(null);
 var useToast = () => {
   const context = useContext5(ToastContext);
@@ -4232,7 +4425,7 @@ var useToast = () => {
   }
   return context;
 };
-var variantClasses19 = {
+var variantClasses20 = {
   info: "alert-info",
   success: "alert-success",
   warning: "alert-warning",
@@ -4267,7 +4460,7 @@ var ToastItem = forwardRef53(
         return () => clearTimeout(timer);
       }
     }, [duration, onDismiss]);
-    return /* @__PURE__ */ jsxs36("div", { ref, className: clsx53("alert", variantClasses19[variant], className), ...props, children: [
+    return /* @__PURE__ */ jsxs38("div", { ref, className: clsx53("alert", variantClasses20[variant], className), ...props, children: [
       /* @__PURE__ */ jsx53(Icon, { className: "h-6 w-6" }),
       /* @__PURE__ */ jsx53("span", { children: message }),
       onDismiss && /* @__PURE__ */ jsx53("button", { onClick: onDismiss, className: "btn btn-sm btn-circle btn-ghost ml-auto", children: /* @__PURE__ */ jsx53(XMarkIcon, { className: "h-5 w-5" }) })
@@ -4284,7 +4477,7 @@ var ToastProvider = ({ children, position = "bottom-end" }) => {
   const removeToast = (id) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
-  return /* @__PURE__ */ jsxs36(ToastContext.Provider, { value: { toasts, addToast, removeToast }, children: [
+  return /* @__PURE__ */ jsxs38(ToastContext.Provider, { value: { toasts, addToast, removeToast }, children: [
     children,
     toasts.length > 0 && /* @__PURE__ */ jsx53("div", { className: clsx53("toast z-50", positionClasses3[position]), children: toasts.map((toast) => /* @__PURE__ */ jsx53(
       ToastItem,
@@ -4311,13 +4504,13 @@ var useToggleGroup = () => {
   }
   return context;
 };
-var sizeClasses21 = {
+var sizeClasses22 = {
   xs: "btn-xs",
   sm: "btn-sm",
   md: "btn-md",
   lg: "btn-lg"
 };
-var variantClasses20 = {
+var variantClasses21 = {
   primary: "btn-primary",
   secondary: "btn-secondary",
   accent: "btn-accent"
@@ -4342,8 +4535,8 @@ var Toggle = forwardRef54(
         "aria-pressed": isPressed,
         className: clsx54(
           "btn",
-          sizeClasses21[size],
-          variant && variantClasses20[variant],
+          sizeClasses22[size],
+          variant && variantClasses21[variant],
           isPressed && "btn-active",
           className
         ),
@@ -4382,8 +4575,8 @@ var ToggleGroupItem = forwardRef54(
         "aria-pressed": isPressed,
         className: clsx54(
           "btn join-item",
-          size && sizeClasses21[size],
-          variant && variantClasses20[variant],
+          size && sizeClasses22[size],
+          variant && variantClasses21[variant],
           isPressed && "btn-active",
           className
         ),
@@ -4405,7 +4598,7 @@ var positionClasses4 = {
   left: "tooltip-left",
   right: "tooltip-right"
 };
-var variantClasses21 = {
+var variantClasses22 = {
   primary: "tooltip-primary",
   secondary: "tooltip-secondary",
   accent: "tooltip-accent",
@@ -4423,7 +4616,7 @@ var Tooltip = forwardRef55(
         className: clsx55(
           "tooltip",
           positionClasses4[position],
-          variant && variantClasses21[variant],
+          variant && variantClasses22[variant],
           open && "tooltip-open",
           className
         ),
@@ -4440,7 +4633,7 @@ Tooltip.displayName = "Tooltip";
 import clsx56 from "clsx";
 import { forwardRef as forwardRef56 } from "react";
 import { jsx as jsx56 } from "react/jsx-runtime";
-var variantClasses22 = {
+var variantClasses23 = {
   h1: "text-4xl font-bold",
   h2: "text-3xl font-bold",
   h3: "text-2xl font-bold",
@@ -4473,7 +4666,7 @@ var defaultElements = {
 var Typography = forwardRef56(
   ({ variant = "p", as, children, className, ...props }, ref) => {
     const Component = as || defaultElements[variant];
-    return /* @__PURE__ */ jsx56(Component, { ref, className: clsx56(variantClasses22[variant], className), ...props, children });
+    return /* @__PURE__ */ jsx56(Component, { ref, className: clsx56(variantClasses23[variant], className), ...props, children });
   }
 );
 Typography.displayName = "Typography";

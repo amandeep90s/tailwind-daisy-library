@@ -4,7 +4,7 @@ import { Control } from 'react-hook-form';
 import * as react_jsx_runtime from 'react/jsx-runtime';
 import '@shared-ui-library/tokens';
 
-type AmountFieldVariant = "bordered" | "ghost";
+type AmountFieldVariant = "bordered" | "ghost" | "floating";
 type AmountFieldColor = "default" | "neutral" | "primary" | "secondary" | "accent" | "info" | "success" | "warning" | "error";
 type AmountFieldSize = "xs" | "sm" | "md" | "lg" | "xl";
 interface AmountFieldProps extends Omit<React__default.InputHTMLAttributes<HTMLInputElement>, "size" | "type" | "onChange" | "value"> {
@@ -517,12 +517,15 @@ interface CollapsibleProps extends React__default.HTMLAttributes<HTMLDivElement>
  */
 declare const Collapsible: React__default.ForwardRefExoticComponent<CollapsibleProps & React__default.RefAttributes<HTMLDivElement>>;
 
+type ComboboxVariant = "bordered" | "ghost" | "floating";
 interface ComboboxOption {
     value: string;
     label: string;
     disabled?: boolean;
 }
 interface ComboboxProps {
+    /** Style variant */
+    variant?: ComboboxVariant;
     /** Available options */
     options: ComboboxOption[];
     /** Selected value */
@@ -541,6 +544,12 @@ interface ComboboxProps {
     disabled?: boolean;
     /** Unique identifier for the combobox */
     id?: string;
+    /** Label for floating variant */
+    label?: string;
+    /** Error message */
+    error?: string;
+    /** Helper text */
+    helperText?: string;
 }
 /**
  * Combobox component with search functionality following shadcn pattern
@@ -754,7 +763,16 @@ declare const SortableDataTable: <T extends Record<string, any>>(props: Sortable
     ref?: React__default.ForwardedRef<HTMLDivElement>;
 }) => React__default.ReactElement;
 
-interface DatePickerProps extends Omit<React__default.InputHTMLAttributes<HTMLInputElement>, "type" | "onChange" | "value" | "min" | "max" | "min" | "max"> {
+type DatePickerVariant = "bordered" | "ghost" | "floating";
+type DatePickerColor = "primary" | "secondary" | "accent" | "info" | "success" | "warning" | "error";
+type DatePickerSize = "xs" | "sm" | "md" | "lg" | "xl";
+interface DatePickerProps extends Omit<React__default.InputHTMLAttributes<HTMLInputElement>, "type" | "onChange" | "value" | "min" | "max" | "size"> {
+    /** Style variant */
+    variant?: DatePickerVariant;
+    /** Color variant */
+    color?: DatePickerColor;
+    /** Size */
+    size?: DatePickerSize;
     /** Selected date */
     value?: Date;
     /** Callback when date changes */
@@ -763,6 +781,12 @@ interface DatePickerProps extends Omit<React__default.InputHTMLAttributes<HTMLIn
     min?: Date;
     /** Maximum selectable date */
     max?: Date;
+    /** Label for floating variant */
+    label?: string;
+    /** Error message */
+    error?: string;
+    /** Helper text */
+    helperText?: string;
 }
 /**
  * DatePicker component with native input
@@ -770,6 +794,7 @@ interface DatePickerProps extends Omit<React__default.InputHTMLAttributes<HTMLIn
  * @example
  * ```tsx
  * <DatePicker value={selectedDate} onChange={setSelectedDate} />
+ * <DatePicker variant="floating" label="Birth Date" />
  * ```
  */
 declare const DatePicker: React__default.ForwardRefExoticComponent<DatePickerProps & React__default.RefAttributes<HTMLInputElement>>;
@@ -1602,7 +1627,7 @@ interface RadioProps extends Omit<React__default.InputHTMLAttributes<HTMLInputEl
 declare const RadioGroup: React__default.ForwardRefExoticComponent<RadioGroupProps & React__default.RefAttributes<HTMLDivElement>>;
 declare const Radio: React__default.ForwardRefExoticComponent<RadioProps & React__default.RefAttributes<HTMLInputElement>>;
 
-type SelectVariant = "bordered" | "ghost";
+type SelectVariant = "bordered" | "ghost" | "floating";
 type SelectColor = "primary" | "secondary" | "accent" | "info" | "success" | "warning" | "error";
 type SelectSize = "xs" | "sm" | "md" | "lg";
 interface SelectOption {
@@ -1623,6 +1648,12 @@ interface SelectProps extends Omit<React__default.SelectHTMLAttributes<HTMLSelec
     placeholder?: string;
     /** Show custom arrow (default: true) */
     showArrow?: boolean;
+    /** Label for floating variant */
+    label?: string;
+    /** Error message */
+    error?: string;
+    /** Helper text */
+    helperText?: string;
 }
 /**
  * Select component with DaisyUI styling
@@ -1906,7 +1937,7 @@ declare const Tabs: React__default.ForwardRefExoticComponent<TabsProps & React__
 declare const Tab: React__default.ForwardRefExoticComponent<TabProps & React__default.RefAttributes<HTMLInputElement>>;
 declare const TabPanel: React__default.ForwardRefExoticComponent<TabPanelProps & React__default.RefAttributes<HTMLDivElement>>;
 
-type TextareaVariant = "bordered" | "ghost";
+type TextareaVariant = "bordered" | "ghost" | "floating";
 type TextareaColor = "primary" | "secondary" | "accent" | "info" | "success" | "warning" | "error";
 type TextareaSize = "xs" | "sm" | "md" | "lg";
 interface TextareaProps extends React__default.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -1916,6 +1947,12 @@ interface TextareaProps extends React__default.TextareaHTMLAttributes<HTMLTextAr
     color?: TextareaColor;
     /** Textarea size */
     size?: TextareaSize;
+    /** Label for floating variant */
+    label?: string;
+    /** Error message */
+    error?: string;
+    /** Helper text */
+    helperText?: string;
 }
 /**
  * Textarea component with DaisyUI styling
@@ -1924,6 +1961,7 @@ interface TextareaProps extends React__default.TextareaHTMLAttributes<HTMLTextAr
  * ```tsx
  * <Textarea variant="bordered" placeholder="Enter text..." />
  * <Textarea color="primary" rows={5} />
+ * <Textarea variant="floating" label="Message" placeholder="Enter message..." />
  * ```
  */
 declare const Textarea: React__default.ForwardRefExoticComponent<TextareaProps & React__default.RefAttributes<HTMLTextAreaElement>>;
@@ -2062,4 +2100,4 @@ interface TypographyProps extends React__default.HTMLAttributes<HTMLElement> {
  */
 declare const Typography: React__default.ForwardRefExoticComponent<TypographyProps & React__default.RefAttributes<HTMLElement>>;
 
-export { Accordion, type AccordionIconPosition, AccordionItem, type AccordionItemProps, type AccordionProps, type AccordionVariant, Alert, AlertDescription, type AlertDescriptionProps, AlertDialog, type AlertDialogProps, type AlertProps, AlertTitle, type AlertTitleProps, type AlertVariant, AmountField, type AmountFieldColor, type AmountFieldProps, type AmountFieldSize, type AmountFieldVariant, Avatar, AvatarGroup, type AvatarGroupProps, type AvatarProps, type AvatarSize, type AvatarStatus, Badge, type BadgeProps, type BadgeSize, type BadgeVariant, Breadcrumb, BreadcrumbItem, type BreadcrumbItemProps, type BreadcrumbProps, Button, type ButtonAsButtonProps, type ButtonAsLinkProps, ButtonGroup, type ButtonGroupProps, type ButtonProps, type ButtonShape, type ButtonSize, type ButtonVariant, Calendar, type CalendarProps, Card, CardActions, type CardActionsProps, CardBody, type CardBodyProps, type CardProps, CardTitle, type CardTitleProps, type CardVariant, Checkbox, type CheckboxProps, type CheckboxSize, type CheckboxVariant, Collapsible, type CollapsibleProps, Combobox, type ComboboxOption, type ComboboxProps, Command, CommandGroup, type CommandGroupProps, CommandItem, type CommandItemProps, type CommandProps, ContextMenu, type ContextMenuItem, type ContextMenuProps, ControlledDynamicFormField, type ControlledDynamicFormFieldProps, DataTable, type DataTableColumn, type DataTableColumnDef, type DataTableProps, type DataTableSize, type DataTableSortState, DatePicker, type DatePickerProps, Dialog, DialogActions, type DialogActionsProps, DialogCloseButton, type DialogCloseButtonProps, DialogDescription, type DialogDescriptionProps, type DialogHorizontalPosition, type DialogPosition, type DialogProps, type DialogSize, DialogTitle, type DialogTitleProps, type DialogVerticalPosition, Drawer, type DrawerPosition, type DrawerProps, Dropdown, DropdownMenu, type DropdownMenuProps, type DropdownPosition, type DynamicFieldConfig, type DynamicFieldOption, type DynamicFieldType, type DynamicFieldValidation, DynamicForm, DynamicFormField, type DynamicFormFieldProps, type DynamicFormProps, Empty, type EmptyProps, Field, FieldDescription, type FieldDescriptionProps, FieldError, type FieldErrorProps, FieldGroup, type FieldGroupProps, FieldLabel, type FieldLabelProps, FieldLegend, type FieldLegendProps, type FieldProps, FieldSeparator, type FieldSeparatorProps, FieldSet, type FieldSetProps, Form, FormActions, type FormActionsProps, FormControl, type FormControlProps, FormDescription, type FormDescriptionProps, FormField, type FormFieldProps, FormItem, type FormItemProps, FormLabel, type FormLabelProps, FormMessage, type FormMessageProps, type FormProps, FormSection, type FormSectionProps, FullPageLoader, type FullPageLoaderProps, type FullPageLoaderSize, type FullPageLoaderType, type FullPageLoaderVariant, HoverCard, type HoverCardProps, Input, type InputColor, InputGroup, type InputGroupProps, InputOTP, type InputOTPProps, type InputProps, type InputSize, type InputVariant, Item, type ItemProps, Kbd, type KbdProps, type KbdSize, Label, type LabelProps, type LinkComponentProps, Menubar, MenubarItem, type MenubarItemProps, type MenubarOrientation, type MenubarProps, type MenubarSize, NativeSelect, type NativeSelectColor, type NativeSelectProps, type NativeSelectSize, type NativeSelectVariant, Navbar, NavbarCenter, type NavbarCenterProps, type NavbarColor, NavbarEnd, type NavbarEndProps, type NavbarProps, NavbarStart, type NavbarStartProps, NavigationMenu, NavigationMenuItem, type NavigationMenuItemProps, type NavigationMenuProps, Pagination, type PaginationProps, type PaginationVariant, Popover, type PopoverProps, Progress, type ProgressProps, type ProgressVariant, Radio, RadioGroup, type RadioGroupProps, type RadioGroupSize, type RadioGroupVariant, type RadioProps, Select, type SelectColor, type SelectOption, type SelectProps, type SelectSize, type SelectVariant, Separator, type SeparatorOrientation, type SeparatorProps, type SeparatorVariant, Sheet, type SheetPosition, type SheetProps, Sidebar, SidebarItem, type SidebarItemProps, type SidebarProps, Skeleton, type SkeletonProps, Slider, type SliderProps, type SliderSize, type SliderVariant, type SortDirection, SortableDataTable, type SortableDataTableProps, Spinner, type SpinnerProps, type SpinnerSize, type SpinnerType, Switch, type SwitchProps, type SwitchSize, type SwitchVariant, Tab, TabPanel, type TabPanelProps, type TabProps, Table, type TableProps, type TableSize, Tabs, type TabsPosition, type TabsProps, type TabsSize, type TabsVariant, Textarea, type TextareaColor, type TextareaProps, type TextareaSize, type TextareaVariant, ToastItem, type ToastPosition, type ToastProps, ToastProvider, type ToastProviderProps, type ToastVariant, Toggle, ToggleGroup, ToggleGroupItem, type ToggleGroupItemProps, type ToggleGroupProps, type ToggleProps, type ToggleSize, type ToggleVariant, Tooltip, type TooltipPosition, type TooltipProps, type TooltipVariant, Typography, type TypographyProps, type TypographyVariant, useToast };
+export { Accordion, type AccordionIconPosition, AccordionItem, type AccordionItemProps, type AccordionProps, type AccordionVariant, Alert, AlertDescription, type AlertDescriptionProps, AlertDialog, type AlertDialogProps, type AlertProps, AlertTitle, type AlertTitleProps, type AlertVariant, AmountField, type AmountFieldColor, type AmountFieldProps, type AmountFieldSize, type AmountFieldVariant, Avatar, AvatarGroup, type AvatarGroupProps, type AvatarProps, type AvatarSize, type AvatarStatus, Badge, type BadgeProps, type BadgeSize, type BadgeVariant, Breadcrumb, BreadcrumbItem, type BreadcrumbItemProps, type BreadcrumbProps, Button, type ButtonAsButtonProps, type ButtonAsLinkProps, ButtonGroup, type ButtonGroupProps, type ButtonProps, type ButtonShape, type ButtonSize, type ButtonVariant, Calendar, type CalendarProps, Card, CardActions, type CardActionsProps, CardBody, type CardBodyProps, type CardProps, CardTitle, type CardTitleProps, type CardVariant, Checkbox, type CheckboxProps, type CheckboxSize, type CheckboxVariant, Collapsible, type CollapsibleProps, Combobox, type ComboboxOption, type ComboboxProps, type ComboboxVariant, Command, CommandGroup, type CommandGroupProps, CommandItem, type CommandItemProps, type CommandProps, ContextMenu, type ContextMenuItem, type ContextMenuProps, ControlledDynamicFormField, type ControlledDynamicFormFieldProps, DataTable, type DataTableColumn, type DataTableColumnDef, type DataTableProps, type DataTableSize, type DataTableSortState, DatePicker, type DatePickerColor, type DatePickerProps, type DatePickerSize, type DatePickerVariant, Dialog, DialogActions, type DialogActionsProps, DialogCloseButton, type DialogCloseButtonProps, DialogDescription, type DialogDescriptionProps, type DialogHorizontalPosition, type DialogPosition, type DialogProps, type DialogSize, DialogTitle, type DialogTitleProps, type DialogVerticalPosition, Drawer, type DrawerPosition, type DrawerProps, Dropdown, DropdownMenu, type DropdownMenuProps, type DropdownPosition, type DynamicFieldConfig, type DynamicFieldOption, type DynamicFieldType, type DynamicFieldValidation, DynamicForm, DynamicFormField, type DynamicFormFieldProps, type DynamicFormProps, Empty, type EmptyProps, Field, FieldDescription, type FieldDescriptionProps, FieldError, type FieldErrorProps, FieldGroup, type FieldGroupProps, FieldLabel, type FieldLabelProps, FieldLegend, type FieldLegendProps, type FieldProps, FieldSeparator, type FieldSeparatorProps, FieldSet, type FieldSetProps, Form, FormActions, type FormActionsProps, FormControl, type FormControlProps, FormDescription, type FormDescriptionProps, FormField, type FormFieldProps, FormItem, type FormItemProps, FormLabel, type FormLabelProps, FormMessage, type FormMessageProps, type FormProps, FormSection, type FormSectionProps, FullPageLoader, type FullPageLoaderProps, type FullPageLoaderSize, type FullPageLoaderType, type FullPageLoaderVariant, HoverCard, type HoverCardProps, Input, type InputColor, InputGroup, type InputGroupProps, InputOTP, type InputOTPProps, type InputProps, type InputSize, type InputVariant, Item, type ItemProps, Kbd, type KbdProps, type KbdSize, Label, type LabelProps, type LinkComponentProps, Menubar, MenubarItem, type MenubarItemProps, type MenubarOrientation, type MenubarProps, type MenubarSize, NativeSelect, type NativeSelectColor, type NativeSelectProps, type NativeSelectSize, type NativeSelectVariant, Navbar, NavbarCenter, type NavbarCenterProps, type NavbarColor, NavbarEnd, type NavbarEndProps, type NavbarProps, NavbarStart, type NavbarStartProps, NavigationMenu, NavigationMenuItem, type NavigationMenuItemProps, type NavigationMenuProps, Pagination, type PaginationProps, type PaginationVariant, Popover, type PopoverProps, Progress, type ProgressProps, type ProgressVariant, Radio, RadioGroup, type RadioGroupProps, type RadioGroupSize, type RadioGroupVariant, type RadioProps, Select, type SelectColor, type SelectOption, type SelectProps, type SelectSize, type SelectVariant, Separator, type SeparatorOrientation, type SeparatorProps, type SeparatorVariant, Sheet, type SheetPosition, type SheetProps, Sidebar, SidebarItem, type SidebarItemProps, type SidebarProps, Skeleton, type SkeletonProps, Slider, type SliderProps, type SliderSize, type SliderVariant, type SortDirection, SortableDataTable, type SortableDataTableProps, Spinner, type SpinnerProps, type SpinnerSize, type SpinnerType, Switch, type SwitchProps, type SwitchSize, type SwitchVariant, Tab, TabPanel, type TabPanelProps, type TabProps, Table, type TableProps, type TableSize, Tabs, type TabsPosition, type TabsProps, type TabsSize, type TabsVariant, Textarea, type TextareaColor, type TextareaProps, type TextareaSize, type TextareaVariant, ToastItem, type ToastPosition, type ToastProps, ToastProvider, type ToastProviderProps, type ToastVariant, Toggle, ToggleGroup, ToggleGroupItem, type ToggleGroupItemProps, type ToggleGroupProps, type ToggleProps, type ToggleSize, type ToggleVariant, Tooltip, type TooltipPosition, type TooltipProps, type TooltipVariant, Typography, type TypographyProps, type TypographyVariant, useToast };
