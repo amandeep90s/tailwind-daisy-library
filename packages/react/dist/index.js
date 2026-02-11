@@ -1063,6 +1063,13 @@ var Calendar = (0, import_react12.forwardRef)(
     const [currentDate, setCurrentDate] = (0, import_react12.useState)(value || /* @__PURE__ */ new Date());
     const [viewMonth, setViewMonth] = (0, import_react12.useState)(currentDate.getMonth());
     const [viewYear, setViewYear] = (0, import_react12.useState)(currentDate.getFullYear());
+    (0, import_react12.useEffect)(() => {
+      if (value) {
+        setViewMonth(value.getMonth());
+        setViewYear(value.getFullYear());
+        setCurrentDate(value);
+      }
+    }, [value]);
     const daysInMonth = getDaysInMonth(viewYear, viewMonth);
     const firstDay = getFirstDayOfMonth(viewYear, viewMonth);
     const handlePrevMonth = () => {

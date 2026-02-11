@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 
 // ============================================================================
 // TYPES
@@ -56,6 +56,15 @@ export const Calendar = forwardRef<HTMLDivElement, CalendarProps>(
     const [currentDate, setCurrentDate] = useState(value || new Date());
     const [viewMonth, setViewMonth] = useState(currentDate.getMonth());
     const [viewYear, setViewYear] = useState(currentDate.getFullYear());
+
+    // Update view when value prop changes (e.g., when user types a date)
+    useEffect(() => {
+      if (value) {
+        setViewMonth(value.getMonth());
+        setViewYear(value.getFullYear());
+        setCurrentDate(value);
+      }
+    }, [value]);
 
     const daysInMonth = getDaysInMonth(viewYear, viewMonth);
     const firstDay = getFirstDayOfMonth(viewYear, viewMonth);

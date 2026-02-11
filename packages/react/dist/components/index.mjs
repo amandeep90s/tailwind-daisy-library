@@ -908,7 +908,7 @@ ButtonGroup.displayName = "ButtonGroup";
 
 // src/components/Calendar.tsx
 import clsx12 from "clsx";
-import { forwardRef as forwardRef12, useState as useState3 } from "react";
+import { forwardRef as forwardRef12, useEffect as useEffect3, useState as useState3 } from "react";
 import { jsx as jsx12, jsxs as jsxs9 } from "react/jsx-runtime";
 var DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -926,6 +926,13 @@ var Calendar = forwardRef12(
     const [currentDate, setCurrentDate] = useState3(value || /* @__PURE__ */ new Date());
     const [viewMonth, setViewMonth] = useState3(currentDate.getMonth());
     const [viewYear, setViewYear] = useState3(currentDate.getFullYear());
+    useEffect3(() => {
+      if (value) {
+        setViewMonth(value.getMonth());
+        setViewYear(value.getFullYear());
+        setCurrentDate(value);
+      }
+    }, [value]);
     const daysInMonth = getDaysInMonth(viewYear, viewMonth);
     const firstDay = getFirstDayOfMonth(viewYear, viewMonth);
     const handlePrevMonth = () => {
@@ -1133,7 +1140,7 @@ Collapsible.displayName = "Collapsible";
 // src/components/Combobox.tsx
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx16 from "clsx";
-import { forwardRef as forwardRef16, useCallback as useCallback2, useEffect as useEffect3, useRef as useRef2, useState as useState5 } from "react";
+import { forwardRef as forwardRef16, useCallback as useCallback2, useEffect as useEffect4, useRef as useRef2, useState as useState5 } from "react";
 import { jsx as jsx16, jsxs as jsxs13 } from "react/jsx-runtime";
 var Combobox = forwardRef16(
   ({
@@ -1177,7 +1184,7 @@ var Combobox = forwardRef16(
         setPosition("bottom");
       }
     }, []);
-    useEffect3(() => {
+    useEffect4(() => {
       if (isOpen) {
         calculatePosition();
         window.addEventListener("resize", calculatePosition);
@@ -1191,7 +1198,7 @@ var Combobox = forwardRef16(
         };
       }
     }, [isOpen, calculatePosition]);
-    useEffect3(() => {
+    useEffect4(() => {
       const handleClickOutside = (event) => {
         if (containerRef.current && !containerRef.current.contains(event.target)) {
           setIsOpen(false);
@@ -1201,7 +1208,7 @@ var Combobox = forwardRef16(
       document.addEventListener("mousedown", handleClickOutside);
       return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
-    useEffect3(() => {
+    useEffect4(() => {
       const handleKeyDown = (event) => {
         if (!isOpen) return;
         if (event.key === "Escape") {
@@ -1424,14 +1431,14 @@ CommandItem.displayName = "CommandItem";
 
 // src/components/ContextMenu.tsx
 import clsx18 from "clsx";
-import { forwardRef as forwardRef18, useEffect as useEffect4, useRef as useRef3, useState as useState7 } from "react";
+import { forwardRef as forwardRef18, useEffect as useEffect5, useRef as useRef3, useState as useState7 } from "react";
 import { jsx as jsx18, jsxs as jsxs15 } from "react/jsx-runtime";
 var ContextMenu = forwardRef18(
   ({ items, trigger, children, className, ...props }, ref) => {
     const [isOpen, setIsOpen] = useState7(false);
     const [position, setPosition] = useState7({ x: 0, y: 0 });
     const menuRef = useRef3(null);
-    useEffect4(() => {
+    useEffect5(() => {
       const handleClickOutside = (event) => {
         if (menuRef.current && !menuRef.current.contains(event.target)) {
           setIsOpen(false);
@@ -1946,7 +1953,7 @@ SortableDataTable.displayName = "SortableDataTable";
 // src/components/DateInput.tsx
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import clsx21 from "clsx";
-import { forwardRef as forwardRef21, useCallback as useCallback4, useEffect as useEffect5, useRef as useRef4, useState as useState9 } from "react";
+import { forwardRef as forwardRef21, useCallback as useCallback4, useEffect as useEffect6, useRef as useRef4, useState as useState9 } from "react";
 import { jsx as jsx21, jsxs as jsxs18 } from "react/jsx-runtime";
 var variantClasses9 = {
   bordered: "input-bordered",
@@ -2052,10 +2059,10 @@ var DateInput = forwardRef21(
     const [isCalendarOpen, setIsCalendarOpen] = useState9(false);
     const containerRef = useRef4(null);
     const inputId = id || (label ? `date-input-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
-    useEffect5(() => {
+    useEffect6(() => {
       setInputValue(formatDateToString(value || null, dateFormat));
     }, [value, dateFormat]);
-    useEffect5(() => {
+    useEffect6(() => {
       const handleClickOutside = (event) => {
         if (containerRef.current && !containerRef.current.contains(event.target)) {
           setIsCalendarOpen(false);
@@ -2278,7 +2285,7 @@ DatePicker.displayName = "DatePicker";
 
 // src/components/Dialog.tsx
 import clsx23 from "clsx";
-import { forwardRef as forwardRef23, useEffect as useEffect6, useRef as useRef5 } from "react";
+import { forwardRef as forwardRef23, useEffect as useEffect7, useRef as useRef5 } from "react";
 import { jsx as jsx23, jsxs as jsxs20 } from "react/jsx-runtime";
 var verticalPositionClasses = {
   top: "modal-top",
@@ -2355,7 +2362,7 @@ var Dialog = forwardRef23(
   }, ref) => {
     const dialogRef = useRef5(null);
     const internalRef = ref || dialogRef;
-    useEffect6(() => {
+    useEffect7(() => {
       const dialog = internalRef.current;
       if (!dialog) return;
       if (open) {
@@ -2364,7 +2371,7 @@ var Dialog = forwardRef23(
         dialog.close();
       }
     }, [open, internalRef]);
-    useEffect6(() => {
+    useEffect7(() => {
       const dialog = internalRef.current;
       if (!dialog || !open) return;
       const handleKeyDown = (e) => {
@@ -2451,7 +2458,7 @@ Drawer.displayName = "Drawer";
 
 // src/components/DropdownMenu.tsx
 import clsx25 from "clsx";
-import { forwardRef as forwardRef25, useEffect as useEffect7, useRef as useRef6, useState as useState10 } from "react";
+import { forwardRef as forwardRef25, useEffect as useEffect8, useRef as useRef6, useState as useState10 } from "react";
 import { jsx as jsx25, jsxs as jsxs22 } from "react/jsx-runtime";
 var positionClasses = {
   top: "dropdown-top",
@@ -2474,7 +2481,7 @@ var Dropdown = forwardRef25(
     const [internalOpen, setInternalOpen] = useState10(false);
     const dropdownRef = useRef6(null);
     const isOpen = open !== void 0 ? open : internalOpen;
-    useEffect7(() => {
+    useEffect8(() => {
       const handleClickOutside = (event) => {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
           if (open === void 0) {
@@ -3808,14 +3815,14 @@ FullPageLoader.displayName = "FullPageLoader";
 
 // src/components/HoverCard.tsx
 import clsx34 from "clsx";
-import { forwardRef as forwardRef34, useEffect as useEffect8, useRef as useRef7, useState as useState11 } from "react";
+import { forwardRef as forwardRef34, useEffect as useEffect9, useRef as useRef7, useState as useState11 } from "react";
 import { jsx as jsx34, jsxs as jsxs31 } from "react/jsx-runtime";
 var HoverCard = forwardRef34(
   ({ trigger, openDelay = 200, closeDelay = 300, children, className, ...props }, ref) => {
     const [isOpen, setIsOpen] = useState11(false);
     const openTimeoutRef = useRef7(void 0);
     const closeTimeoutRef = useRef7(void 0);
-    useEffect8(() => {
+    useEffect9(() => {
       return () => {
         if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
         if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
@@ -4171,14 +4178,14 @@ NavigationMenuItem.displayName = "NavigationMenuItem";
 
 // src/components/Popover.tsx
 import clsx43 from "clsx";
-import { forwardRef as forwardRef43, useEffect as useEffect9, useRef as useRef9, useState as useState13 } from "react";
+import { forwardRef as forwardRef43, useEffect as useEffect10, useRef as useRef9, useState as useState13 } from "react";
 import { jsx as jsx43, jsxs as jsxs34 } from "react/jsx-runtime";
 var Popover = forwardRef43(
   ({ trigger, open, onOpenChange, children, className, ...props }, ref) => {
     const [internalOpen, setInternalOpen] = useState13(false);
     const popoverRef = useRef9(null);
     const isOpen = open !== void 0 ? open : internalOpen;
-    useEffect9(() => {
+    useEffect10(() => {
       const handleClickOutside = (event) => {
         if (popoverRef.current && !popoverRef.current.contains(event.target)) {
           if (open === void 0) {
@@ -4268,13 +4275,13 @@ Separator.displayName = "Separator";
 
 // src/components/Sheet.tsx
 import clsx46 from "clsx";
-import { forwardRef as forwardRef46, useEffect as useEffect10, useRef as useRef10 } from "react";
+import { forwardRef as forwardRef46, useEffect as useEffect11, useRef as useRef10 } from "react";
 import { jsx as jsx46, jsxs as jsxs35 } from "react/jsx-runtime";
 var Sheet = forwardRef46(
   ({ open, onClose, position = "right", title, children, className, ...props }, ref) => {
     const dialogRef = useRef10(null);
     const internalRef = ref || dialogRef;
-    useEffect10(() => {
+    useEffect11(() => {
       const dialog = internalRef.current;
       if (!dialog) return;
       if (open) {
@@ -4706,7 +4713,7 @@ import {
   XMarkIcon
 } from "@heroicons/react/24/outline";
 import clsx54 from "clsx";
-import { createContext as createContext5, forwardRef as forwardRef54, useContext as useContext5, useEffect as useEffect11, useState as useState15 } from "react";
+import { createContext as createContext5, forwardRef as forwardRef54, useContext as useContext5, useEffect as useEffect12, useState as useState15 } from "react";
 import { jsx as jsx54, jsxs as jsxs39 } from "react/jsx-runtime";
 var ToastContext = createContext5(null);
 var useToast = () => {
@@ -4745,7 +4752,7 @@ var positionClasses3 = {
 var ToastItem = forwardRef54(
   ({ message, variant = "info", duration = 3e3, onDismiss, className, ...props }, ref) => {
     const Icon = variantIcons[variant];
-    useEffect11(() => {
+    useEffect12(() => {
       if (duration && onDismiss) {
         const timer = setTimeout(onDismiss, duration);
         return () => clearTimeout(timer);
