@@ -20,6 +20,7 @@ import { ComboboxPage } from "./pages/ComboboxPage";
 import { CommandPage } from "./pages/CommandPage";
 import { ContextMenuPage } from "./pages/ContextMenuPage";
 import { DataTablePage } from "./pages/DataTablePage";
+import { DateInputPage } from "./pages/DateInputPage";
 import { DatePickerPage } from "./pages/DatePickerPage";
 import { DialogPage } from "./pages/DialogPage";
 import { DrawerPage } from "./pages/DrawerPage";
@@ -85,6 +86,7 @@ function App() {
         <Route path="context-menu" element={<ContextMenuPage />} />
         {/* D-F */}
         <Route path="data-table" element={<DataTablePage />} />
+        <Route path="date-input" element={<DateInputPage />} />
         <Route path="date-picker" element={<DatePickerPage />} />
         <Route path="dialog" element={<DialogPage />} />
         <Route path="drawer" element={<DrawerPage />} />

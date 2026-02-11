@@ -18,6 +18,7 @@ const components = [
   { name: "Command", path: "/command" },
   { name: "Context Menu", path: "/context-menu" },
   { name: "Data Table", path: "/data-table" },
+  { name: "Date Input", path: "/date-input" },
   { name: "Date Picker", path: "/date-picker" },
   { name: "Dialog", path: "/dialog" },
   { name: "Drawer", path: "/drawer" },
