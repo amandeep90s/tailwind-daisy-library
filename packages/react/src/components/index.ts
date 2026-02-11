@@ -73,9 +73,17 @@ export type {
   DataTableSize,
   DataTableSortState,
   PaginationVariant,
-  SortDirection,
   SortableDataTableProps,
+  SortDirection,
 } from "./DataTable";
+export { DateInput } from "./DateInput";
+export type {
+  DateFormat,
+  DateInputColor,
+  DateInputProps,
+  DateInputSize,
+  DateInputVariant,
+} from "./DateInput";
 export { DatePicker } from "./DatePicker";
 export type {
   DatePickerColor,
