@@ -111,7 +111,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       return (
         <div className="form-control w-full">
           <label className="floating-label">
-            <span>{label}</span>
+            <span>{label ?? props.placeholder}</span>
             <input
               ref={ref}
               id={inputId}
@@ -125,6 +125,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               aria-describedby={
                 error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
               }
+              placeholder={props.placeholder ?? label}
               {...props}
             />
           </label>

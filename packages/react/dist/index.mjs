@@ -363,7 +363,7 @@ var Input = forwardRef3(
     if (variant === "floating") {
       return /* @__PURE__ */ jsxs3("div", { className: "form-control w-full", children: [
         /* @__PURE__ */ jsxs3("label", { className: "floating-label", children: [
-          /* @__PURE__ */ jsx3("span", { children: label }),
+          /* @__PURE__ */ jsx3("span", { children: label ?? props.placeholder }),
           /* @__PURE__ */ jsx3(
             "input",
             {
@@ -377,6 +377,7 @@ var Input = forwardRef3(
               ),
               "aria-invalid": error ? "true" : void 0,
               "aria-describedby": error ? `${inputId}-error` : helperText ? `${inputId}-helper` : void 0,
+              placeholder: props.placeholder ?? label,
               ...props
             }
           )

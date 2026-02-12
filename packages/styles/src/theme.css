@@ -129,6 +129,31 @@
   --noise: 0;
 }
 
+/* ============================================================================
+ * Custom Floating Label - HeroUI Style Override
+ * 
+ * Overrides DaisyUI's default floating label behavior so the label floats
+ * INSIDE the input (above the filled text) instead of sitting on top of
+ * the border. This mimics HeroUI / Material-style filled inputs.
+ * ============================================================================ */
+
+/* Override DaisyUI floated state - keep label INSIDE input instead of on border */
+:is(
+    .floating-label:focus-within,
+    .floating-label:not(:has(input:placeholder-shown, textarea:placeholder-shown))
+  )
+  > span {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 2;
+  top: 10px;
+  translate: -12.5% calc(-50% - 0.125em);
+  scale: 0.75;
+  left: 10px;
+  font-size: 12px;
+  background-color: transparent;
+}
+
 /* Custom typography */
 @layer base {
   :root {

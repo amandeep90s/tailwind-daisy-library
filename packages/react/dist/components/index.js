@@ -501,7 +501,7 @@ var Input = (0, import_react3.forwardRef)(
     if (variant === "floating") {
       return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "form-control w-full", children: [
         /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("label", { className: "floating-label", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: label }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { children: label ?? props.placeholder }),
           /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
             "input",
             {
@@ -515,6 +515,7 @@ var Input = (0, import_react3.forwardRef)(
               ),
               "aria-invalid": error ? "true" : void 0,
               "aria-describedby": error ? `${inputId}-error` : helperText ? `${inputId}-helper` : void 0,
+              placeholder: props.placeholder ?? label,
               ...props
             }
           )
