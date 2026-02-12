@@ -158,8 +158,43 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       return (
         <div className="form-control w-full">
           <label className="floating-label">
-            <span>{label}</span>
-            {selectElement}
+            <span>{label ?? placeholder}</span>
+            <div className="relative w-full">
+              <select
+                ref={ref}
+                id={selectId}
+                className={clsx(
+                  "select w-full appearance-none bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat",
+                  "bg-none",
+                  error ? colorClasses.error : color && colorClasses[color],
+                  sizeClasses[size],
+                  rightPadding,
+                  className
+                )}
+                style={{
+                  backgroundImage: "none !important",
+                }}
+                aria-invalid={error ? "true" : undefined}
+                {...props}
+              >
+                <option value="" disabled>
+                  {placeholder ?? label}
+                </option>
+                {options
+                  ? options.map((option) => (
+                      <option key={option.value} value={option.value} disabled={option.disabled}>
+                        {option.label}
+                      </option>
+                    ))
+                  : children}
+              </select>
+              {showArrow && (
+                <ChevronDownIcon
+                  className="text-base-content/70 pointer-events-none absolute top-1/2 right-3 h-5 w-5 -translate-y-1/2"
+                  aria-hidden="true"
+                />
+              )}
+            </div>
           </label>
           {error && <span className="label-text-alt text-error mt-1 text-xs">{error}</span>}
           {!error && helperText && (

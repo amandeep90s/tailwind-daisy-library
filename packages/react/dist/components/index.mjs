@@ -3090,8 +3090,40 @@ var Select = forwardRef27(
     if (variant === "floating") {
       return /* @__PURE__ */ jsxs24("div", { className: "form-control w-full", children: [
         /* @__PURE__ */ jsxs24("label", { className: "floating-label", children: [
-          /* @__PURE__ */ jsx27("span", { children: label }),
-          selectElement
+          /* @__PURE__ */ jsx27("span", { children: label ?? placeholder }),
+          /* @__PURE__ */ jsxs24("div", { className: "relative w-full", children: [
+            /* @__PURE__ */ jsxs24(
+              "select",
+              {
+                ref,
+                id: selectId,
+                className: clsx27(
+                  "select w-full appearance-none bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat",
+                  "bg-none",
+                  error ? colorClasses5.error : color && colorClasses5[color],
+                  sizeClasses12[size],
+                  rightPadding,
+                  className
+                ),
+                style: {
+                  backgroundImage: "none !important"
+                },
+                "aria-invalid": error ? "true" : void 0,
+                ...props,
+                children: [
+                  /* @__PURE__ */ jsx27("option", { value: "", disabled: true, children: placeholder ?? label }),
+                  options ? options.map((option) => /* @__PURE__ */ jsx27("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
+                ]
+              }
+            ),
+            showArrow && /* @__PURE__ */ jsx27(
+              ChevronDownIcon2,
+              {
+                className: "text-base-content/70 pointer-events-none absolute top-1/2 right-3 h-5 w-5 -translate-y-1/2",
+                "aria-hidden": "true"
+              }
+            )
+          ] })
         ] }),
         error && /* @__PURE__ */ jsx27("span", { className: "label-text-alt text-error mt-1 text-xs", children: error }),
         !error && helperText && /* @__PURE__ */ jsx27("span", { className: "label-text-alt mt-1 text-xs", children: helperText })
