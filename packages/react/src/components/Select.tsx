@@ -1,6 +1,6 @@
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
-import React, { forwardRef } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 
 // ============================================================================
 // TYPES
@@ -101,12 +101,33 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       error,
       helperText,
       id,
+      value,
+      onChange,
       ...props
     },
     ref
   ) => {
     const selectId =
       id || (label ? `select-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined);
+
+    // Track if select has a value (for floating label)
+    const [hasValue, setHasValue] = useState(false);
+
+    // Update hasValue when value changes
+    useEffect(() => {
+      if (value !== undefined) {
+        setHasValue(value !== "" && value !== null);
+      }
+    }, [value]);
+
+    // Handle internal change events
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setHasValue(e.target.value !== "" && e.target.value !== null);
+      if (onChange) {
+        onChange(e);
+      }
+    };
+
     // Calculate right padding based on whether arrow is shown
     const rightPadding = showArrow ? "pr-10" : "pr-4";
 
@@ -115,6 +136,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         <select
           ref={ref}
           id={selectId}
+          value={value}
+          onChange={onChange}
           className={clsx(
             "select w-full appearance-none bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat",
             "bg-none", // Important: Override DaisyUI's default background image
@@ -131,11 +154,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           aria-invalid={error ? "true" : undefined}
           {...props}
         >
-          {placeholder && (
-            <option value="" disabled>
-              {placeholder}
-            </option>
-          )}
+          {placeholder && <option value="">{placeholder}</option>}
           {options
             ? options.map((option) => (
                 <option key={option.value} value={option.value} disabled={option.disabled}>
@@ -157,12 +176,14 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     if (variant === "floating") {
       return (
         <div className="form-control w-full">
-          <label className="floating-label">
+          <label className={clsx("floating-label", hasValue && "has-value")}>
             <span>{label ?? placeholder}</span>
             <div className="relative w-full">
               <select
                 ref={ref}
                 id={selectId}
+                value={value}
+                onChange={handleChange}
                 className={clsx(
                   "select w-full appearance-none bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat",
                   "bg-none",
@@ -177,9 +198,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
                 aria-invalid={error ? "true" : undefined}
                 {...props}
               >
-                <option value="" disabled>
-                  {placeholder ?? label}
-                </option>
+                <option value="">{placeholder ?? label}</option>
                 {options
                   ? options.map((option) => (
                       <option key={option.value} value={option.value} disabled={option.disabled}>

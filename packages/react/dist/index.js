@@ -490,7 +490,7 @@ var Input = (0, import_react3.forwardRef)(
   ({
     variant = "bordered",
     color = "default",
-    size = "md",
+    size = "lg",
     label,
     error,
     helperText,
@@ -3198,9 +3198,23 @@ var Select = (0, import_react28.forwardRef)(
     error,
     helperText,
     id,
+    value,
+    onChange,
     ...props
   }, ref) => {
     const selectId = id || (label ? `select-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
+    const [hasValue, setHasValue] = (0, import_react28.useState)(false);
+    (0, import_react28.useEffect)(() => {
+      if (value !== void 0) {
+        setHasValue(value !== "" && value !== null);
+      }
+    }, [value]);
+    const handleChange = (e) => {
+      setHasValue(e.target.value !== "" && e.target.value !== null);
+      if (onChange) {
+        onChange(e);
+      }
+    };
     const rightPadding = showArrow ? "pr-10" : "pr-4";
     const selectElement = /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "relative w-full", children: [
       /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
@@ -3208,6 +3222,8 @@ var Select = (0, import_react28.forwardRef)(
         {
           ref,
           id: selectId,
+          value,
+          onChange,
           className: (0, import_clsx27.default)(
             "select w-full appearance-none bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat",
             "bg-none",
@@ -3225,7 +3241,7 @@ var Select = (0, import_react28.forwardRef)(
           "aria-invalid": error ? "true" : void 0,
           ...props,
           children: [
-            placeholder && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "", disabled: true, children: placeholder }),
+            placeholder && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "", children: placeholder }),
             options ? options.map((option) => /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
           ]
         }
@@ -3240,7 +3256,7 @@ var Select = (0, import_react28.forwardRef)(
     ] });
     if (variant === "floating") {
       return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "form-control w-full", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { className: "floating-label", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { className: (0, import_clsx27.default)("floating-label", hasValue && "has-value"), children: [
           /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { children: label ?? placeholder }),
           /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "relative w-full", children: [
             /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
@@ -3248,6 +3264,8 @@ var Select = (0, import_react28.forwardRef)(
               {
                 ref,
                 id: selectId,
+                value,
+                onChange: handleChange,
                 className: (0, import_clsx27.default)(
                   "select w-full appearance-none bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat",
                   "bg-none",
@@ -3262,7 +3280,7 @@ var Select = (0, import_react28.forwardRef)(
                 "aria-invalid": error ? "true" : void 0,
                 ...props,
                 children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "", disabled: true, children: placeholder ?? label }),
+                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "", children: placeholder ?? label }),
                   options ? options.map((option) => /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
                 ]
               }

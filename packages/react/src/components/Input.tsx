@@ -91,7 +91,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     {
       variant = "bordered",
       color = "default",
-      size = "md",
+      size = "lg",
       label,
       error,
       helperText,

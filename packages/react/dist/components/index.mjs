@@ -348,7 +348,7 @@ var Input = forwardRef3(
   ({
     variant = "bordered",
     color = "default",
-    size = "md",
+    size = "lg",
     label,
     error,
     helperText,
@@ -3025,7 +3025,7 @@ Radio.displayName = "Radio";
 // src/components/Select.tsx
 import { ChevronDownIcon as ChevronDownIcon2 } from "@heroicons/react/20/solid";
 import clsx27 from "clsx";
-import { forwardRef as forwardRef27 } from "react";
+import { forwardRef as forwardRef27, useEffect as useEffect9, useState as useState11 } from "react";
 import { jsx as jsx27, jsxs as jsxs24 } from "react/jsx-runtime";
 var variantClasses12 = {
   bordered: "select-bordered",
@@ -3061,9 +3061,23 @@ var Select = forwardRef27(
     error,
     helperText,
     id,
+    value,
+    onChange,
     ...props
   }, ref) => {
     const selectId = id || (label ? `select-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
+    const [hasValue, setHasValue] = useState11(false);
+    useEffect9(() => {
+      if (value !== void 0) {
+        setHasValue(value !== "" && value !== null);
+      }
+    }, [value]);
+    const handleChange = (e) => {
+      setHasValue(e.target.value !== "" && e.target.value !== null);
+      if (onChange) {
+        onChange(e);
+      }
+    };
     const rightPadding = showArrow ? "pr-10" : "pr-4";
     const selectElement = /* @__PURE__ */ jsxs24("div", { className: "relative w-full", children: [
       /* @__PURE__ */ jsxs24(
@@ -3071,6 +3085,8 @@ var Select = forwardRef27(
         {
           ref,
           id: selectId,
+          value,
+          onChange,
           className: clsx27(
             "select w-full appearance-none bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat",
             "bg-none",
@@ -3088,7 +3104,7 @@ var Select = forwardRef27(
           "aria-invalid": error ? "true" : void 0,
           ...props,
           children: [
-            placeholder && /* @__PURE__ */ jsx27("option", { value: "", disabled: true, children: placeholder }),
+            placeholder && /* @__PURE__ */ jsx27("option", { value: "", children: placeholder }),
             options ? options.map((option) => /* @__PURE__ */ jsx27("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
           ]
         }
@@ -3103,7 +3119,7 @@ var Select = forwardRef27(
     ] });
     if (variant === "floating") {
       return /* @__PURE__ */ jsxs24("div", { className: "form-control w-full", children: [
-        /* @__PURE__ */ jsxs24("label", { className: "floating-label", children: [
+        /* @__PURE__ */ jsxs24("label", { className: clsx27("floating-label", hasValue && "has-value"), children: [
           /* @__PURE__ */ jsx27("span", { children: label ?? placeholder }),
           /* @__PURE__ */ jsxs24("div", { className: "relative w-full", children: [
             /* @__PURE__ */ jsxs24(
@@ -3111,6 +3127,8 @@ var Select = forwardRef27(
               {
                 ref,
                 id: selectId,
+                value,
+                onChange: handleChange,
                 className: clsx27(
                   "select w-full appearance-none bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat",
                   "bg-none",
@@ -3125,7 +3143,7 @@ var Select = forwardRef27(
                 "aria-invalid": error ? "true" : void 0,
                 ...props,
                 children: [
-                  /* @__PURE__ */ jsx27("option", { value: "", disabled: true, children: placeholder ?? label }),
+                  /* @__PURE__ */ jsx27("option", { value: "", children: placeholder ?? label }),
                   options ? options.map((option) => /* @__PURE__ */ jsx27("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
                 ]
               }
@@ -3862,14 +3880,14 @@ FullPageLoader.displayName = "FullPageLoader";
 
 // src/components/HoverCard.tsx
 import clsx34 from "clsx";
-import { forwardRef as forwardRef34, useEffect as useEffect9, useRef as useRef7, useState as useState11 } from "react";
+import { forwardRef as forwardRef34, useEffect as useEffect10, useRef as useRef7, useState as useState12 } from "react";
 import { jsx as jsx34, jsxs as jsxs31 } from "react/jsx-runtime";
 var HoverCard = forwardRef34(
   ({ trigger, openDelay = 200, closeDelay = 300, children, className, ...props }, ref) => {
-    const [isOpen, setIsOpen] = useState11(false);
+    const [isOpen, setIsOpen] = useState12(false);
     const openTimeoutRef = useRef7(void 0);
     const closeTimeoutRef = useRef7(void 0);
-    useEffect9(() => {
+    useEffect10(() => {
       return () => {
         if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
         if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
@@ -3934,11 +3952,11 @@ InputGroup.displayName = "InputGroup";
 
 // src/components/InputOTP.tsx
 import clsx36 from "clsx";
-import { forwardRef as forwardRef36, useRef as useRef8, useState as useState12 } from "react";
+import { forwardRef as forwardRef36, useRef as useRef8, useState as useState13 } from "react";
 import { jsx as jsx36 } from "react/jsx-runtime";
 var InputOTP = forwardRef36(
   ({ length = 6, onChange, onComplete, value = "", className, id, ...props }, ref) => {
-    const [otp, setOtp] = useState12(value.split("").slice(0, length));
+    const [otp, setOtp] = useState13(value.split("").slice(0, length));
     const inputRefs = useRef8([]);
     const inputId = id || `otp-${Math.random().toString(36).substr(2, 9)}`;
     const handleChange = (index, digit) => {
@@ -4225,14 +4243,14 @@ NavigationMenuItem.displayName = "NavigationMenuItem";
 
 // src/components/Popover.tsx
 import clsx43 from "clsx";
-import { forwardRef as forwardRef43, useEffect as useEffect10, useRef as useRef9, useState as useState13 } from "react";
+import { forwardRef as forwardRef43, useEffect as useEffect11, useRef as useRef9, useState as useState14 } from "react";
 import { jsx as jsx43, jsxs as jsxs34 } from "react/jsx-runtime";
 var Popover = forwardRef43(
   ({ trigger, open, onOpenChange, children, className, ...props }, ref) => {
-    const [internalOpen, setInternalOpen] = useState13(false);
+    const [internalOpen, setInternalOpen] = useState14(false);
     const popoverRef = useRef9(null);
     const isOpen = open !== void 0 ? open : internalOpen;
-    useEffect10(() => {
+    useEffect11(() => {
       const handleClickOutside = (event) => {
         if (popoverRef.current && !popoverRef.current.contains(event.target)) {
           if (open === void 0) {
@@ -4322,13 +4340,13 @@ Separator.displayName = "Separator";
 
 // src/components/Sheet.tsx
 import clsx46 from "clsx";
-import { forwardRef as forwardRef46, useEffect as useEffect11, useRef as useRef10 } from "react";
+import { forwardRef as forwardRef46, useEffect as useEffect12, useRef as useRef10 } from "react";
 import { jsx as jsx46, jsxs as jsxs35 } from "react/jsx-runtime";
 var Sheet = forwardRef46(
   ({ open, onClose, position = "right", title, children, className, ...props }, ref) => {
     const dialogRef = useRef10(null);
     const internalRef = ref || dialogRef;
-    useEffect11(() => {
+    useEffect12(() => {
       const dialog = internalRef.current;
       if (!dialog) return;
       if (open) {
@@ -4631,7 +4649,7 @@ function DataTable({
 
 // src/components/Tabs.tsx
 import clsx53 from "clsx";
-import { createContext as createContext4, forwardRef as forwardRef53, useContext as useContext4, useId as useId3, useState as useState14 } from "react";
+import { createContext as createContext4, forwardRef as forwardRef53, useContext as useContext4, useId as useId3, useState as useState15 } from "react";
 import { jsx as jsx53 } from "react/jsx-runtime";
 var TabsContext = createContext4(null);
 var useTabs = () => {
@@ -4680,7 +4698,7 @@ var Tabs = forwardRef53(
     className,
     ...props
   }, ref) => {
-    const [internalActiveTab, setInternalActiveTab] = useState14(defaultValue);
+    const [internalActiveTab, setInternalActiveTab] = useState15(defaultValue);
     const activeTab = value !== void 0 ? value : internalActiveTab;
     const groupName = useId3();
     const handleTabChange = (newValue) => {
@@ -4779,7 +4797,7 @@ import {
   XMarkIcon
 } from "@heroicons/react/24/outline";
 import clsx54 from "clsx";
-import { createContext as createContext5, forwardRef as forwardRef54, useContext as useContext5, useEffect as useEffect12, useState as useState15 } from "react";
+import { createContext as createContext5, forwardRef as forwardRef54, useContext as useContext5, useEffect as useEffect13, useState as useState16 } from "react";
 import { jsx as jsx54, jsxs as jsxs39 } from "react/jsx-runtime";
 var ToastContext = createContext5(null);
 var useToast = () => {
@@ -4818,7 +4836,7 @@ var positionClasses3 = {
 var ToastItem = forwardRef54(
   ({ message, variant = "info", duration = 3e3, onDismiss, className, ...props }, ref) => {
     const Icon = variantIcons[variant];
-    useEffect12(() => {
+    useEffect13(() => {
       if (duration && onDismiss) {
         const timer = setTimeout(onDismiss, duration);
         return () => clearTimeout(timer);
@@ -4836,7 +4854,7 @@ var ToastProvider = ({
   children,
   position = "bottom-end"
 }) => {
-  const [toasts, setToasts] = useState15([]);
+  const [toasts, setToasts] = useState16([]);
   const addToast = (toast) => {
     const id = Math.random().toString(36).substring(7);
     setToasts((prev) => [...prev, { ...toast, id }]);
@@ -4861,7 +4879,7 @@ var ToastProvider = ({
 
 // src/components/Toggle.tsx
 import clsx55 from "clsx";
-import { createContext as createContext6, forwardRef as forwardRef55, useContext as useContext6, useState as useState16 } from "react";
+import { createContext as createContext6, forwardRef as forwardRef55, useContext as useContext6, useState as useState17 } from "react";
 import { jsx as jsx55 } from "react/jsx-runtime";
 var ToggleGroupContext = createContext6(null);
 var useToggleGroup = () => {
@@ -4884,7 +4902,7 @@ var variantClasses22 = {
 };
 var Toggle = forwardRef55(
   ({ pressed, onPressedChange, size = "md", variant, children, className, ...props }, ref) => {
-    const [internalPressed, setInternalPressed] = useState16(false);
+    const [internalPressed, setInternalPressed] = useState17(false);
     const isPressed = pressed !== void 0 ? pressed : internalPressed;
     const handleClick = () => {
       const newPressed = !isPressed;

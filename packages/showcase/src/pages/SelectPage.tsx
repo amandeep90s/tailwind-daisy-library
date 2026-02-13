@@ -42,13 +42,13 @@ export function SelectPage() {
           onChange={(e) => setFloatingValue(e.target.value)}
         />
       </ShowcaseSection>
+      <p className="text-base-content/70 mb-4">
+        Floating labels provide a modern UX pattern where the label moves up when the input is
+        focused or has value.
+      </p>
 
       <ShowcaseSection title="Floating Label">
-        <p className="text-base-content/70 mb-4">
-          Floating labels provide a modern UX pattern where the label moves up when the input is
-          focused or has value.
-        </p>
-        <div className="max-w-sm space-y-4">
+        <div className="flex w-full flex-col space-y-4">
           <Select
             variant="floating"
             label="Country"
