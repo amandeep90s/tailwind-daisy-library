@@ -4776,6 +4776,16 @@ var positionClasses2 = {
   top: "",
   bottom: "tabs-bottom"
 };
+var activeColorClasses = {
+  neutral: "tab-active",
+  primary: "checked:text-primary checked:font-medium checked:[border-color:hsl(var(--p))]",
+  secondary: "checked:text-secondary checked:font-medium checked:[border-color:hsl(var(--s))]",
+  accent: "checked:text-accent checked:font-medium checked:[border-color:hsl(var(--a))]",
+  info: "checked:text-info checked:font-medium checked:[border-color:hsl(var(--in))]",
+  success: "checked:text-success checked:font-medium checked:[border-color:hsl(var(--su))]",
+  warning: "checked:text-warning checked:font-medium checked:[border-color:hsl(var(--wa))]",
+  error: "checked:text-error checked:font-medium checked:[border-color:hsl(var(--er))]"
+};
 var Tabs = (0, import_react54.forwardRef)(
   ({
     defaultValue = "",
@@ -4784,6 +4794,7 @@ var Tabs = (0, import_react54.forwardRef)(
     variant = "bordered",
     size = "md",
     position = "top",
+    activeColor,
     children,
     className,
     ...props
@@ -4806,6 +4817,7 @@ var Tabs = (0, import_react54.forwardRef)(
           variant,
           size,
           position,
+          activeColor,
           groupName
         },
         children: /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
@@ -4830,7 +4842,8 @@ var Tabs = (0, import_react54.forwardRef)(
 Tabs.displayName = "Tabs";
 var Tab = (0, import_react54.forwardRef)(
   ({ value, label, disabled = false, className, ...props }, ref) => {
-    const { activeTab, setActiveTab, groupName } = useTabs();
+    const { activeTab, setActiveTab, groupName, activeColor } = useTabs();
+    const isActive = activeTab === value;
     return /* @__PURE__ */ (0, import_jsx_runtime53.jsx)(
       "input",
       {
@@ -4839,10 +4852,16 @@ var Tab = (0, import_react54.forwardRef)(
         name: groupName,
         role: "tab",
         "aria-label": typeof label === "string" ? label : void 0,
-        checked: activeTab === value,
+        checked: isActive,
         onChange: () => !disabled && setActiveTab(value),
         disabled,
-        className: (0, import_clsx53.default)("tab", disabled && "tab-disabled", className),
+        className: (0, import_clsx53.default)(
+          "tab",
+          isActive && "tab-active",
+          disabled && "tab-disabled",
+          isActive && activeColor && activeColor !== "neutral" && activeColorClasses[activeColor],
+          className
+        ),
         ...props
       }
     );

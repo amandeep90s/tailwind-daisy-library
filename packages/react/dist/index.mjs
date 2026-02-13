@@ -4643,6 +4643,16 @@ var positionClasses2 = {
   top: "",
   bottom: "tabs-bottom"
 };
+var activeColorClasses = {
+  neutral: "tab-active",
+  primary: "checked:text-primary checked:font-medium checked:[border-color:hsl(var(--p))]",
+  secondary: "checked:text-secondary checked:font-medium checked:[border-color:hsl(var(--s))]",
+  accent: "checked:text-accent checked:font-medium checked:[border-color:hsl(var(--a))]",
+  info: "checked:text-info checked:font-medium checked:[border-color:hsl(var(--in))]",
+  success: "checked:text-success checked:font-medium checked:[border-color:hsl(var(--su))]",
+  warning: "checked:text-warning checked:font-medium checked:[border-color:hsl(var(--wa))]",
+  error: "checked:text-error checked:font-medium checked:[border-color:hsl(var(--er))]"
+};
 var Tabs = forwardRef53(
   ({
     defaultValue = "",
@@ -4651,6 +4661,7 @@ var Tabs = forwardRef53(
     variant = "bordered",
     size = "md",
     position = "top",
+    activeColor,
     children,
     className,
     ...props
@@ -4673,6 +4684,7 @@ var Tabs = forwardRef53(
           variant,
           size,
           position,
+          activeColor,
           groupName
         },
         children: /* @__PURE__ */ jsx53(
@@ -4697,7 +4709,8 @@ var Tabs = forwardRef53(
 Tabs.displayName = "Tabs";
 var Tab = forwardRef53(
   ({ value, label, disabled = false, className, ...props }, ref) => {
-    const { activeTab, setActiveTab, groupName } = useTabs();
+    const { activeTab, setActiveTab, groupName, activeColor } = useTabs();
+    const isActive = activeTab === value;
     return /* @__PURE__ */ jsx53(
       "input",
       {
@@ -4706,10 +4719,16 @@ var Tab = forwardRef53(
         name: groupName,
         role: "tab",
         "aria-label": typeof label === "string" ? label : void 0,
-        checked: activeTab === value,
+        checked: isActive,
         onChange: () => !disabled && setActiveTab(value),
         disabled,
-        className: clsx53("tab", disabled && "tab-disabled", className),
+        className: clsx53(
+          "tab",
+          isActive && "tab-active",
+          disabled && "tab-disabled",
+          isActive && activeColor && activeColor !== "neutral" && activeColorClasses[activeColor],
+          className
+        ),
         ...props
       }
     );

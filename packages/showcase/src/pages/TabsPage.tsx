@@ -382,6 +382,154 @@ export function TabsPage() {
           </Tabs>
         </div>
       </ShowcaseSection>
+
+      <ShowcaseSection title="Active Tab Colors">
+        <div className="w-full space-y-8">
+          <div>
+            <p className="mb-3 text-sm font-semibold">Primary Color</p>
+            <Tabs defaultValue="tab1" variant="bordered" activeColor="primary">
+              <Tab value="tab1" label="Home" />
+              <TabPanel value="tab1">
+                <p className="text-sm">Active tab displayed in primary color.</p>
+              </TabPanel>
+              <Tab value="tab2" label="Profile" />
+              <TabPanel value="tab2">
+                <p className="text-sm">Switch to see the primary color on active tab.</p>
+              </TabPanel>
+              <Tab value="tab3" label="Settings" />
+              <TabPanel value="tab3">
+                <p className="text-sm">Primary color styling for active state.</p>
+              </TabPanel>
+            </Tabs>
+          </div>
+
+          <div>
+            <p className="mb-3 text-sm font-semibold">Secondary Color</p>
+            <Tabs defaultValue="tab1" variant="lifted" activeColor="secondary">
+              <Tab value="tab1" label="Dashboard" />
+              <TabPanel value="tab1">
+                <p className="text-sm">Active tab displayed in secondary color.</p>
+              </TabPanel>
+              <Tab value="tab2" label="Analytics" />
+              <TabPanel value="tab2">
+                <p className="text-sm">The active tab uses secondary color theme.</p>
+              </TabPanel>
+              <Tab value="tab3" label="Reports" />
+              <TabPanel value="tab3">
+                <p className="text-sm">Secondary color for active tab indicator.</p>
+              </TabPanel>
+            </Tabs>
+          </div>
+
+          <div>
+            <p className="mb-3 text-sm font-semibold">Success Color</p>
+            <Tabs defaultValue="tab1" variant="boxed" activeColor="success">
+              <Tab value="tab1" label="✓ Completed" />
+              <TabPanel value="tab1">
+                <p className="text-sm">Active tab shown in success color (green).</p>
+              </TabPanel>
+              <Tab value="tab2" label="In Progress" />
+              <TabPanel value="tab2">
+                <p className="text-sm">Success color highlights active tab status.</p>
+              </TabPanel>
+              <Tab value="tab3" label="Pending" />
+              <TabPanel value="tab3">
+                <p className="text-sm">Green color indicates successful/active state.</p>
+              </TabPanel>
+            </Tabs>
+          </div>
+
+          <div>
+            <p className="mb-3 text-sm font-semibold">Warning Color</p>
+            <Tabs defaultValue="tab1" variant="lifted" activeColor="warning">
+              <Tab value="tab1" label="⚠ Warning" />
+              <TabPanel value="tab1">
+                <p className="text-sm">Active tab displayed in warning color (amber).</p>
+              </TabPanel>
+              <Tab value="tab2" label="Alerts" />
+              <TabPanel value="tab2">
+                <p className="text-sm">Warning color for active tab display.</p>
+              </TabPanel>
+              <Tab value="tab3" label="Notifications" />
+              <TabPanel value="tab3">
+                <p className="text-sm">Amber/warning color active state indicator.</p>
+              </TabPanel>
+            </Tabs>
+          </div>
+
+          <div>
+            <p className="mb-3 text-sm font-semibold">Error Color</p>
+            <Tabs defaultValue="tab1" variant="bordered" activeColor="error">
+              <Tab value="tab1" label="✕ Error" />
+              <TabPanel value="tab1">
+                <p className="text-sm">Active tab displayed in error color (red).</p>
+              </TabPanel>
+              <Tab value="tab2" label="Issues" />
+              <TabPanel value="tab2">
+                <p className="text-sm">Error color highlights the active tab.</p>
+              </TabPanel>
+              <Tab value="tab3" label="Problems" />
+              <TabPanel value="tab3">
+                <p className="text-sm">Red error color for active tab status.</p>
+              </TabPanel>
+            </Tabs>
+          </div>
+
+          <div>
+            <p className="mb-3 text-sm font-semibold">Info Color</p>
+            <Tabs defaultValue="tab1" variant="boxed" activeColor="info">
+              <Tab value="tab1" label="ℹ Info" />
+              <TabPanel value="tab1">
+                <p className="text-sm">Active tab in info color (blue).</p>
+              </TabPanel>
+              <Tab value="tab2" label="Details" />
+              <TabPanel value="tab2">
+                <p className="text-sm">Info color for active tab display.</p>
+              </TabPanel>
+              <Tab value="tab3" label="More" />
+              <TabPanel value="tab3">
+                <p className="text-sm">Blue info color active state styling.</p>
+              </TabPanel>
+            </Tabs>
+          </div>
+
+          <div>
+            <p className="mb-3 text-sm font-semibold">Accent Color</p>
+            <Tabs defaultValue="tab1" variant="lifted" activeColor="accent">
+              <Tab value="tab1" label="Featured" />
+              <TabPanel value="tab1">
+                <p className="text-sm">Active tab in accent color.</p>
+              </TabPanel>
+              <Tab value="tab2" label="Promoted" />
+              <TabPanel value="tab2">
+                <p className="text-sm">Accent color highlights the active tab.</p>
+              </TabPanel>
+              <Tab value="tab3" label="Special" />
+              <TabPanel value="tab3">
+                <p className="text-sm">Accent color for active state display.</p>
+              </TabPanel>
+            </Tabs>
+          </div>
+
+          <div>
+            <p className="mb-3 text-sm font-semibold">Neutral Color (Default)</p>
+            <Tabs defaultValue="tab1" variant="bordered" activeColor="neutral">
+              <Tab value="tab1" label="Standard" />
+              <TabPanel value="tab1">
+                <p className="text-sm">Active tab in neutral color (default styling).</p>
+              </TabPanel>
+              <Tab value="tab2" label="Regular" />
+              <TabPanel value="tab2">
+                <p className="text-sm">Neutral color for a clean, standard look.</p>
+              </TabPanel>
+              <Tab value="tab3" label="Basic" />
+              <TabPanel value="tab3">
+                <p className="text-sm">Neutral active tab color styling.</p>
+              </TabPanel>
+            </Tabs>
+          </div>
+        </div>
+      </ShowcaseSection>
     </ComponentPage>
   );
 }

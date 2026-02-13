@@ -1941,6 +1941,7 @@ declare function DataTable<T extends Record<string, any>>({ data, columns, getRo
 type TabsVariant = "bordered" | "lifted" | "boxed";
 type TabsSize = "xs" | "sm" | "md" | "lg" | "xl";
 type TabsPosition = "top" | "bottom";
+type TabsColor = "neutral" | "primary" | "secondary" | "accent" | "info" | "success" | "warning" | "error";
 interface TabsProps extends Omit<React__default.HTMLAttributes<HTMLDivElement>, "onChange"> {
     /** Tabs variant */
     variant?: TabsVariant;
@@ -1948,6 +1949,8 @@ interface TabsProps extends Omit<React__default.HTMLAttributes<HTMLDivElement>, 
     size?: TabsSize;
     /** Tabs position (top or bottom) */
     position?: TabsPosition;
+    /** Active tab color */
+    activeColor?: TabsColor;
     /** Default active tab */
     defaultValue?: string;
     /** Controlled active tab */

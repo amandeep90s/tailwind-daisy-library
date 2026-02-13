@@ -8,6 +8,15 @@ import React, { createContext, forwardRef, useContext, useId, useState } from "r
 export type TabsVariant = "bordered" | "lifted" | "boxed";
 export type TabsSize = "xs" | "sm" | "md" | "lg" | "xl";
 export type TabsPosition = "top" | "bottom";
+export type TabsColor =
+  | "neutral"
+  | "primary"
+  | "secondary"
+  | "accent"
+  | "info"
+  | "success"
+  | "warning"
+  | "error";
 
 export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
   /** Tabs variant */
@@ -16,6 +25,8 @@ export interface TabsProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "o
   size?: TabsSize;
   /** Tabs position (top or bottom) */
   position?: TabsPosition;
+  /** Active tab color */
+  activeColor?: TabsColor;
   /** Default active tab */
   defaultValue?: string;
   /** Controlled active tab */
@@ -51,6 +62,7 @@ interface TabsContextValue {
   variant: TabsVariant;
   size: TabsSize;
   position: TabsPosition;
+  activeColor?: TabsColor;
   groupName: string;
 }
 
@@ -87,6 +99,17 @@ const positionClasses: Record<TabsPosition, string> = {
   bottom: "tabs-bottom",
 };
 
+const activeColorClasses: Record<TabsColor, string> = {
+  neutral: "tab-active",
+  primary: "checked:text-primary checked:font-medium checked:[border-color:hsl(var(--p))]",
+  secondary: "checked:text-secondary checked:font-medium checked:[border-color:hsl(var(--s))]",
+  accent: "checked:text-accent checked:font-medium checked:[border-color:hsl(var(--a))]",
+  info: "checked:text-info checked:font-medium checked:[border-color:hsl(var(--in))]",
+  success: "checked:text-success checked:font-medium checked:[border-color:hsl(var(--su))]",
+  warning: "checked:text-warning checked:font-medium checked:[border-color:hsl(var(--wa))]",
+  error: "checked:text-error checked:font-medium checked:[border-color:hsl(var(--er))]",
+};
+
 /**
  * Tabs component with DaisyUI styling using radio inputs for native tab-content support
  *
@@ -109,6 +132,7 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
       variant = "bordered",
       size = "md",
       position = "top",
+      activeColor,
       children,
       className,
       ...props
@@ -134,6 +158,7 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
           variant,
           size,
           position,
+          activeColor,
           groupName,
         }}
       >
@@ -159,7 +184,8 @@ Tabs.displayName = "Tabs";
 
 export const Tab = forwardRef<HTMLInputElement, TabProps>(
   ({ value, label, disabled = false, className, ...props }, ref) => {
-    const { activeTab, setActiveTab, groupName } = useTabs();
+    const { activeTab, setActiveTab, groupName, activeColor } = useTabs();
+    const isActive = activeTab === value;
 
     return (
       <input
@@ -168,10 +194,16 @@ export const Tab = forwardRef<HTMLInputElement, TabProps>(
         name={groupName}
         role="tab"
         aria-label={typeof label === "string" ? label : undefined}
-        checked={activeTab === value}
+        checked={isActive}
         onChange={() => !disabled && setActiveTab(value)}
         disabled={disabled}
-        className={clsx("tab", disabled && "tab-disabled", className)}
+        className={clsx(
+          "tab",
+          isActive && "tab-active",
+          disabled && "tab-disabled",
+          isActive && activeColor && activeColor !== "neutral" && activeColorClasses[activeColor],
+          className
+        )}
         {...props}
       />
     );
