@@ -12,7 +12,8 @@ export type RadioGroupVariant =
   | "info"
   | "success"
   | "warning"
-  | "error";
+  | "error"
+  | "subtle";
 export type RadioGroupSize = "xs" | "sm" | "md" | "lg";
 
 export interface RadioGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
@@ -76,6 +77,7 @@ const variantClasses: Record<RadioGroupVariant, string> = {
   success: "radio-success",
   warning: "radio-warning",
   error: "radio-error",
+  subtle: "", // Handled specially in Radio component
 };
 
 const sizeClasses: Record<RadioGroupSize, string> = {
@@ -136,9 +138,30 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
   ({ value, label, className, id, ...props }, ref) => {
     const { name, value: groupValue, onChange, variant, size } = useRadioGroup();
     const radioId = id || `radio-${name}-${value}`;
+    const isChecked = groupValue === value;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       onChange?.(e.target.value);
+    };
+
+    // For subtle variant, apply special styling
+    const getRadioClasses = () => {
+      if (variant === "subtle") {
+        return clsx(
+          "radio",
+          size && sizeClasses[size],
+          isChecked
+            ? "radio-accent"
+            : "!border-gray-400 !bg-transparent checked:!border-accent checked:!bg-accent",
+          className
+        );
+      }
+      return clsx(
+        "radio",
+        variant && variantClasses[variant],
+        size && sizeClasses[size],
+        className
+      );
     };
 
     const radio = (
@@ -148,14 +171,9 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
         type="radio"
         name={name}
         value={value}
-        checked={groupValue === value}
+        checked={isChecked}
         onChange={handleChange}
-        className={clsx(
-          "radio",
-          variant && variantClasses[variant],
-          size && sizeClasses[size],
-          className
-        )}
+        className={getRadioClasses()}
         {...props}
       />
     );

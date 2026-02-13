@@ -3067,7 +3067,9 @@ var variantClasses11 = {
   info: "radio-info",
   success: "radio-success",
   warning: "radio-warning",
-  error: "radio-error"
+  error: "radio-error",
+  subtle: ""
+  // Handled specially in Radio component
 };
 var sizeClasses11 = {
   xs: "radio-xs",
@@ -3108,8 +3110,25 @@ var Radio = (0, import_react27.forwardRef)(
   ({ value, label, className, id, ...props }, ref) => {
     const { name, value: groupValue, onChange, variant, size } = useRadioGroup();
     const radioId = id || `radio-${name}-${value}`;
+    const isChecked = groupValue === value;
     const handleChange = (e) => {
       onChange?.(e.target.value);
+    };
+    const getRadioClasses = () => {
+      if (variant === "subtle") {
+        return (0, import_clsx26.default)(
+          "radio",
+          size && sizeClasses11[size],
+          isChecked ? "radio-accent" : "!border-gray-400 !bg-transparent checked:!border-accent checked:!bg-accent",
+          className
+        );
+      }
+      return (0, import_clsx26.default)(
+        "radio",
+        variant && variantClasses11[variant],
+        size && sizeClasses11[size],
+        className
+      );
     };
     const radio = /* @__PURE__ */ (0, import_jsx_runtime26.jsx)(
       "input",
@@ -3119,14 +3138,9 @@ var Radio = (0, import_react27.forwardRef)(
         type: "radio",
         name,
         value,
-        checked: groupValue === value,
+        checked: isChecked,
         onChange: handleChange,
-        className: (0, import_clsx26.default)(
-          "radio",
-          variant && variantClasses11[variant],
-          size && sizeClasses11[size],
-          className
-        ),
+        className: getRadioClasses(),
         ...props
       }
     );

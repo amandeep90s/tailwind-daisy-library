@@ -11,7 +11,7 @@ export function RadioGroupPage() {
       description="A set of checkable buttons where only one can be checked at a time."
     >
       <ShowcaseSection title="Default">
-        <RadioGroup name="default" value={value} onChange={setValue}>
+        <RadioGroup name="default" value={value} onChange={setValue} variant="subtle">
           <Radio value="option1" label="Option 1" />
           <Radio value="option2" label="Option 2" />
           <Radio value="option3" label="Option 3" />

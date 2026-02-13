@@ -2934,7 +2934,9 @@ var variantClasses11 = {
   info: "radio-info",
   success: "radio-success",
   warning: "radio-warning",
-  error: "radio-error"
+  error: "radio-error",
+  subtle: ""
+  // Handled specially in Radio component
 };
 var sizeClasses11 = {
   xs: "radio-xs",
@@ -2975,8 +2977,25 @@ var Radio = forwardRef26(
   ({ value, label, className, id, ...props }, ref) => {
     const { name, value: groupValue, onChange, variant, size } = useRadioGroup();
     const radioId = id || `radio-${name}-${value}`;
+    const isChecked = groupValue === value;
     const handleChange = (e) => {
       onChange?.(e.target.value);
+    };
+    const getRadioClasses = () => {
+      if (variant === "subtle") {
+        return clsx26(
+          "radio",
+          size && sizeClasses11[size],
+          isChecked ? "radio-accent" : "!border-gray-400 !bg-transparent checked:!border-accent checked:!bg-accent",
+          className
+        );
+      }
+      return clsx26(
+        "radio",
+        variant && variantClasses11[variant],
+        size && sizeClasses11[size],
+        className
+      );
     };
     const radio = /* @__PURE__ */ jsx26(
       "input",
@@ -2986,14 +3005,9 @@ var Radio = forwardRef26(
         type: "radio",
         name,
         value,
-        checked: groupValue === value,
+        checked: isChecked,
         onChange: handleChange,
-        className: clsx26(
-          "radio",
-          variant && variantClasses11[variant],
-          size && sizeClasses11[size],
-          className
-        ),
+        className: getRadioClasses(),
         ...props
       }
     );

@@ -1636,7 +1636,7 @@ interface ProgressProps extends React__default.ProgressHTMLAttributes<HTMLProgre
  */
 declare const Progress: React__default.ForwardRefExoticComponent<ProgressProps & React__default.RefAttributes<HTMLProgressElement>>;
 
-type RadioGroupVariant = "primary" | "secondary" | "accent" | "info" | "success" | "warning" | "error";
+type RadioGroupVariant = "primary" | "secondary" | "accent" | "info" | "success" | "warning" | "error" | "subtle";
 type RadioGroupSize = "xs" | "sm" | "md" | "lg";
 interface RadioGroupProps extends Omit<React__default.HTMLAttributes<HTMLDivElement>, "onChange"> {
     /** Group name */
