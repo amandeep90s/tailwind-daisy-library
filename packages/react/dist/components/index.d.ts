@@ -524,7 +524,7 @@ interface ComboboxOption {
     disabled?: boolean;
 }
 interface ComboboxProps {
-    /** Style variant */
+    /** Style variant. 'floating' uses custom UI with floating label, 'bordered' and 'ghost' use standard behavior */
     variant?: ComboboxVariant;
     /** Available options */
     options: ComboboxOption[];
@@ -544,7 +544,7 @@ interface ComboboxProps {
     disabled?: boolean;
     /** Unique identifier for the combobox */
     id?: string;
-    /** Label for floating variant */
+    /** Label text (required for floating variant, optional for others) */
     label?: string;
     /** Error message */
     error?: string;
@@ -555,8 +555,28 @@ interface ComboboxProps {
  * Combobox component with search functionality following shadcn pattern
  * Uses a button trigger with a dropdown containing a search input
  *
+ * Features:
+ * - **Floating variant**: Custom UI with floating label that moves to top when value is selected or dropdown opens
+ * - **Bordered/Ghost variants**: Standard combobox behavior
+ * - Searchable options with keyboard navigation
+ * - Collision detection for dropdown positioning
+ *
  * @example
  * ```tsx
+ * // Floating variant
+ * <Combobox
+ *   variant="floating"
+ *   label="Select Framework"
+ *   options={[
+ *     { value: 'react', label: 'React' },
+ *     { value: 'vue', label: 'Vue' },
+ *   ]}
+ *   value={value}
+ *   onChange={setValue}
+ *   searchPlaceholder="Search frameworks..."
+ * />
+ *
+ * // Standard variant
  * <Combobox
  *   options={[
  *     { value: '1', label: 'Option 1' },

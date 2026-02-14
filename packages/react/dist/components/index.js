@@ -1353,7 +1353,9 @@ var Combobox = (0, import_react16.forwardRef)(
       document.addEventListener("keydown", handleKeyDown);
       return () => document.removeEventListener("keydown", handleKeyDown);
     }, [isOpen]);
-    const handleSelect = (optionValue) => {
+    const handleSelect = (optionValue, event) => {
+      event?.stopPropagation();
+      event?.preventDefault();
       const newValue = optionValue === value ? "" : optionValue;
       onChange?.(newValue);
       setSearchTerm("");
@@ -1367,6 +1369,7 @@ var Combobox = (0, import_react16.forwardRef)(
         }
       }
     };
+    const isActive = !!value || isOpen;
     const dropdownContent = /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
       "div",
       {
@@ -1452,7 +1455,7 @@ var Combobox = (0, import_react16.forwardRef)(
                           "button",
                           {
                             type: "button",
-                            onClick: () => handleSelect(option.value),
+                            onClick: (e) => handleSelect(option.value, e),
                             disabled: option.disabled,
                             className: (0, import_clsx16.default)(
                               "flex w-full items-center justify-between",
@@ -1476,10 +1479,121 @@ var Combobox = (0, import_react16.forwardRef)(
       }
     );
     if (variant === "floating") {
-      return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: (0, import_clsx16.default)("form-control w-full", className), children: [
-        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: "floating-label", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { children: label }),
-          dropdownContent
+      return /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { ref: containerRef, className: (0, import_clsx16.default)("form-control w-full", className), children: [
+        /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("label", { className: `floating-label ${isActive ? "active" : ""}`, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "outer-label", children: label }),
+          /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)("div", { className: (0, import_clsx16.default)("dropdown w-full", isOpen && "dropdown-open"), children: [
+            /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+              "button",
+              {
+                ref: (node) => {
+                  triggerRef.current = node;
+                  if (typeof ref === "function") {
+                    ref(node);
+                  } else if (ref) {
+                    ref.current = node;
+                  }
+                },
+                id: comboboxId,
+                type: "button",
+                role: "combobox",
+                "aria-expanded": isOpen,
+                "aria-haspopup": "listbox",
+                "aria-controls": `${comboboxId}-listbox`,
+                disabled,
+                onClick: handleToggle,
+                className: (0, import_clsx16.default)(
+                  "input input-bordered relative flex w-full cursor-pointer outline-none",
+                  "items-center justify-between gap-2 px-4 py-3 transition-colors",
+                  "bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat",
+                  "bg-none",
+                  // Override DaisyUI default background
+                  disabled && "cursor-not-allowed opacity-50",
+                  error && "input-error"
+                ),
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+                    "span",
+                    {
+                      className: (0, import_clsx16.default)(
+                        "select-content flex flex-1 justify-start select-none",
+                        value && "pt-4 pl-1"
+                      ),
+                      children: [
+                        /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "internal-label", children: label || placeholder }),
+                        value && selectedOption && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "select-value text-secondary-400 text-base", children: selectedOption.label })
+                      ]
+                    }
+                  ),
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+                    import_solid.ChevronDownIcon,
+                    {
+                      className: (0, import_clsx16.default)(
+                        "h-5 w-5 shrink-0 transition-transform duration-200",
+                        isOpen && "rotate-180"
+                      )
+                    }
+                  )
+                ]
+              }
+            ),
+            isOpen && /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+              "div",
+              {
+                ref: dropdownRef,
+                className: (0, import_clsx16.default)(
+                  "dropdown-content bg-base-100 rounded-box border-base-300 z-50 w-full border shadow-lg",
+                  position === "bottom" ? "mt-1" : "bottom-full mb-1"
+                ),
+                style: position === "top" ? { bottom: "100%", top: "auto" } : void 0,
+                children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("div", { className: "border-base-300 border-b p-2", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+                    "input",
+                    {
+                      ref: searchInputRef,
+                      type: "text",
+                      placeholder: searchPlaceholder,
+                      value: searchTerm,
+                      onChange: (e) => setSearchTerm(e.target.value),
+                      className: "input input-sm input-bordered w-full"
+                    }
+                  ) }),
+                  /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+                    "ul",
+                    {
+                      className: "menu max-h-60 w-full flex-col flex-nowrap overflow-y-auto p-2",
+                      role: "listbox",
+                      children: filteredOptions.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("li", { className: "disabled w-full", children: /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "text-base-content/50 w-full text-center", children: emptyText }) }) : filteredOptions.map((option) => /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(
+                        "li",
+                        {
+                          role: "option",
+                          "aria-selected": option.value === value,
+                          className: "w-full",
+                          children: /* @__PURE__ */ (0, import_jsx_runtime16.jsxs)(
+                            "button",
+                            {
+                              type: "button",
+                              onClick: (e) => handleSelect(option.value, e),
+                              disabled: option.disabled,
+                              className: (0, import_clsx16.default)(
+                                "flex w-full items-center justify-between",
+                                option.value === value && "active"
+                              ),
+                              children: [
+                                /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "truncate", children: option.label }),
+                                option.value === value && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)(import_solid.CheckIcon, { className: "h-4 w-4" })
+                              ]
+                            }
+                          )
+                        },
+                        option.value
+                      ))
+                    }
+                  )
+                ]
+              }
+            )
+          ] })
         ] }),
         error && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "label-text-alt text-error mt-1 text-xs", children: error }),
         !error && helperText && /* @__PURE__ */ (0, import_jsx_runtime16.jsx)("span", { className: "label-text-alt mt-1 text-xs", children: helperText })

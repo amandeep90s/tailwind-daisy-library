@@ -43,7 +43,7 @@ export function ComboboxPage() {
       description="Autocomplete input and command palette with a list of suggestions. Click the button to open a searchable dropdown."
     >
       <ShowcaseSection title="Default">
-        <div className="w-72">
+        <div className="w-full">
           <Combobox
             options={frameworks}
             value={framework}
@@ -58,7 +58,7 @@ export function ComboboxPage() {
       </ShowcaseSection>
 
       <ShowcaseSection title="With Custom Empty Text">
-        <div className="w-72">
+        <div className="w-full">
           <Combobox
             options={countries}
             value={country}
@@ -74,7 +74,7 @@ export function ComboboxPage() {
       </ShowcaseSection>
 
       <ShowcaseSection title="With Disabled Options">
-        <div className="w-72">
+        <div className="w-full">
           <Combobox
             options={statuses}
             value={status}
@@ -90,7 +90,7 @@ export function ComboboxPage() {
       </ShowcaseSection>
 
       <ShowcaseSection title="Disabled Combobox">
-        <div className="w-72">
+        <div className="w-full">
           <Combobox
             options={frameworks}
             value="react"
@@ -101,19 +101,51 @@ export function ComboboxPage() {
         </div>
       </ShowcaseSection>
 
-      <ShowcaseSection title="Floating Label">
+      <ShowcaseSection title="Floating Label Behavior">
+        <div className="flex w-full flex-col space-y-6">
+          <p className="text-base-content/70 text-sm">
+            The floating variant displays the label by default. When a value is selected or the
+            dropdown opens, the label moves to the top, similar to Material Design.
+          </p>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+              <p className="mb-3 text-sm font-semibold">Without Selection:</p>
+              <Combobox
+                variant="floating"
+                label="Select Framework"
+                options={frameworks}
+                value=""
+                onChange={() => {}}
+                searchPlaceholder="Search frameworks..."
+              />
+            </div>
+            <div>
+              <p className="mb-3 text-sm font-semibold">With Selection:</p>
+              <Combobox
+                variant="floating"
+                label="Select Framework"
+                options={frameworks}
+                value="react"
+                onChange={() => {}}
+                searchPlaceholder="Search frameworks..."
+              />
+            </div>
+          </div>
+        </div>
+      </ShowcaseSection>
+
+      <ShowcaseSection title="Floating Label Examples">
         <p className="text-base-content/70 mb-4">
-          Floating labels provide a modern UX pattern where the label moves up when the input is
+          Floating labels provide a modern UX pattern where the label moves up when the combobox is
           focused or has value.
         </p>
-        <div className="max-w-sm space-y-4">
+        <div className="space-y-4">
           <Combobox
             variant="floating"
             label="Framework"
             options={frameworks}
             value={framework}
             onChange={setFramework}
-            placeholder="Select framework..."
             searchPlaceholder="Search frameworks..."
           />
           <Combobox
@@ -122,7 +154,6 @@ export function ComboboxPage() {
             options={countries}
             value={country}
             onChange={setCountry}
-            placeholder="Select country..."
             helperText="Choose your country of residence"
           />
           <Combobox
@@ -131,14 +162,40 @@ export function ComboboxPage() {
             options={statuses}
             value={status}
             onChange={setStatus}
-            placeholder="Set status..."
             error="Status is required"
           />
         </div>
       </ShowcaseSection>
 
+      <ShowcaseSection title="Variants">
+        <div className="flex flex-col gap-4">
+          <div className="w-full">
+            <p className="mb-2 text-sm font-semibold">Bordered (Default):</p>
+            <Combobox
+              variant="bordered"
+              options={frameworks}
+              value={framework}
+              onChange={setFramework}
+              placeholder="Select framework..."
+              searchPlaceholder="Search frameworks..."
+            />
+          </div>
+          <div className="w-full">
+            <p className="mb-2 text-sm font-semibold">Floating:</p>
+            <Combobox
+              variant="floating"
+              label="Framework"
+              options={frameworks}
+              value={framework}
+              onChange={setFramework}
+              searchPlaceholder="Search frameworks..."
+            />
+          </div>
+        </div>
+      </ShowcaseSection>
+
       <ShowcaseSection title="Toggle Selection">
-        <div className="w-72">
+        <div className="w-full">
           <Combobox
             options={frameworks}
             value={framework}

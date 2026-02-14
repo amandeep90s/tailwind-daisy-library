@@ -1220,7 +1220,9 @@ var Combobox = forwardRef16(
       document.addEventListener("keydown", handleKeyDown);
       return () => document.removeEventListener("keydown", handleKeyDown);
     }, [isOpen]);
-    const handleSelect = (optionValue) => {
+    const handleSelect = (optionValue, event) => {
+      event?.stopPropagation();
+      event?.preventDefault();
       const newValue = optionValue === value ? "" : optionValue;
       onChange?.(newValue);
       setSearchTerm("");
@@ -1234,6 +1236,7 @@ var Combobox = forwardRef16(
         }
       }
     };
+    const isActive = !!value || isOpen;
     const dropdownContent = /* @__PURE__ */ jsxs13(
       "div",
       {
@@ -1319,7 +1322,7 @@ var Combobox = forwardRef16(
                           "button",
                           {
                             type: "button",
-                            onClick: () => handleSelect(option.value),
+                            onClick: (e) => handleSelect(option.value, e),
                             disabled: option.disabled,
                             className: clsx16(
                               "flex w-full items-center justify-between",
@@ -1343,10 +1346,121 @@ var Combobox = forwardRef16(
       }
     );
     if (variant === "floating") {
-      return /* @__PURE__ */ jsxs13("div", { className: clsx16("form-control w-full", className), children: [
-        /* @__PURE__ */ jsxs13("label", { className: "floating-label", children: [
-          /* @__PURE__ */ jsx16("span", { children: label }),
-          dropdownContent
+      return /* @__PURE__ */ jsxs13("div", { ref: containerRef, className: clsx16("form-control w-full", className), children: [
+        /* @__PURE__ */ jsxs13("label", { className: `floating-label ${isActive ? "active" : ""}`, children: [
+          /* @__PURE__ */ jsx16("span", { className: "outer-label", children: label }),
+          /* @__PURE__ */ jsxs13("div", { className: clsx16("dropdown w-full", isOpen && "dropdown-open"), children: [
+            /* @__PURE__ */ jsxs13(
+              "button",
+              {
+                ref: (node) => {
+                  triggerRef.current = node;
+                  if (typeof ref === "function") {
+                    ref(node);
+                  } else if (ref) {
+                    ref.current = node;
+                  }
+                },
+                id: comboboxId,
+                type: "button",
+                role: "combobox",
+                "aria-expanded": isOpen,
+                "aria-haspopup": "listbox",
+                "aria-controls": `${comboboxId}-listbox`,
+                disabled,
+                onClick: handleToggle,
+                className: clsx16(
+                  "input input-bordered relative flex w-full cursor-pointer outline-none",
+                  "items-center justify-between gap-2 px-4 py-3 transition-colors",
+                  "bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat",
+                  "bg-none",
+                  // Override DaisyUI default background
+                  disabled && "cursor-not-allowed opacity-50",
+                  error && "input-error"
+                ),
+                children: [
+                  /* @__PURE__ */ jsxs13(
+                    "span",
+                    {
+                      className: clsx16(
+                        "select-content flex flex-1 justify-start select-none",
+                        value && "pt-4 pl-1"
+                      ),
+                      children: [
+                        /* @__PURE__ */ jsx16("span", { className: "internal-label", children: label || placeholder }),
+                        value && selectedOption && /* @__PURE__ */ jsx16("span", { className: "select-value text-secondary-400 text-base", children: selectedOption.label })
+                      ]
+                    }
+                  ),
+                  /* @__PURE__ */ jsx16(
+                    ChevronDownIcon,
+                    {
+                      className: clsx16(
+                        "h-5 w-5 shrink-0 transition-transform duration-200",
+                        isOpen && "rotate-180"
+                      )
+                    }
+                  )
+                ]
+              }
+            ),
+            isOpen && /* @__PURE__ */ jsxs13(
+              "div",
+              {
+                ref: dropdownRef,
+                className: clsx16(
+                  "dropdown-content bg-base-100 rounded-box border-base-300 z-50 w-full border shadow-lg",
+                  position === "bottom" ? "mt-1" : "bottom-full mb-1"
+                ),
+                style: position === "top" ? { bottom: "100%", top: "auto" } : void 0,
+                children: [
+                  /* @__PURE__ */ jsx16("div", { className: "border-base-300 border-b p-2", children: /* @__PURE__ */ jsx16(
+                    "input",
+                    {
+                      ref: searchInputRef,
+                      type: "text",
+                      placeholder: searchPlaceholder,
+                      value: searchTerm,
+                      onChange: (e) => setSearchTerm(e.target.value),
+                      className: "input input-sm input-bordered w-full"
+                    }
+                  ) }),
+                  /* @__PURE__ */ jsx16(
+                    "ul",
+                    {
+                      className: "menu max-h-60 w-full flex-col flex-nowrap overflow-y-auto p-2",
+                      role: "listbox",
+                      children: filteredOptions.length === 0 ? /* @__PURE__ */ jsx16("li", { className: "disabled w-full", children: /* @__PURE__ */ jsx16("span", { className: "text-base-content/50 w-full text-center", children: emptyText }) }) : filteredOptions.map((option) => /* @__PURE__ */ jsx16(
+                        "li",
+                        {
+                          role: "option",
+                          "aria-selected": option.value === value,
+                          className: "w-full",
+                          children: /* @__PURE__ */ jsxs13(
+                            "button",
+                            {
+                              type: "button",
+                              onClick: (e) => handleSelect(option.value, e),
+                              disabled: option.disabled,
+                              className: clsx16(
+                                "flex w-full items-center justify-between",
+                                option.value === value && "active"
+                              ),
+                              children: [
+                                /* @__PURE__ */ jsx16("span", { className: "truncate", children: option.label }),
+                                option.value === value && /* @__PURE__ */ jsx16(CheckIcon, { className: "h-4 w-4" })
+                              ]
+                            }
+                          )
+                        },
+                        option.value
+                      ))
+                    }
+                  )
+                ]
+              }
+            )
+          ] })
         ] }),
         error && /* @__PURE__ */ jsx16("span", { className: "label-text-alt text-error mt-1 text-xs", children: error }),
         !error && helperText && /* @__PURE__ */ jsx16("span", { className: "label-text-alt mt-1 text-xs", children: helperText })
