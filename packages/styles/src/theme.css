@@ -142,18 +142,10 @@
     .floating-label:focus-within,
     .floating-label:not(:has(input:placeholder-shown, textarea:placeholder-shown))
   )
-  > input,
-:is(
-    .floating-label:focus-within,
-    .floating-label:not(:has(input:placeholder-shown, textarea:placeholder-shown))
-  )
-  > textarea,
-:is(.floating-label.has-value:focus-within, .floating-label.has-value) select,
-:is(.floating-label.has-value:focus-within, .floating-label.has-value) button {
+  > input {
   padding-top: 0.875rem;
   transition: padding-top 0.2s ease-in-out;
 }
-
 :is(
     .floating-label:focus-within,
     .floating-label:not(:has(input:placeholder-shown, textarea:placeholder-shown))
@@ -167,12 +159,6 @@
     .floating-label:focus-within,
     .floating-label:not(:has(input:placeholder-shown, textarea:placeholder-shown))
   )
-  > span,
-:is(
-    .floating-label:focus-within:has(select),
-    .floating-label.has-value:has(select),
-    .floating-label:has(select:valid:not(:placeholder-shown))
-  )
   > span {
   opacity: 1;
   pointer-events: auto;
@@ -185,19 +171,91 @@
   background-color: transparent;
 }
 
-/* Hide label initially for select elements when no value is selected */
-.floating-label:has(select) > span {
-  display: none;
-}
-.has-value.floating-label:has(select) > span {
+/* Datepicker CSS */
+/* Hide the native date input visually but keep it functional */
+.datepicker-native {
   position: absolute;
+  inset: 0;
   opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+}
+
+/* Floating label container */
+/* .floating-label {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+} */
+
+/* Outer label - floats at the top when active */
+:is(
+    .floating-label:focus-within,
+    .floating-label:not(:has(input:placeholder-shown, textarea:placeholder-shown))
+  )
+  > span.outer-label {
+  position: absolute;
+  left: 1rem;
+  top: 1.5rem;
+  transform: translateY(-50%);
+  background-color: hsl(var(--b1));
+  padding: 0 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: hsl(var(--p));
   pointer-events: none;
-  z-index: 2;
-  top: 1rem;
-  left: 0.625rem;
-  transition: all 0.2s ease-in-out;
-  display: inline-block;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Show outer label when active */
+:is(
+    .active.floating-label:focus-within,
+    .active.floating-label:not(:has(input:placeholder-shown, textarea:placeholder-shown))
+  )
+  > span.outer-label {
+  opacity: 1;
+}
+
+/* Internal label - appears inside input when not active */
+.internal-label {
+  color: hsl(var(--bc) / 0.5);
+  font-size: 1rem;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Hide internal label when active */
+.floating-label.active .internal-label {
+  opacity: 0;
+  position: absolute;
+}
+
+/* Date value display */
+.date-value {
+  color: hsl(var(--bc));
+}
+
+/* ============================================================================
+ * Tooltip Z-Index Fix for Accordion
+ * 
+ * Ensures tooltips inside accordion icons appear on top of accordion content
+ * ============================================================================ */
+
+/* Tooltip positioning and z-index */
+.tooltip {
+  position: relative;
+  z-index: 50;
+}
+
+/* Ensure tooltip content appears above accordion */
+.tooltip::before,
+.tooltip::after {
+  z-index: 50 !important;
 }
 
 /* Custom typography */

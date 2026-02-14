@@ -2312,13 +2312,14 @@ var DateInput = (0, import_react21.forwardRef)(
 DateInput.displayName = "DateInput";
 
 // src/components/DatePicker.tsx
+var import_solid2 = require("@heroicons/react/20/solid");
 var import_clsx22 = __toESM(require("clsx"));
 var import_react22 = require("react");
 var import_jsx_runtime22 = require("react/jsx-runtime");
 var variantClasses10 = {
   bordered: "input-bordered",
   ghost: "input-ghost",
-  floating: ""
+  floating: "border-secondary-400"
 };
 var colorClasses4 = {
   default: "",
@@ -2337,22 +2338,66 @@ var sizeClasses9 = {
   lg: "input-lg",
   xl: "input-xl"
 };
-function formatDate(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+function formatDateByPattern(isoDate, format) {
+  if (!isoDate) return "";
+  const [year, month, day] = isoDate.split("-");
+  switch (format) {
+    case "dd/mm/yyyy":
+      return `${day}/${month}/${year}`;
+    case "mm/dd/yyyy":
+      return `${month}/${day}/${year}`;
+    case "yyyy-mm-dd":
+      return isoDate;
+    case "dd-mm-yyyy":
+      return `${day}-${month}-${year}`;
+    case "mm-dd-yyyy":
+      return `${month}-${day}-${year}`;
+    default:
+      return `${day}/${month}/${year}`;
+  }
 }
-function parseDate(dateString) {
-  const date = new Date(dateString);
-  return isNaN(date.getTime()) ? null : date;
+function getPlaceholderByFormat(format) {
+  return format;
 }
+var HiddenDateInput = ({
+  inputRef,
+  currentValue,
+  handleDateChange,
+  handleFocus,
+  handleBlur,
+  min,
+  max,
+  inputId,
+  error,
+  props
+}) => /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+  "input",
+  {
+    ...props,
+    ref: inputRef,
+    type: "date",
+    className: "datepicker-native",
+    value: currentValue,
+    onChange: handleDateChange,
+    onFocus: handleFocus,
+    onBlur: handleBlur,
+    min,
+    max,
+    id: inputId,
+    "aria-invalid": error ? "true" : void 0
+  }
+);
+var ErrorHelperText = ({ error, helperText, inputId }) => /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(import_jsx_runtime22.Fragment, { children: [
+  error && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("label", { className: "label", id: `${inputId}-error`, children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "label-text-alt text-error", children: error }) }),
+  !error && helperText && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("label", { className: "label", id: `${inputId}-helper`, children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "label-text-alt", children: helperText }) })
+] });
 var DatePicker = (0, import_react22.forwardRef)(
   ({
     variant = "bordered",
     color,
-    size = "md",
+    size = "lg",
     value,
+    defaultValue,
     onChange,
     min,
     max,
@@ -2361,58 +2406,129 @@ var DatePicker = (0, import_react22.forwardRef)(
     helperText,
     className,
     id,
+    fullWidth = false,
+    format = "dd/mm/yyyy",
     ...props
   }, ref) => {
+    const [isFocused, setIsFocused] = (0, import_react22.useState)(false);
+    const [internalValue, setInternalValue] = (0, import_react22.useState)(defaultValue || value || "");
+    const dateInputRef = (0, import_react22.useRef)(null);
+    (0, import_react22.useEffect)(() => {
+      if (value !== void 0) {
+        setInternalValue(value);
+      }
+    }, [value]);
+    const currentValue = value !== void 0 ? value : internalValue;
+    const displayValue = currentValue ? formatDateByPattern(currentValue, format) : "";
+    const placeholder = getPlaceholderByFormat(format);
     const inputId = id || (label ? `datepicker-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
-    const handleChange = (e) => {
-      const date = parseDate(e.target.value);
-      onChange?.(date);
+    const handleDateChange = (e) => {
+      const dateValue = e.target.value;
+      if (value === void 0) {
+        setInternalValue(dateValue);
+      }
+      if (onChange) {
+        if (dateValue) {
+          onChange({
+            iso: dateValue,
+            display: formatDateByPattern(dateValue, format),
+            format
+          });
+        } else {
+          onChange(null);
+        }
+      }
     };
+    const openPicker = () => {
+      setIsFocused(true);
+      dateInputRef.current?.showPicker();
+    };
+    const handleFocus = (e) => {
+      setIsFocused(true);
+      props.onFocus?.(e);
+    };
+    const handleBlur = (e) => {
+      setIsFocused(false);
+      props.onBlur?.(e);
+    };
+    const isActive = currentValue || isFocused;
     const inputClasses = (0, import_clsx22.default)(
-      "input w-full",
-      variant !== "floating" && variantClasses10[variant],
+      size === "lg" && "h-15",
+      variantClasses10[variant],
       error ? colorClasses4.error : color && colorClasses4[color],
       sizeClasses9[size],
       className
     );
+    const commonInputProps = {
+      inputRef: dateInputRef,
+      currentValue,
+      handleDateChange,
+      handleFocus,
+      handleBlur,
+      min,
+      max,
+      error,
+      props
+    };
     if (variant === "floating") {
       return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "form-control w-full", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { className: "floating-label", children: [
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { children: label }),
-          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-            "input",
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { className: `floating-label ${isActive ? "active" : ""}`, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "outer-label", children: label }),
+          /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
+            "div",
             {
-              ref,
-              id: inputId,
-              type: "date",
-              value: value ? formatDate(value) : "",
-              onChange: handleChange,
-              min: min ? formatDate(min) : void 0,
-              max: max ? formatDate(max) : void 0,
-              className: inputClasses,
-              "aria-invalid": error ? "true" : void 0,
-              ...props
+              className: (0, import_clsx22.default)(
+                "input input-bordered relative flex cursor-pointer outline-none",
+                "items-center gap-2 px-4 py-3 transition-colors",
+                fullWidth ? "w-full" : "inline-flex",
+                inputClasses
+              ),
+              onClick: openPicker,
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
+                  "span",
+                  {
+                    className: `${currentValue ? "pt-4 pl-1" : ""} datepicker-content flex flex-1 justify-start select-none`,
+                    children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "internal-label", children: label }),
+                      currentValue && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "date-value text-secondary-400 text-base", children: displayValue })
+                    ]
+                  }
+                ),
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(HiddenDateInput, { ...commonInputProps, inputId }),
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(import_solid2.CalendarIcon, { className: "h-5 w-5 shrink-0" })
+              ]
             }
           )
         ] }),
-        error && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "label-text-alt text-error mt-1 text-xs", children: error }),
-        !error && helperText && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "label-text-alt mt-1 text-xs", children: helperText })
+        /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ErrorHelperText, { error, helperText, inputId })
       ] });
     }
-    return /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-      "input",
-      {
-        ref,
-        id: inputId,
-        type: "date",
-        value: value ? formatDate(value) : "",
-        onChange: handleChange,
-        min: min ? formatDate(min) : void 0,
-        max: max ? formatDate(max) : void 0,
-        className: inputClasses,
-        ...props
-      }
-    );
+    return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "form-control w-full", children: [
+      label && /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("label", { className: "label", htmlFor: inputId, children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "label-text font-medium", children: label }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("div", { className: "relative inline-block w-full", children: /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)(
+        "div",
+        {
+          className: (0, import_clsx22.default)(
+            "input flex w-full items-center justify-between px-4 py-3 outline-none",
+            inputClasses
+          ),
+          onClick: openPicker,
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+              "span",
+              {
+                className: `${currentValue ? "pl-1" : ""} datepicker-content flex flex-1 justify-start select-none`,
+                children: /* @__PURE__ */ (0, import_jsx_runtime22.jsx)("span", { className: "date-value text-secondary-400 text-base", children: displayValue || placeholder })
+              }
+            ),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(HiddenDateInput, { ...commonInputProps, inputId }),
+            /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(import_solid2.CalendarIcon, { className: "h-5 w-5 shrink-0" })
+          ]
+        }
+      ) }),
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(ErrorHelperText, { error, helperText, inputId })
+    ] });
   }
 );
 DatePicker.displayName = "DatePicker";
@@ -3156,7 +3272,7 @@ var Radio = (0, import_react27.forwardRef)(
 Radio.displayName = "Radio";
 
 // src/components/Select.tsx
-var import_solid2 = require("@heroicons/react/20/solid");
+var import_solid3 = require("@heroicons/react/20/solid");
 var import_clsx27 = __toESM(require("clsx"));
 var import_react28 = require("react");
 var import_jsx_runtime27 = require("react/jsx-runtime");
@@ -3243,7 +3359,7 @@ var Select = (0, import_react28.forwardRef)(
         }
       ),
       showArrow && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
-        import_solid2.ChevronDownIcon,
+        import_solid3.ChevronDownIcon,
         {
           className: "text-base-content/70 pointer-events-none absolute top-1/2 right-3 h-5 w-5 -translate-y-1/2",
           "aria-hidden": "true"
@@ -3282,7 +3398,7 @@ var Select = (0, import_react28.forwardRef)(
               }
             ),
             showArrow && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
-              import_solid2.ChevronDownIcon,
+              import_solid3.ChevronDownIcon,
               {
                 className: "text-base-content/70 pointer-events-none absolute top-1/2 right-3 h-5 w-5 -translate-y-1/2",
                 "aria-hidden": "true"

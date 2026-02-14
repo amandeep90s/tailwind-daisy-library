@@ -2179,13 +2179,14 @@ var DateInput = forwardRef21(
 DateInput.displayName = "DateInput";
 
 // src/components/DatePicker.tsx
+import { CalendarIcon } from "@heroicons/react/20/solid";
 import clsx22 from "clsx";
-import { forwardRef as forwardRef22 } from "react";
-import { jsx as jsx22, jsxs as jsxs19 } from "react/jsx-runtime";
+import { forwardRef as forwardRef22, useEffect as useEffect7, useRef as useRef5, useState as useState10 } from "react";
+import { Fragment, jsx as jsx22, jsxs as jsxs19 } from "react/jsx-runtime";
 var variantClasses10 = {
   bordered: "input-bordered",
   ghost: "input-ghost",
-  floating: ""
+  floating: "border-secondary-400"
 };
 var colorClasses4 = {
   default: "",
@@ -2204,22 +2205,66 @@ var sizeClasses9 = {
   lg: "input-lg",
   xl: "input-xl"
 };
-function formatDate(date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+function formatDateByPattern(isoDate, format) {
+  if (!isoDate) return "";
+  const [year, month, day] = isoDate.split("-");
+  switch (format) {
+    case "dd/mm/yyyy":
+      return `${day}/${month}/${year}`;
+    case "mm/dd/yyyy":
+      return `${month}/${day}/${year}`;
+    case "yyyy-mm-dd":
+      return isoDate;
+    case "dd-mm-yyyy":
+      return `${day}-${month}-${year}`;
+    case "mm-dd-yyyy":
+      return `${month}-${day}-${year}`;
+    default:
+      return `${day}/${month}/${year}`;
+  }
 }
-function parseDate(dateString) {
-  const date = new Date(dateString);
-  return isNaN(date.getTime()) ? null : date;
+function getPlaceholderByFormat(format) {
+  return format;
 }
+var HiddenDateInput = ({
+  inputRef,
+  currentValue,
+  handleDateChange,
+  handleFocus,
+  handleBlur,
+  min,
+  max,
+  inputId,
+  error,
+  props
+}) => /* @__PURE__ */ jsx22(
+  "input",
+  {
+    ...props,
+    ref: inputRef,
+    type: "date",
+    className: "datepicker-native",
+    value: currentValue,
+    onChange: handleDateChange,
+    onFocus: handleFocus,
+    onBlur: handleBlur,
+    min,
+    max,
+    id: inputId,
+    "aria-invalid": error ? "true" : void 0
+  }
+);
+var ErrorHelperText = ({ error, helperText, inputId }) => /* @__PURE__ */ jsxs19(Fragment, { children: [
+  error && /* @__PURE__ */ jsx22("label", { className: "label", id: `${inputId}-error`, children: /* @__PURE__ */ jsx22("span", { className: "label-text-alt text-error", children: error }) }),
+  !error && helperText && /* @__PURE__ */ jsx22("label", { className: "label", id: `${inputId}-helper`, children: /* @__PURE__ */ jsx22("span", { className: "label-text-alt", children: helperText }) })
+] });
 var DatePicker = forwardRef22(
   ({
     variant = "bordered",
     color,
-    size = "md",
+    size = "lg",
     value,
+    defaultValue,
     onChange,
     min,
     max,
@@ -2228,65 +2273,136 @@ var DatePicker = forwardRef22(
     helperText,
     className,
     id,
+    fullWidth = false,
+    format = "dd/mm/yyyy",
     ...props
   }, ref) => {
+    const [isFocused, setIsFocused] = useState10(false);
+    const [internalValue, setInternalValue] = useState10(defaultValue || value || "");
+    const dateInputRef = useRef5(null);
+    useEffect7(() => {
+      if (value !== void 0) {
+        setInternalValue(value);
+      }
+    }, [value]);
+    const currentValue = value !== void 0 ? value : internalValue;
+    const displayValue = currentValue ? formatDateByPattern(currentValue, format) : "";
+    const placeholder = getPlaceholderByFormat(format);
     const inputId = id || (label ? `datepicker-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
-    const handleChange = (e) => {
-      const date = parseDate(e.target.value);
-      onChange?.(date);
+    const handleDateChange = (e) => {
+      const dateValue = e.target.value;
+      if (value === void 0) {
+        setInternalValue(dateValue);
+      }
+      if (onChange) {
+        if (dateValue) {
+          onChange({
+            iso: dateValue,
+            display: formatDateByPattern(dateValue, format),
+            format
+          });
+        } else {
+          onChange(null);
+        }
+      }
     };
+    const openPicker = () => {
+      setIsFocused(true);
+      dateInputRef.current?.showPicker();
+    };
+    const handleFocus = (e) => {
+      setIsFocused(true);
+      props.onFocus?.(e);
+    };
+    const handleBlur = (e) => {
+      setIsFocused(false);
+      props.onBlur?.(e);
+    };
+    const isActive = currentValue || isFocused;
     const inputClasses = clsx22(
-      "input w-full",
-      variant !== "floating" && variantClasses10[variant],
+      size === "lg" && "h-15",
+      variantClasses10[variant],
       error ? colorClasses4.error : color && colorClasses4[color],
       sizeClasses9[size],
       className
     );
+    const commonInputProps = {
+      inputRef: dateInputRef,
+      currentValue,
+      handleDateChange,
+      handleFocus,
+      handleBlur,
+      min,
+      max,
+      error,
+      props
+    };
     if (variant === "floating") {
       return /* @__PURE__ */ jsxs19("div", { className: "form-control w-full", children: [
-        /* @__PURE__ */ jsxs19("label", { className: "floating-label", children: [
-          /* @__PURE__ */ jsx22("span", { children: label }),
-          /* @__PURE__ */ jsx22(
-            "input",
+        /* @__PURE__ */ jsxs19("label", { className: `floating-label ${isActive ? "active" : ""}`, children: [
+          /* @__PURE__ */ jsx22("span", { className: "outer-label", children: label }),
+          /* @__PURE__ */ jsxs19(
+            "div",
             {
-              ref,
-              id: inputId,
-              type: "date",
-              value: value ? formatDate(value) : "",
-              onChange: handleChange,
-              min: min ? formatDate(min) : void 0,
-              max: max ? formatDate(max) : void 0,
-              className: inputClasses,
-              "aria-invalid": error ? "true" : void 0,
-              ...props
+              className: clsx22(
+                "input input-bordered relative flex cursor-pointer outline-none",
+                "items-center gap-2 px-4 py-3 transition-colors",
+                fullWidth ? "w-full" : "inline-flex",
+                inputClasses
+              ),
+              onClick: openPicker,
+              children: [
+                /* @__PURE__ */ jsxs19(
+                  "span",
+                  {
+                    className: `${currentValue ? "pt-4 pl-1" : ""} datepicker-content flex flex-1 justify-start select-none`,
+                    children: [
+                      /* @__PURE__ */ jsx22("span", { className: "internal-label", children: label }),
+                      currentValue && /* @__PURE__ */ jsx22("span", { className: "date-value text-secondary-400 text-base", children: displayValue })
+                    ]
+                  }
+                ),
+                /* @__PURE__ */ jsx22(HiddenDateInput, { ...commonInputProps, inputId }),
+                /* @__PURE__ */ jsx22(CalendarIcon, { className: "h-5 w-5 shrink-0" })
+              ]
             }
           )
         ] }),
-        error && /* @__PURE__ */ jsx22("span", { className: "label-text-alt text-error mt-1 text-xs", children: error }),
-        !error && helperText && /* @__PURE__ */ jsx22("span", { className: "label-text-alt mt-1 text-xs", children: helperText })
+        /* @__PURE__ */ jsx22(ErrorHelperText, { error, helperText, inputId })
       ] });
     }
-    return /* @__PURE__ */ jsx22(
-      "input",
-      {
-        ref,
-        id: inputId,
-        type: "date",
-        value: value ? formatDate(value) : "",
-        onChange: handleChange,
-        min: min ? formatDate(min) : void 0,
-        max: max ? formatDate(max) : void 0,
-        className: inputClasses,
-        ...props
-      }
-    );
+    return /* @__PURE__ */ jsxs19("div", { className: "form-control w-full", children: [
+      label && /* @__PURE__ */ jsx22("label", { className: "label", htmlFor: inputId, children: /* @__PURE__ */ jsx22("span", { className: "label-text font-medium", children: label }) }),
+      /* @__PURE__ */ jsx22("div", { className: "relative inline-block w-full", children: /* @__PURE__ */ jsxs19(
+        "div",
+        {
+          className: clsx22(
+            "input flex w-full items-center justify-between px-4 py-3 outline-none",
+            inputClasses
+          ),
+          onClick: openPicker,
+          children: [
+            /* @__PURE__ */ jsx22(
+              "span",
+              {
+                className: `${currentValue ? "pl-1" : ""} datepicker-content flex flex-1 justify-start select-none`,
+                children: /* @__PURE__ */ jsx22("span", { className: "date-value text-secondary-400 text-base", children: displayValue || placeholder })
+              }
+            ),
+            /* @__PURE__ */ jsx22(HiddenDateInput, { ...commonInputProps, inputId }),
+            /* @__PURE__ */ jsx22(CalendarIcon, { className: "h-5 w-5 shrink-0" })
+          ]
+        }
+      ) }),
+      /* @__PURE__ */ jsx22(ErrorHelperText, { error, helperText, inputId })
+    ] });
   }
 );
 DatePicker.displayName = "DatePicker";
 
 // src/components/Dialog.tsx
 import clsx23 from "clsx";
-import { forwardRef as forwardRef23, useEffect as useEffect7, useRef as useRef5 } from "react";
+import { forwardRef as forwardRef23, useEffect as useEffect8, useRef as useRef6 } from "react";
 import { jsx as jsx23, jsxs as jsxs20 } from "react/jsx-runtime";
 var verticalPositionClasses = {
   top: "modal-top",
@@ -2361,9 +2477,9 @@ var Dialog = forwardRef23(
     className,
     ...props
   }, ref) => {
-    const dialogRef = useRef5(null);
+    const dialogRef = useRef6(null);
     const internalRef = ref || dialogRef;
-    useEffect7(() => {
+    useEffect8(() => {
       const dialog = internalRef.current;
       if (!dialog) return;
       if (open) {
@@ -2372,7 +2488,7 @@ var Dialog = forwardRef23(
         dialog.close();
       }
     }, [open, internalRef]);
-    useEffect7(() => {
+    useEffect8(() => {
       const dialog = internalRef.current;
       if (!dialog || !open) return;
       const handleKeyDown = (e) => {
@@ -2459,7 +2575,7 @@ Drawer.displayName = "Drawer";
 
 // src/components/DropdownMenu.tsx
 import clsx25 from "clsx";
-import { forwardRef as forwardRef25, useEffect as useEffect8, useRef as useRef6, useState as useState10 } from "react";
+import { forwardRef as forwardRef25, useEffect as useEffect9, useRef as useRef7, useState as useState11 } from "react";
 import { jsx as jsx25, jsxs as jsxs22 } from "react/jsx-runtime";
 var positionClasses = {
   top: "dropdown-top",
@@ -2479,10 +2595,10 @@ var Dropdown = forwardRef25(
     className,
     ...props
   }, ref) => {
-    const [internalOpen, setInternalOpen] = useState10(false);
-    const dropdownRef = useRef6(null);
+    const [internalOpen, setInternalOpen] = useState11(false);
+    const dropdownRef = useRef7(null);
     const isOpen = open !== void 0 ? open : internalOpen;
-    useEffect8(() => {
+    useEffect9(() => {
       const handleClickOutside = (event) => {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
           if (open === void 0) {
@@ -3025,7 +3141,7 @@ Radio.displayName = "Radio";
 // src/components/Select.tsx
 import { ChevronDownIcon as ChevronDownIcon2 } from "@heroicons/react/20/solid";
 import clsx27 from "clsx";
-import { forwardRef as forwardRef27, useEffect as useEffect9, useState as useState11 } from "react";
+import { forwardRef as forwardRef27, useEffect as useEffect10, useState as useState12 } from "react";
 import { jsx as jsx27, jsxs as jsxs24 } from "react/jsx-runtime";
 var variantClasses12 = {
   bordered: "select-bordered",
@@ -3066,8 +3182,8 @@ var Select = forwardRef27(
     ...props
   }, ref) => {
     const selectId = id || (label ? `select-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
-    const [hasValue, setHasValue] = useState11(false);
-    useEffect9(() => {
+    const [hasValue, setHasValue] = useState12(false);
+    useEffect10(() => {
       if (value !== void 0) {
         setHasValue(value !== "" && value !== null);
       }
@@ -3880,14 +3996,14 @@ FullPageLoader.displayName = "FullPageLoader";
 
 // src/components/HoverCard.tsx
 import clsx34 from "clsx";
-import { forwardRef as forwardRef34, useEffect as useEffect10, useRef as useRef7, useState as useState12 } from "react";
+import { forwardRef as forwardRef34, useEffect as useEffect11, useRef as useRef8, useState as useState13 } from "react";
 import { jsx as jsx34, jsxs as jsxs31 } from "react/jsx-runtime";
 var HoverCard = forwardRef34(
   ({ trigger, openDelay = 200, closeDelay = 300, children, className, ...props }, ref) => {
-    const [isOpen, setIsOpen] = useState12(false);
-    const openTimeoutRef = useRef7(void 0);
-    const closeTimeoutRef = useRef7(void 0);
-    useEffect10(() => {
+    const [isOpen, setIsOpen] = useState13(false);
+    const openTimeoutRef = useRef8(void 0);
+    const closeTimeoutRef = useRef8(void 0);
+    useEffect11(() => {
       return () => {
         if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
         if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
@@ -3952,12 +4068,12 @@ InputGroup.displayName = "InputGroup";
 
 // src/components/InputOTP.tsx
 import clsx36 from "clsx";
-import { forwardRef as forwardRef36, useRef as useRef8, useState as useState13 } from "react";
+import { forwardRef as forwardRef36, useRef as useRef9, useState as useState14 } from "react";
 import { jsx as jsx36 } from "react/jsx-runtime";
 var InputOTP = forwardRef36(
   ({ length = 6, onChange, onComplete, value = "", className, id, ...props }, ref) => {
-    const [otp, setOtp] = useState13(value.split("").slice(0, length));
-    const inputRefs = useRef8([]);
+    const [otp, setOtp] = useState14(value.split("").slice(0, length));
+    const inputRefs = useRef9([]);
     const inputId = id || `otp-${Math.random().toString(36).substr(2, 9)}`;
     const handleChange = (index, digit) => {
       if (digit && !/^\d$/.test(digit)) return;
@@ -4243,14 +4359,14 @@ NavigationMenuItem.displayName = "NavigationMenuItem";
 
 // src/components/Popover.tsx
 import clsx43 from "clsx";
-import { forwardRef as forwardRef43, useEffect as useEffect11, useRef as useRef9, useState as useState14 } from "react";
+import { forwardRef as forwardRef43, useEffect as useEffect12, useRef as useRef10, useState as useState15 } from "react";
 import { jsx as jsx43, jsxs as jsxs34 } from "react/jsx-runtime";
 var Popover = forwardRef43(
   ({ trigger, open, onOpenChange, children, className, ...props }, ref) => {
-    const [internalOpen, setInternalOpen] = useState14(false);
-    const popoverRef = useRef9(null);
+    const [internalOpen, setInternalOpen] = useState15(false);
+    const popoverRef = useRef10(null);
     const isOpen = open !== void 0 ? open : internalOpen;
-    useEffect11(() => {
+    useEffect12(() => {
       const handleClickOutside = (event) => {
         if (popoverRef.current && !popoverRef.current.contains(event.target)) {
           if (open === void 0) {
@@ -4340,13 +4456,13 @@ Separator.displayName = "Separator";
 
 // src/components/Sheet.tsx
 import clsx46 from "clsx";
-import { forwardRef as forwardRef46, useEffect as useEffect12, useRef as useRef10 } from "react";
+import { forwardRef as forwardRef46, useEffect as useEffect13, useRef as useRef11 } from "react";
 import { jsx as jsx46, jsxs as jsxs35 } from "react/jsx-runtime";
 var Sheet = forwardRef46(
   ({ open, onClose, position = "right", title, children, className, ...props }, ref) => {
-    const dialogRef = useRef10(null);
+    const dialogRef = useRef11(null);
     const internalRef = ref || dialogRef;
-    useEffect12(() => {
+    useEffect13(() => {
       const dialog = internalRef.current;
       if (!dialog) return;
       if (open) {
@@ -4406,7 +4522,7 @@ Sheet.displayName = "Sheet";
 // src/components/Sidebar.tsx
 import clsx47 from "clsx";
 import { forwardRef as forwardRef47 } from "react";
-import { Fragment, jsx as jsx47, jsxs as jsxs36 } from "react/jsx-runtime";
+import { Fragment as Fragment2, jsx as jsx47, jsxs as jsxs36 } from "react/jsx-runtime";
 var Sidebar = forwardRef47(
   ({ collapsed, children, className, ...props }, ref) => {
     return /* @__PURE__ */ jsx47(
@@ -4427,7 +4543,7 @@ var Sidebar = forwardRef47(
 Sidebar.displayName = "Sidebar";
 var SidebarItem = forwardRef47(
   ({ icon, href, active, children, className, ...props }, ref) => {
-    const content = /* @__PURE__ */ jsxs36(Fragment, { children: [
+    const content = /* @__PURE__ */ jsxs36(Fragment2, { children: [
       icon && /* @__PURE__ */ jsx47("span", { className: "shrink-0", children: icon }),
       /* @__PURE__ */ jsx47("span", { children })
     ] });
@@ -4649,7 +4765,7 @@ function DataTable({
 
 // src/components/Tabs.tsx
 import clsx53 from "clsx";
-import { createContext as createContext4, forwardRef as forwardRef53, useContext as useContext4, useId as useId3, useState as useState15 } from "react";
+import { createContext as createContext4, forwardRef as forwardRef53, useContext as useContext4, useId as useId3, useState as useState16 } from "react";
 import { jsx as jsx53 } from "react/jsx-runtime";
 var TabsContext = createContext4(null);
 var useTabs = () => {
@@ -4698,7 +4814,7 @@ var Tabs = forwardRef53(
     className,
     ...props
   }, ref) => {
-    const [internalActiveTab, setInternalActiveTab] = useState15(defaultValue);
+    const [internalActiveTab, setInternalActiveTab] = useState16(defaultValue);
     const activeTab = value !== void 0 ? value : internalActiveTab;
     const groupName = useId3();
     const handleTabChange = (newValue) => {
@@ -4797,7 +4913,7 @@ import {
   XMarkIcon
 } from "@heroicons/react/24/outline";
 import clsx54 from "clsx";
-import { createContext as createContext5, forwardRef as forwardRef54, useContext as useContext5, useEffect as useEffect13, useState as useState16 } from "react";
+import { createContext as createContext5, forwardRef as forwardRef54, useContext as useContext5, useEffect as useEffect14, useState as useState17 } from "react";
 import { jsx as jsx54, jsxs as jsxs39 } from "react/jsx-runtime";
 var ToastContext = createContext5(null);
 var useToast = () => {
@@ -4836,7 +4952,7 @@ var positionClasses3 = {
 var ToastItem = forwardRef54(
   ({ message, variant = "info", duration = 3e3, onDismiss, className, ...props }, ref) => {
     const Icon = variantIcons[variant];
-    useEffect13(() => {
+    useEffect14(() => {
       if (duration && onDismiss) {
         const timer = setTimeout(onDismiss, duration);
         return () => clearTimeout(timer);
@@ -4854,7 +4970,7 @@ var ToastProvider = ({
   children,
   position = "bottom-end"
 }) => {
-  const [toasts, setToasts] = useState16([]);
+  const [toasts, setToasts] = useState17([]);
   const addToast = (toast) => {
     const id = Math.random().toString(36).substring(7);
     setToasts((prev) => [...prev, { ...toast, id }]);
@@ -4879,7 +4995,7 @@ var ToastProvider = ({
 
 // src/components/Toggle.tsx
 import clsx55 from "clsx";
-import { createContext as createContext6, forwardRef as forwardRef55, useContext as useContext6, useState as useState17 } from "react";
+import { createContext as createContext6, forwardRef as forwardRef55, useContext as useContext6, useState as useState18 } from "react";
 import { jsx as jsx55 } from "react/jsx-runtime";
 var ToggleGroupContext = createContext6(null);
 var useToggleGroup = () => {
@@ -4902,7 +5018,7 @@ var variantClasses22 = {
 };
 var Toggle = forwardRef55(
   ({ pressed, onPressedChange, size = "md", variant, children, className, ...props }, ref) => {
-    const [internalPressed, setInternalPressed] = useState17(false);
+    const [internalPressed, setInternalPressed] = useState18(false);
     const isPressed = pressed !== void 0 ? pressed : internalPressed;
     const handleClick = () => {
       const newPressed = !isPressed;
