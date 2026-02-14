@@ -1712,14 +1712,15 @@ declare const Radio: React__default.ForwardRefExoticComponent<RadioProps & React
 
 type SelectVariant = "bordered" | "ghost" | "floating";
 type SelectColor = "primary" | "secondary" | "accent" | "info" | "success" | "warning" | "error";
-type SelectSize = "xs" | "sm" | "md" | "lg";
+type SelectSize = "xs" | "sm" | "md" | "lg" | "xl";
 interface SelectOption {
     value: string;
     label: string;
     disabled?: boolean;
+    hidden?: boolean;
 }
 interface SelectProps extends Omit<React__default.SelectHTMLAttributes<HTMLSelectElement>, "size"> {
-    /** Select variant */
+    /** Select variant. 'floating' uses custom UI with floating label, 'bordered' and 'ghost' use DaisyUI native select */
     variant?: SelectVariant;
     /** Select color */
     color?: SelectColor;
@@ -1729,27 +1730,54 @@ interface SelectProps extends Omit<React__default.SelectHTMLAttributes<HTMLSelec
     options?: SelectOption[];
     /** Placeholder text */
     placeholder?: string;
-    /** Show custom arrow (default: true) */
+    /** Show custom arrow (only for floating variant) */
     showArrow?: boolean;
-    /** Label for floating variant */
+    /** Label text (required for floating variant, optional for others) */
     label?: string;
     /** Error message */
     error?: string;
     /** Helper text */
     helperText?: string;
+    /** Default value for uncontrolled mode */
+    defaultValue?: string;
+    /** Full width */
+    fullWidth?: boolean;
 }
 /**
- * Select component with DaisyUI styling
+ * Select component with DaisyUI styling and floating label support.
+ *
+ * Features:
+ * - **Floating variant**: Custom UI with floating label that moves to top when value is selected
+ * - **Bordered/Ghost variants**: Use DaisyUI's native select component for standard behavior
+ * - Supports controlled and uncontrolled modes
  *
  * @example
  * ```tsx
+ * // Floating variant (custom UI with label display)
+ * <Select
+ *   variant="floating"
+ *   label="Select Country"
+ *   value={country}
+ *   onChange={(e) => setCountry(e.target.value)}
+ *   options={[
+ *     { value: 'us', label: 'United States' },
+ *     { value: 'uk', label: 'United Kingdom' },
+ *   ]}
+ * />
+ *
+ * // Bordered variant (DaisyUI native select)
  * <Select
  *   variant="bordered"
- *   options={[
- *     { value: '1', label: 'Option 1' },
- *     { value: '2', label: 'Option 2' },
- *   ]}
- *   placeholder="Select an option"
+ *   placeholder="Choose an option"
+ *   options={options}
+ * />
+ *
+ * // Uncontrolled mode
+ * <Select
+ *   variant="floating"
+ *   label="Category"
+ *   defaultValue="tech"
+ *   options={options}
  * />
  * ```
  */

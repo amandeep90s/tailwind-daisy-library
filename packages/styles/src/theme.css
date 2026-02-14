@@ -241,6 +241,39 @@
 }
 
 /* ============================================================================
+ * Select Component CSS
+ * Similar to DatePicker, hides native select while keeping it functional
+ * ============================================================================ */
+
+/* Hide the native select visually but keep it functional */
+.select-native {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  border: none;
+  /* Keep native appearance for dropdown styling - only hide the closed state */
+  /* Inherit font properties for proper dropdown styling */
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: hsl(var(--bc));
+}
+
+/* Select value display */
+.select-value {
+  color: hsl(var(--bc));
+  pointer-events: none;
+}
+
+/* Select content wrapper */
+.select-content {
+  pointer-events: none;
+}
+
+/* ============================================================================
  * Tooltip Z-Index Fix for Accordion
  * 
  * Ensures tooltips inside accordion icons appear on top of accordion content

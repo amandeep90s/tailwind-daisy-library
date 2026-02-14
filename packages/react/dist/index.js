@@ -3280,12 +3280,31 @@ var import_solid3 = require("@heroicons/react/20/solid");
 var import_clsx27 = __toESM(require("clsx"));
 var import_react28 = require("react");
 var import_jsx_runtime27 = require("react/jsx-runtime");
-var variantClasses12 = {
-  bordered: "select-bordered",
-  ghost: "select-ghost",
-  floating: ""
+var floatingVariantClasses = {
+  floating: "border-secondary-400"
 };
-var colorClasses5 = {
+var floatingColorClasses = {
+  default: "",
+  primary: "input-primary",
+  secondary: "input-secondary",
+  accent: "input-accent",
+  info: "input-info",
+  success: "input-success",
+  warning: "input-warning",
+  error: "input-error"
+};
+var floatingSizeClasses = {
+  xs: "input-xs",
+  sm: "input-sm",
+  md: "input-md",
+  lg: "input-lg",
+  xl: "input-xl"
+};
+var selectVariantClasses = {
+  bordered: "select-bordered",
+  ghost: "select-ghost"
+};
+var selectColorClasses = {
   primary: "select-primary",
   secondary: "select-secondary",
   accent: "select-accent",
@@ -3294,17 +3313,22 @@ var colorClasses5 = {
   warning: "select-warning",
   error: "select-error"
 };
-var sizeClasses12 = {
+var selectSizeClasses = {
   xs: "select-xs",
   sm: "select-sm",
   md: "select-md",
-  lg: "select-lg"
+  lg: "select-lg",
+  xl: "select-xl"
 };
+var ErrorHelperText2 = ({ error, helperText, inputId }) => /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(import_jsx_runtime27.Fragment, { children: [
+  error && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("label", { className: "label", id: `${inputId}-error`, children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "label-text-alt text-error", children: error }) }),
+  !error && helperText && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("label", { className: "label", id: `${inputId}-helper`, children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "label-text-alt", children: helperText }) })
+] });
 var Select = (0, import_react28.forwardRef)(
   ({
     variant = "bordered",
     color,
-    size = "md",
+    size = "lg",
     options,
     placeholder,
     children,
@@ -3315,106 +3339,162 @@ var Select = (0, import_react28.forwardRef)(
     helperText,
     id,
     value,
+    defaultValue,
     onChange,
+    fullWidth = false,
     ...props
   }, ref) => {
+    const [isFocused, setIsFocused] = (0, import_react28.useState)(false);
+    const [internalValue, setInternalValue] = (0, import_react28.useState)(defaultValue || value || "");
+    const selectRef = (0, import_react28.useRef)(null);
     const selectId = id || (label ? `select-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
-    const [hasValue, setHasValue] = (0, import_react28.useState)(false);
     (0, import_react28.useEffect)(() => {
       if (value !== void 0) {
-        setHasValue(value !== "" && value !== null);
+        setInternalValue(value);
       }
     }, [value]);
+    const currentValue = value !== void 0 ? value : internalValue;
     const handleChange = (e) => {
-      setHasValue(e.target.value !== "" && e.target.value !== null);
+      const newValue = e.target.value;
+      if (value === void 0) {
+        setInternalValue(newValue);
+      }
       if (onChange) {
         onChange(e);
       }
     };
-    const rightPadding = showArrow ? "pr-10" : "pr-4";
-    const selectElement = /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "relative w-full", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
-        "select",
-        {
-          ref,
-          id: selectId,
-          value,
-          onChange,
-          className: (0, import_clsx27.default)(
-            "select w-full appearance-none bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat",
-            "bg-none",
-            // Important: Override DaisyUI's default background image
-            variant !== "floating" && variantClasses12[variant],
-            error ? colorClasses5.error : color && colorClasses5[color],
-            sizeClasses12[size],
-            rightPadding,
-            className
-          ),
-          style: {
-            // Ensure no native arrow shows up in any browser
-            backgroundImage: "none !important"
-          },
-          "aria-invalid": error ? "true" : void 0,
-          ...props,
-          children: [
-            placeholder && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "", children: placeholder }),
-            options ? options.map((option) => /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
-          ]
-        }
-      ),
-      showArrow && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
-        import_solid3.ChevronDownIcon,
-        {
-          className: "text-base-content/70 pointer-events-none absolute top-1/2 right-3 h-5 w-5 -translate-y-1/2",
-          "aria-hidden": "true"
-        }
-      )
-    ] });
+    const handleFocus = (e) => {
+      setIsFocused(true);
+      props.onFocus?.(e);
+    };
+    const handleBlur = (e) => {
+      setIsFocused(false);
+      props.onBlur?.(e);
+    };
+    const openSelect = () => {
+      selectRef.current?.focus();
+    };
+    const isActive = !!currentValue || isFocused;
+    const getSelectedLabel = () => {
+      if (!currentValue) return "";
+      if (options) {
+        const selectedOption = options.find((opt) => opt.value === currentValue);
+        return selectedOption?.label || "";
+      }
+      return currentValue;
+    };
+    const selectedLabel = getSelectedLabel();
     if (variant === "floating") {
+      const inputClasses = (0, import_clsx27.default)(
+        size === "lg" && "h-15",
+        floatingVariantClasses.floating,
+        error ? floatingColorClasses.error : color ? floatingColorClasses[color] : floatingColorClasses.default,
+        floatingSizeClasses[size],
+        className
+      );
       return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "form-control w-full", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { className: (0, import_clsx27.default)("floating-label", hasValue && "has-value"), children: [
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { children: label ?? placeholder }),
-          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "relative w-full", children: [
-            /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
-              "select",
-              {
-                ref,
-                id: selectId,
-                value,
-                onChange: handleChange,
-                className: (0, import_clsx27.default)(
-                  "select w-full appearance-none bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat",
-                  "bg-none",
-                  error ? colorClasses5.error : color && colorClasses5[color],
-                  sizeClasses12[size],
-                  rightPadding,
-                  className
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("label", { className: `floating-label ${isActive ? "active" : ""}`, children: [
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "outer-label", children: label }),
+          /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+            "div",
+            {
+              className: (0, import_clsx27.default)(
+                "select select-bordered outline-nonerelative flex w-full cursor-pointer",
+                "bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat outline-none",
+                "items-center gap-2 px-4 py-3 transition-colors",
+                "bg-none",
+                // Important: Override DaisyUI's default background image
+                fullWidth ? "w-full" : "inline-flex",
+                inputClasses
+              ),
+              onClick: openSelect,
+              children: [
+                /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+                  "span",
+                  {
+                    className: `${currentValue ? "pt-4 pl-1" : ""} select-content flex flex-1 justify-start select-none`,
+                    children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "internal-label", children: label || placeholder }),
+                      currentValue && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "select-value text-secondary-400 text-base", children: selectedLabel })
+                    ]
+                  }
                 ),
-                style: {
-                  backgroundImage: "none !important"
-                },
-                "aria-invalid": error ? "true" : void 0,
-                ...props,
-                children: [
-                  /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "", children: placeholder ?? label }),
-                  options ? options.map((option) => /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
-                ]
-              }
-            ),
-            showArrow && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
-              import_solid3.ChevronDownIcon,
-              {
-                className: "text-base-content/70 pointer-events-none absolute top-1/2 right-3 h-5 w-5 -translate-y-1/2",
-                "aria-hidden": "true"
-              }
-            )
-          ] })
+                /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+                  "select",
+                  {
+                    ref: (node) => {
+                      if (typeof ref === "function") {
+                        ref(node);
+                      } else if (ref) {
+                        ref.current = node;
+                      }
+                      selectRef.current = node;
+                    },
+                    id: selectId,
+                    value: currentValue,
+                    onChange: handleChange,
+                    onFocus: handleFocus,
+                    onBlur: handleBlur,
+                    className: "select-native",
+                    "aria-invalid": error ? "true" : void 0,
+                    ...props,
+                    children: [
+                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "", disabled: true, hidden: true, children: label || placeholder || "Select an option" }),
+                      options ? options.map((option) => /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
+                    ]
+                  }
+                ),
+                showArrow && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(import_solid3.ChevronDownIcon, { className: "h-5 w-5 shrink-0" })
+              ]
+            }
+          )
         ] }),
-        error && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "label-text-alt text-error mt-1 text-xs", children: error }),
-        !error && helperText && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "label-text-alt mt-1 text-xs", children: helperText })
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ErrorHelperText2, { error, helperText, inputId: selectId })
       ] });
     }
-    return selectElement;
+    const selectClasses = (0, import_clsx27.default)(
+      "select w-full outline-none bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat",
+      "bg-none",
+      // Important: Override DaisyUI's default background image
+      selectVariantClasses[variant],
+      error ? selectColorClasses.error : color && selectColorClasses[color],
+      selectSizeClasses[size],
+      fullWidth ? "w-full" : "",
+      // rightPadding,
+      className
+    );
+    return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "form-control w-full", children: [
+      label && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("label", { className: "label", htmlFor: selectId, children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "label-text font-medium", children: label }) }),
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "relative w-full", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+          "select",
+          {
+            style: { backgroundImage: "none !important" },
+            ref,
+            id: selectId,
+            value: currentValue,
+            onChange: handleChange,
+            onFocus: handleFocus,
+            onBlur: handleBlur,
+            className: selectClasses,
+            "aria-invalid": error ? "true" : void 0,
+            ...props,
+            children: [
+              placeholder && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "", disabled: !currentValue, hidden: true, children: placeholder }),
+              options ? options.map((option) => /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
+            ]
+          }
+        ),
+        showArrow && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+          import_solid3.ChevronDownIcon,
+          {
+            className: "text-base-content/70 pointer-events-none absolute top-1/2 right-3 h-5 w-5 -translate-y-1/2",
+            "aria-hidden": "true"
+          }
+        )
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(ErrorHelperText2, { error, helperText, inputId: selectId })
+    ] });
   }
 );
 Select.displayName = "Select";
@@ -3423,12 +3503,12 @@ Select.displayName = "Select";
 var import_clsx28 = __toESM(require("clsx"));
 var import_react29 = require("react");
 var import_jsx_runtime28 = require("react/jsx-runtime");
-var variantClasses13 = {
+var variantClasses12 = {
   bordered: "textarea-bordered",
   ghost: "textarea-ghost",
   floating: ""
 };
-var colorClasses6 = {
+var colorClasses5 = {
   primary: "textarea-primary",
   secondary: "textarea-secondary",
   accent: "textarea-accent",
@@ -3437,7 +3517,7 @@ var colorClasses6 = {
   warning: "textarea-warning",
   error: "textarea-error"
 };
-var sizeClasses13 = {
+var sizeClasses12 = {
   xs: "textarea-xs",
   sm: "textarea-sm",
   md: "textarea-md",
@@ -3448,9 +3528,9 @@ var Textarea = (0, import_react29.forwardRef)(
     const textareaId = id || (label ? `textarea-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
     const textareaClasses = (0, import_clsx28.default)(
       "textarea w-full",
-      variant !== "floating" && variantClasses13[variant],
-      error ? colorClasses6.error : color && colorClasses6[color],
-      sizeClasses13[size],
+      variant !== "floating" && variantClasses12[variant],
+      error ? colorClasses5.error : color && colorClasses5[color],
+      sizeClasses12[size],
       className
     );
     if (variant === "floating") {
@@ -4031,7 +4111,7 @@ FormActions.displayName = "FormActions";
 var import_clsx33 = __toESM(require("clsx"));
 var import_react34 = require("react");
 var import_jsx_runtime33 = require("react/jsx-runtime");
-var sizeClasses14 = {
+var sizeClasses13 = {
   xs: "loading-xs",
   sm: "loading-sm",
   md: "loading-md",
@@ -4046,7 +4126,7 @@ var typeClasses = {
   bars: "loading-bars",
   infinity: "loading-infinity"
 };
-var variantClasses14 = {
+var variantClasses13 = {
   default: "",
   primary: "text-primary",
   secondary: "text-secondary",
@@ -4109,8 +4189,8 @@ var FullPageLoader = (0, import_react34.forwardRef)(
                 className: (0, import_clsx33.default)(
                   "loading",
                   typeClasses[type],
-                  sizeClasses14[size],
-                  variantClasses14[variant]
+                  sizeClasses13[size],
+                  variantClasses13[variant]
                 ),
                 "aria-hidden": "true"
               }
@@ -4118,7 +4198,7 @@ var FullPageLoader = (0, import_react34.forwardRef)(
             text && /* @__PURE__ */ (0, import_jsx_runtime33.jsx)(
               "p",
               {
-                className: (0, import_clsx33.default)("mt-4 font-medium", textSizeClasses[size], variantClasses14[variant]),
+                className: (0, import_clsx33.default)("mt-4 font-medium", textSizeClasses[size], variantClasses13[variant]),
                 children: text
               }
             )
@@ -4315,7 +4395,7 @@ Item.displayName = "Item";
 var import_clsx38 = __toESM(require("clsx"));
 var import_react39 = require("react");
 var import_jsx_runtime38 = require("react/jsx-runtime");
-var sizeClasses15 = {
+var sizeClasses14 = {
   xs: "kbd-xs",
   sm: "kbd-sm",
   md: "kbd-md",
@@ -4323,7 +4403,7 @@ var sizeClasses15 = {
 };
 var Kbd = (0, import_react39.forwardRef)(
   ({ size = "md", children, className, ...props }, ref) => {
-    return /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("kbd", { ref, className: (0, import_clsx38.default)("kbd", sizeClasses15[size], className), ...props, children });
+    return /* @__PURE__ */ (0, import_jsx_runtime38.jsx)("kbd", { ref, className: (0, import_clsx38.default)("kbd", sizeClasses14[size], className), ...props, children });
   }
 );
 Kbd.displayName = "Kbd";
@@ -4332,7 +4412,7 @@ Kbd.displayName = "Kbd";
 var import_clsx39 = __toESM(require("clsx"));
 var import_react40 = require("react");
 var import_jsx_runtime39 = require("react/jsx-runtime");
-var sizeClasses16 = {
+var sizeClasses15 = {
   xs: "menu-xs",
   sm: "menu-sm",
   md: "menu-md",
@@ -4348,7 +4428,7 @@ var Menubar = (0, import_react40.forwardRef)(
           "menu",
           orientation === "horizontal" && "menu-horizontal",
           orientation === "vertical" && "menu-vertical",
-          sizeClasses16[size],
+          sizeClasses15[size],
           compact2 && "menu-compact",
           "bg-base-100",
           className
@@ -4372,11 +4452,11 @@ MenubarItem.displayName = "MenubarItem";
 var import_clsx40 = __toESM(require("clsx"));
 var import_react41 = require("react");
 var import_jsx_runtime40 = require("react/jsx-runtime");
-var variantClasses15 = {
+var variantClasses14 = {
   bordered: "select-bordered",
   ghost: "select-ghost"
 };
-var colorClasses7 = {
+var colorClasses6 = {
   primary: "select-primary",
   secondary: "select-secondary",
   accent: "select-accent",
@@ -4385,7 +4465,7 @@ var colorClasses7 = {
   warning: "select-warning",
   error: "select-error"
 };
-var sizeClasses17 = {
+var sizeClasses16 = {
   xs: "select-xs",
   sm: "select-sm",
   md: "select-md",
@@ -4399,9 +4479,9 @@ var NativeSelect = (0, import_react41.forwardRef)(
         ref,
         className: (0, import_clsx40.default)(
           "select w-full",
-          variantClasses15[variant],
-          color && colorClasses7[color],
-          sizeClasses17[size],
+          variantClasses14[variant],
+          color && colorClasses6[color],
+          sizeClasses16[size],
           className
         ),
         ...props,
@@ -4416,7 +4496,7 @@ NativeSelect.displayName = "NativeSelect";
 var import_clsx41 = __toESM(require("clsx"));
 var import_react42 = require("react");
 var import_jsx_runtime41 = require("react/jsx-runtime");
-var colorClasses8 = {
+var colorClasses7 = {
   default: "bg-base-100",
   neutral: "bg-neutral text-neutral-content",
   primary: "bg-primary text-primary-content",
@@ -4444,7 +4524,7 @@ var Navbar = (0, import_react42.forwardRef)(
         ref,
         className: (0, import_clsx41.default)(
           "navbar",
-          colorClasses8[color],
+          colorClasses7[color],
           shadow && "shadow-lg",
           bordered && "border-base-300 border-b",
           sticky && "sticky top-0 z-50",
@@ -4536,7 +4616,7 @@ Popover.displayName = "Popover";
 var import_clsx44 = __toESM(require("clsx"));
 var import_react45 = require("react");
 var import_jsx_runtime44 = require("react/jsx-runtime");
-var variantClasses16 = {
+var variantClasses15 = {
   primary: "progress-primary",
   secondary: "progress-secondary",
   accent: "progress-accent",
@@ -4551,7 +4631,7 @@ var Progress = (0, import_react45.forwardRef)(
       "progress",
       {
         ref,
-        className: (0, import_clsx44.default)("progress w-full", variantClasses16[variant], className),
+        className: (0, import_clsx44.default)("progress w-full", variantClasses15[variant], className),
         value,
         max: 100,
         ...props
@@ -4565,7 +4645,7 @@ Progress.displayName = "Progress";
 var import_clsx45 = __toESM(require("clsx"));
 var import_react46 = require("react");
 var import_jsx_runtime45 = require("react/jsx-runtime");
-var variantClasses17 = {
+var variantClasses16 = {
   default: "",
   primary: "divider-primary",
   secondary: "divider-secondary",
@@ -4580,7 +4660,7 @@ var Separator = (0, import_react46.forwardRef)(
         className: (0, import_clsx45.default)(
           "divider",
           orientation === "vertical" && "divider-horizontal",
-          variantClasses17[variant],
+          variantClasses16[variant],
           className
         ),
         ...props,
@@ -4717,7 +4797,7 @@ Skeleton.displayName = "Skeleton";
 var import_clsx49 = __toESM(require("clsx"));
 var import_react50 = require("react");
 var import_jsx_runtime49 = require("react/jsx-runtime");
-var variantClasses18 = {
+var variantClasses17 = {
   primary: "range-primary",
   secondary: "range-secondary",
   accent: "range-accent",
@@ -4726,7 +4806,7 @@ var variantClasses18 = {
   warning: "range-warning",
   error: "range-error"
 };
-var sizeClasses18 = {
+var sizeClasses17 = {
   xs: "range-xs",
   sm: "range-sm",
   md: "range-md",
@@ -4739,7 +4819,7 @@ var Slider = (0, import_react50.forwardRef)(
       {
         ref,
         type: "range",
-        className: (0, import_clsx49.default)("range", variantClasses18[variant], sizeClasses18[size], className),
+        className: (0, import_clsx49.default)("range", variantClasses17[variant], sizeClasses17[size], className),
         ...props
       }
     );
@@ -4751,7 +4831,7 @@ Slider.displayName = "Slider";
 var import_clsx50 = __toESM(require("clsx"));
 var import_react51 = require("react");
 var import_jsx_runtime50 = require("react/jsx-runtime");
-var sizeClasses19 = {
+var sizeClasses18 = {
   xs: "loading-xs",
   sm: "loading-sm",
   md: "loading-md",
@@ -4766,7 +4846,7 @@ var typeClasses2 = {
   bars: "loading-bars",
   infinity: "loading-infinity"
 };
-var colorClasses9 = {
+var colorClasses8 = {
   primary: "text-primary",
   secondary: "text-secondary",
   accent: "text-accent",
@@ -4785,8 +4865,8 @@ var Spinner = (0, import_react51.forwardRef)(
         className: (0, import_clsx50.default)(
           "loading",
           typeClasses2[type],
-          sizeClasses19[size],
-          color && colorClasses9[color],
+          sizeClasses18[size],
+          color && colorClasses8[color],
           className
         ),
         ...props
@@ -4800,7 +4880,7 @@ Spinner.displayName = "Spinner";
 var import_clsx51 = __toESM(require("clsx"));
 var import_react52 = require("react");
 var import_jsx_runtime51 = require("react/jsx-runtime");
-var variantClasses19 = {
+var variantClasses18 = {
   primary: "toggle-primary",
   secondary: "toggle-secondary",
   accent: "toggle-accent",
@@ -4810,7 +4890,7 @@ var variantClasses19 = {
   warning: "toggle-warning",
   error: "toggle-error"
 };
-var sizeClasses20 = {
+var sizeClasses19 = {
   xs: "toggle-xs",
   sm: "toggle-sm",
   md: "toggle-md",
@@ -4825,8 +4905,8 @@ var Switch = (0, import_react52.forwardRef)(
         {
           className: (0, import_clsx51.default)(
             "toggle text-base-content",
-            variant && variantClasses19[variant],
-            sizeClasses20[size],
+            variant && variantClasses18[variant],
+            sizeClasses19[size],
             className
           ),
           children: [
@@ -4842,7 +4922,7 @@ var Switch = (0, import_react52.forwardRef)(
       {
         ref,
         type: "checkbox",
-        className: (0, import_clsx51.default)("toggle", variant && variantClasses19[variant], sizeClasses20[size], className),
+        className: (0, import_clsx51.default)("toggle", variant && variantClasses18[variant], sizeClasses19[size], className),
         ...props
       }
     );
@@ -4861,7 +4941,7 @@ Switch.displayName = "Switch";
 var import_clsx52 = __toESM(require("clsx"));
 var import_react53 = require("react");
 var import_jsx_runtime52 = require("react/jsx-runtime");
-var sizeClasses21 = {
+var sizeClasses20 = {
   xs: "table-xs",
   sm: "table-sm",
   md: "table-md",
@@ -4875,7 +4955,7 @@ var Table = (0, import_react53.forwardRef)(
         ref,
         className: (0, import_clsx52.default)(
           "table",
-          sizeClasses21[size],
+          sizeClasses20[size],
           zebra && "table-zebra",
           pinRows && "table-pin-rows",
           pinCols && "table-pin-cols",
@@ -4912,12 +4992,12 @@ var useTabs = () => {
   }
   return context;
 };
-var variantClasses20 = {
+var variantClasses19 = {
   bordered: "tabs-border",
   lifted: "tabs-lift",
   boxed: "tabs-box"
 };
-var sizeClasses22 = {
+var sizeClasses21 = {
   xs: "tabs-xs",
   sm: "tabs-sm",
   md: "tabs-md",
@@ -4978,8 +5058,8 @@ var Tabs = (0, import_react54.forwardRef)(
             ref,
             className: (0, import_clsx53.default)(
               "tabs",
-              variantClasses20[variant],
-              sizeClasses22[size],
+              variantClasses19[variant],
+              sizeClasses21[size],
               positionClasses2[position],
               className
             ),
@@ -5054,7 +5134,7 @@ var useToast = () => {
   }
   return context;
 };
-var variantClasses21 = {
+var variantClasses20 = {
   info: "alert-info",
   success: "alert-success",
   warning: "alert-warning",
@@ -5089,7 +5169,7 @@ var ToastItem = (0, import_react55.forwardRef)(
         return () => clearTimeout(timer);
       }
     }, [duration, onDismiss]);
-    return /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)("div", { ref, className: (0, import_clsx54.default)("alert", variantClasses21[variant], className), ...props, children: [
+    return /* @__PURE__ */ (0, import_jsx_runtime54.jsxs)("div", { ref, className: (0, import_clsx54.default)("alert", variantClasses20[variant], className), ...props, children: [
       /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(Icon, { className: "h-6 w-6" }),
       /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("span", { children: message }),
       onDismiss && /* @__PURE__ */ (0, import_jsx_runtime54.jsx)("button", { onClick: onDismiss, className: "btn btn-sm btn-circle btn-ghost ml-auto", children: /* @__PURE__ */ (0, import_jsx_runtime54.jsx)(import_outline4.XMarkIcon, { className: "h-5 w-5" }) })
@@ -5136,13 +5216,13 @@ var useToggleGroup = () => {
   }
   return context;
 };
-var sizeClasses23 = {
+var sizeClasses22 = {
   xs: "btn-xs",
   sm: "btn-sm",
   md: "btn-md",
   lg: "btn-lg"
 };
-var variantClasses22 = {
+var variantClasses21 = {
   primary: "btn-primary",
   secondary: "btn-secondary",
   accent: "btn-accent"
@@ -5167,8 +5247,8 @@ var Toggle = (0, import_react56.forwardRef)(
         "aria-pressed": isPressed,
         className: (0, import_clsx55.default)(
           "btn",
-          sizeClasses23[size],
-          variant && variantClasses22[variant],
+          sizeClasses22[size],
+          variant && variantClasses21[variant],
           isPressed && "btn-active",
           className
         ),
@@ -5213,8 +5293,8 @@ var ToggleGroupItem = (0, import_react56.forwardRef)(
         "aria-pressed": isPressed,
         className: (0, import_clsx55.default)(
           "btn join-item",
-          size && sizeClasses23[size],
-          variant && variantClasses22[variant],
+          size && sizeClasses22[size],
+          variant && variantClasses21[variant],
           isPressed && "btn-active",
           className
         ),
@@ -5236,7 +5316,7 @@ var positionClasses4 = {
   left: "tooltip-left",
   right: "tooltip-right"
 };
-var variantClasses23 = {
+var variantClasses22 = {
   primary: "tooltip-primary",
   secondary: "tooltip-secondary",
   accent: "tooltip-accent",
@@ -5254,7 +5334,7 @@ var Tooltip = (0, import_react57.forwardRef)(
         className: (0, import_clsx56.default)(
           "tooltip",
           positionClasses4[position],
-          variant && variantClasses23[variant],
+          variant && variantClasses22[variant],
           open && "tooltip-open",
           className
         ),
@@ -5271,7 +5351,7 @@ Tooltip.displayName = "Tooltip";
 var import_clsx57 = __toESM(require("clsx"));
 var import_react58 = require("react");
 var import_jsx_runtime57 = require("react/jsx-runtime");
-var variantClasses24 = {
+var variantClasses23 = {
   h1: "text-4xl font-bold",
   h2: "text-3xl font-bold",
   h3: "text-2xl font-bold",
@@ -5304,7 +5384,7 @@ var defaultElements = {
 var Typography = (0, import_react58.forwardRef)(
   ({ variant = "p", as, children, className, ...props }, ref) => {
     const Component = as || defaultElements[variant];
-    return /* @__PURE__ */ (0, import_jsx_runtime57.jsx)(Component, { ref, className: (0, import_clsx57.default)(variantClasses24[variant], className), ...props, children });
+    return /* @__PURE__ */ (0, import_jsx_runtime57.jsx)(Component, { ref, className: (0, import_clsx57.default)(variantClasses23[variant], className), ...props, children });
   }
 );
 Typography.displayName = "Typography";
