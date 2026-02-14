@@ -3187,6 +3187,72 @@ var ErrorHelperText2 = ({ error, helperText, inputId }) => /* @__PURE__ */ jsxs2
   error && /* @__PURE__ */ jsx27("label", { className: "label", id: `${inputId}-error`, children: /* @__PURE__ */ jsx27("span", { className: "label-text-alt text-error", children: error }) }),
   !error && helperText && /* @__PURE__ */ jsx27("label", { className: "label", id: `${inputId}-helper`, children: /* @__PURE__ */ jsx27("span", { className: "label-text-alt", children: helperText }) })
 ] });
+var SelectOptions = ({
+  options,
+  children,
+  placeholder,
+  label,
+  showPlaceholder = true,
+  hidePlaceholder = false
+}) => /* @__PURE__ */ jsxs24(Fragment2, { children: [
+  showPlaceholder && (placeholder || label) && /* @__PURE__ */ jsx27("option", { value: "", disabled: true, hidden: hidePlaceholder, children: placeholder || label || "Select an option" }),
+  options ? options.map((option) => /* @__PURE__ */ jsx27(
+    "option",
+    {
+      value: option.value,
+      disabled: option.disabled,
+      hidden: option.hidden,
+      children: option.label
+    },
+    option.value
+  )) : children
+] });
+var HiddenNativeSelect = ({
+  selectId,
+  currentValue,
+  handleChange,
+  handleFocus,
+  handleBlur,
+  error,
+  forwardedRef,
+  selectRef,
+  options,
+  children,
+  placeholder,
+  label,
+  props
+}) => /* @__PURE__ */ jsx27(
+  "select",
+  {
+    ref: (node) => {
+      if (typeof forwardedRef === "function") {
+        forwardedRef(node);
+      } else if (forwardedRef) {
+        forwardedRef.current = node;
+      }
+      selectRef.current = node;
+    },
+    id: selectId,
+    value: currentValue,
+    onChange: handleChange,
+    onFocus: handleFocus,
+    onBlur: handleBlur,
+    className: "select-native",
+    "aria-invalid": error ? "true" : void 0,
+    ...props,
+    children: /* @__PURE__ */ jsx27(
+      SelectOptions,
+      {
+        options,
+        placeholder,
+        label,
+        showPlaceholder: true,
+        hidePlaceholder: true,
+        children
+      }
+    )
+  }
+);
 var Select = forwardRef27(
   ({
     variant = "bordered",
@@ -3282,29 +3348,22 @@ var Select = forwardRef27(
                     ]
                   }
                 ),
-                /* @__PURE__ */ jsxs24(
-                  "select",
+                /* @__PURE__ */ jsx27(
+                  HiddenNativeSelect,
                   {
-                    ref: (node) => {
-                      if (typeof ref === "function") {
-                        ref(node);
-                      } else if (ref) {
-                        ref.current = node;
-                      }
-                      selectRef.current = node;
-                    },
-                    id: selectId,
-                    value: currentValue,
-                    onChange: handleChange,
-                    onFocus: handleFocus,
-                    onBlur: handleBlur,
-                    className: "select-native",
-                    "aria-invalid": error ? "true" : void 0,
-                    ...props,
-                    children: [
-                      /* @__PURE__ */ jsx27("option", { value: "", disabled: true, hidden: true, children: label || placeholder || "Select an option" }),
-                      options ? options.map((option) => /* @__PURE__ */ jsx27("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
-                    ]
+                    selectId,
+                    currentValue,
+                    handleChange,
+                    handleFocus,
+                    handleBlur,
+                    error,
+                    forwardedRef: ref,
+                    selectRef,
+                    options,
+                    placeholder,
+                    label,
+                    props,
+                    children
                   }
                 ),
                 showArrow && /* @__PURE__ */ jsx27(ChevronDownIcon2, { className: "h-5 w-5 shrink-0" })
@@ -3329,7 +3388,7 @@ var Select = forwardRef27(
     return /* @__PURE__ */ jsxs24("div", { className: "form-control w-full", children: [
       label && /* @__PURE__ */ jsx27("label", { className: "label", htmlFor: selectId, children: /* @__PURE__ */ jsx27("span", { className: "label-text font-medium", children: label }) }),
       /* @__PURE__ */ jsxs24("div", { className: "relative w-full", children: [
-        /* @__PURE__ */ jsxs24(
+        /* @__PURE__ */ jsx27(
           "select",
           {
             style: { backgroundImage: "none !important" },
@@ -3342,10 +3401,17 @@ var Select = forwardRef27(
             className: selectClasses,
             "aria-invalid": error ? "true" : void 0,
             ...props,
-            children: [
-              placeholder && /* @__PURE__ */ jsx27("option", { value: "", disabled: !currentValue, hidden: true, children: placeholder }),
-              options ? options.map((option) => /* @__PURE__ */ jsx27("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
-            ]
+            children: /* @__PURE__ */ jsx27(
+              SelectOptions,
+              {
+                options,
+                placeholder,
+                label,
+                showPlaceholder: !!placeholder,
+                hidePlaceholder: true,
+                children
+              }
+            )
           }
         ),
         showArrow && /* @__PURE__ */ jsx27(

@@ -1750,36 +1750,6 @@ interface SelectProps extends Omit<React__default.SelectHTMLAttributes<HTMLSelec
  * - **Floating variant**: Custom UI with floating label that moves to top when value is selected
  * - **Bordered/Ghost variants**: Use DaisyUI's native select component for standard behavior
  * - Supports controlled and uncontrolled modes
- *
- * @example
- * ```tsx
- * // Floating variant (custom UI with label display)
- * <Select
- *   variant="floating"
- *   label="Select Country"
- *   value={country}
- *   onChange={(e) => setCountry(e.target.value)}
- *   options={[
- *     { value: 'us', label: 'United States' },
- *     { value: 'uk', label: 'United Kingdom' },
- *   ]}
- * />
- *
- * // Bordered variant (DaisyUI native select)
- * <Select
- *   variant="bordered"
- *   placeholder="Choose an option"
- *   options={options}
- * />
- *
- * // Uncontrolled mode
- * <Select
- *   variant="floating"
- *   label="Category"
- *   defaultValue="tech"
- *   options={options}
- * />
- * ```
  */
 declare const Select: React__default.ForwardRefExoticComponent<SelectProps & React__default.RefAttributes<HTMLSelectElement>>;
 

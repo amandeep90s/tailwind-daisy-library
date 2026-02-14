@@ -3324,6 +3324,72 @@ var ErrorHelperText2 = ({ error, helperText, inputId }) => /* @__PURE__ */ (0, i
   error && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("label", { className: "label", id: `${inputId}-error`, children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "label-text-alt text-error", children: error }) }),
   !error && helperText && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("label", { className: "label", id: `${inputId}-helper`, children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "label-text-alt", children: helperText }) })
 ] });
+var SelectOptions = ({
+  options,
+  children,
+  placeholder,
+  label,
+  showPlaceholder = true,
+  hidePlaceholder = false
+}) => /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(import_jsx_runtime27.Fragment, { children: [
+  showPlaceholder && (placeholder || label) && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "", disabled: true, hidden: hidePlaceholder, children: placeholder || label || "Select an option" }),
+  options ? options.map((option) => /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+    "option",
+    {
+      value: option.value,
+      disabled: option.disabled,
+      hidden: option.hidden,
+      children: option.label
+    },
+    option.value
+  )) : children
+] });
+var HiddenNativeSelect = ({
+  selectId,
+  currentValue,
+  handleChange,
+  handleFocus,
+  handleBlur,
+  error,
+  forwardedRef,
+  selectRef,
+  options,
+  children,
+  placeholder,
+  label,
+  props
+}) => /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+  "select",
+  {
+    ref: (node) => {
+      if (typeof forwardedRef === "function") {
+        forwardedRef(node);
+      } else if (forwardedRef) {
+        forwardedRef.current = node;
+      }
+      selectRef.current = node;
+    },
+    id: selectId,
+    value: currentValue,
+    onChange: handleChange,
+    onFocus: handleFocus,
+    onBlur: handleBlur,
+    className: "select-native",
+    "aria-invalid": error ? "true" : void 0,
+    ...props,
+    children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+      SelectOptions,
+      {
+        options,
+        placeholder,
+        label,
+        showPlaceholder: true,
+        hidePlaceholder: true,
+        children
+      }
+    )
+  }
+);
 var Select = (0, import_react28.forwardRef)(
   ({
     variant = "bordered",
@@ -3419,29 +3485,22 @@ var Select = (0, import_react28.forwardRef)(
                     ]
                   }
                 ),
-                /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
-                  "select",
+                /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+                  HiddenNativeSelect,
                   {
-                    ref: (node) => {
-                      if (typeof ref === "function") {
-                        ref(node);
-                      } else if (ref) {
-                        ref.current = node;
-                      }
-                      selectRef.current = node;
-                    },
-                    id: selectId,
-                    value: currentValue,
-                    onChange: handleChange,
-                    onFocus: handleFocus,
-                    onBlur: handleBlur,
-                    className: "select-native",
-                    "aria-invalid": error ? "true" : void 0,
-                    ...props,
-                    children: [
-                      /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "", disabled: true, hidden: true, children: label || placeholder || "Select an option" }),
-                      options ? options.map((option) => /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
-                    ]
+                    selectId,
+                    currentValue,
+                    handleChange,
+                    handleFocus,
+                    handleBlur,
+                    error,
+                    forwardedRef: ref,
+                    selectRef,
+                    options,
+                    placeholder,
+                    label,
+                    props,
+                    children
                   }
                 ),
                 showArrow && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(import_solid3.ChevronDownIcon, { className: "h-5 w-5 shrink-0" })
@@ -3466,7 +3525,7 @@ var Select = (0, import_react28.forwardRef)(
     return /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "form-control w-full", children: [
       label && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("label", { className: "label", htmlFor: selectId, children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("span", { className: "label-text font-medium", children: label }) }),
       /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)("div", { className: "relative w-full", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime27.jsxs)(
+        /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
           "select",
           {
             style: { backgroundImage: "none !important" },
@@ -3479,10 +3538,17 @@ var Select = (0, import_react28.forwardRef)(
             className: selectClasses,
             "aria-invalid": error ? "true" : void 0,
             ...props,
-            children: [
-              placeholder && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: "", disabled: !currentValue, hidden: true, children: placeholder }),
-              options ? options.map((option) => /* @__PURE__ */ (0, import_jsx_runtime27.jsx)("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
-            ]
+            children: /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(
+              SelectOptions,
+              {
+                options,
+                placeholder,
+                label,
+                showPlaceholder: !!placeholder,
+                hidePlaceholder: true,
+                children
+              }
+            )
           }
         ),
         showArrow && /* @__PURE__ */ (0, import_jsx_runtime27.jsx)(

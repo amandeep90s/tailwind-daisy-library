@@ -126,6 +126,107 @@ const ErrorHelperText: React.FC<ErrorHelperTextProps> = ({ error, helperText, in
   </>
 );
 
+interface SelectOptionsProps {
+  options?: SelectOption[];
+  children?: React.ReactNode;
+  placeholder?: string;
+  label?: string;
+  showPlaceholder?: boolean;
+  hidePlaceholder?: boolean;
+}
+
+const SelectOptions: React.FC<SelectOptionsProps> = ({
+  options,
+  children,
+  placeholder,
+  label,
+  showPlaceholder = true,
+  hidePlaceholder = false,
+}) => (
+  <>
+    {showPlaceholder && (placeholder || label) && (
+      <option value="" disabled hidden={hidePlaceholder}>
+        {placeholder || label || "Select an option"}
+      </option>
+    )}
+    {options
+      ? options.map((option) => (
+          <option
+            key={option.value}
+            value={option.value}
+            disabled={option.disabled}
+            hidden={option.hidden}
+          >
+            {option.label}
+          </option>
+        ))
+      : children}
+  </>
+);
+
+interface HiddenNativeSelectProps {
+  selectId?: string;
+  currentValue: string | number | readonly string[];
+  handleChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleFocus: (e: React.FocusEvent<HTMLSelectElement>) => void;
+  handleBlur: (e: React.FocusEvent<HTMLSelectElement>) => void;
+  error?: string;
+  forwardedRef: React.ForwardedRef<HTMLSelectElement>;
+  selectRef: React.RefObject<HTMLSelectElement | null>;
+  options?: SelectOption[];
+  children?: React.ReactNode;
+  placeholder?: string;
+  label?: string;
+  props: any;
+}
+
+const HiddenNativeSelect: React.FC<HiddenNativeSelectProps> = ({
+  selectId,
+  currentValue,
+  handleChange,
+  handleFocus,
+  handleBlur,
+  error,
+  forwardedRef,
+  selectRef,
+  options,
+  children,
+  placeholder,
+  label,
+  props,
+}) => (
+  <select
+    ref={(node) => {
+      // Handle both forwarded ref and internal ref
+      if (typeof forwardedRef === "function") {
+        forwardedRef(node);
+      } else if (forwardedRef) {
+        forwardedRef.current = node;
+      }
+      // @ts-ignore - selectRef is a mutable ref
+      selectRef.current = node;
+    }}
+    id={selectId}
+    value={currentValue}
+    onChange={handleChange}
+    onFocus={handleFocus}
+    onBlur={handleBlur}
+    className="select-native"
+    aria-invalid={error ? "true" : undefined}
+    {...props}
+  >
+    <SelectOptions
+      options={options}
+      placeholder={placeholder}
+      label={label}
+      showPlaceholder={true}
+      hidePlaceholder={true}
+    >
+      {children}
+    </SelectOptions>
+  </select>
+);
+
 // ============================================================================
 // COMPONENT
 // ============================================================================
@@ -137,36 +238,6 @@ const ErrorHelperText: React.FC<ErrorHelperTextProps> = ({ error, helperText, in
  * - **Floating variant**: Custom UI with floating label that moves to top when value is selected
  * - **Bordered/Ghost variants**: Use DaisyUI's native select component for standard behavior
  * - Supports controlled and uncontrolled modes
- *
- * @example
- * ```tsx
- * // Floating variant (custom UI with label display)
- * <Select
- *   variant="floating"
- *   label="Select Country"
- *   value={country}
- *   onChange={(e) => setCountry(e.target.value)}
- *   options={[
- *     { value: 'us', label: 'United States' },
- *     { value: 'uk', label: 'United Kingdom' },
- *   ]}
- * />
- *
- * // Bordered variant (DaisyUI native select)
- * <Select
- *   variant="bordered"
- *   placeholder="Choose an option"
- *   options={options}
- * />
- *
- * // Uncontrolled mode
- * <Select
- *   variant="floating"
- *   label="Category"
- *   defaultValue="tech"
- *   options={options}
- * />
- * ```
  */
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
   (
@@ -294,38 +365,22 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
               </span>
 
               {/* Hidden native select */}
-              <select
-                ref={(node) => {
-                  // Handle both forwarded ref and internal ref
-                  if (typeof ref === "function") {
-                    ref(node);
-                  } else if (ref) {
-                    ref.current = node;
-                  }
-                  // @ts-ignore - selectRef is a mutable ref
-                  selectRef.current = node;
-                }}
-                id={selectId}
-                value={currentValue}
-                onChange={handleChange}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                className="select-native"
-                aria-invalid={error ? "true" : undefined}
-                {...props}
+              <HiddenNativeSelect
+                selectId={selectId}
+                currentValue={currentValue}
+                handleChange={handleChange}
+                handleFocus={handleFocus}
+                handleBlur={handleBlur}
+                error={error}
+                forwardedRef={ref}
+                selectRef={selectRef}
+                options={options}
+                placeholder={placeholder}
+                label={label}
+                props={props}
               >
-                {/* Hidden placeholder option to prevent showing first option */}
-                <option value="" disabled hidden>
-                  {label || placeholder || "Select an option"}
-                </option>
-                {options
-                  ? options.map((option) => (
-                      <option key={option.value} value={option.value} disabled={option.disabled}>
-                        {option.label}
-                      </option>
-                    ))
-                  : children}
-              </select>
+                {children}
+              </HiddenNativeSelect>
 
               {/* Chevron icon */}
               {showArrow && <ChevronDownIcon className="h-5 w-5 shrink-0" />}
@@ -370,18 +425,15 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             aria-invalid={error ? "true" : undefined}
             {...props}
           >
-            {placeholder && (
-              <option value="" disabled={!currentValue} hidden={true}>
-                {placeholder}
-              </option>
-            )}
-            {options
-              ? options.map((option) => (
-                  <option key={option.value} value={option.value} disabled={option.disabled}>
-                    {option.label}
-                  </option>
-                ))
-              : children}
+            <SelectOptions
+              options={options}
+              placeholder={placeholder}
+              label={label}
+              showPlaceholder={!!placeholder}
+              hidePlaceholder={true}
+            >
+              {children}
+            </SelectOptions>
           </select>
           {showArrow && (
             <ChevronDownIcon
