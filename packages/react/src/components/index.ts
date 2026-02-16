@@ -73,8 +73,8 @@ export type {
   DataTableSize,
   DataTableSortState,
   PaginationVariant,
-  SortDirection,
   SortableDataTableProps,
+  SortDirection,
 } from "./DataTable";
 export { DateInput } from "./DateInput";
 export type {
@@ -93,6 +93,14 @@ export type {
   DatePickerSize,
   DatePickerVariant,
 } from "./DatePicker";
+export { DatetimeInput } from "./DatetimeInput";
+export type {
+  DatetimeInputColor,
+  DatetimeInputProps,
+  DatetimeInputSize,
+  DatetimeInputType,
+  DatetimeInputVariant,
+} from "./DatetimeInput";
 export { Dialog, DialogActions, DialogCloseButton, DialogDescription, DialogTitle } from "./Dialog";
 export type {
   DialogActionsProps,

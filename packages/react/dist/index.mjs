@@ -2514,10 +2514,203 @@ var DatePicker = forwardRef22(
 );
 DatePicker.displayName = "DatePicker";
 
-// src/components/Dialog.tsx
+// src/components/DatetimeInput.tsx
+import { ClockIcon } from "@heroicons/react/24/outline";
 import clsx23 from "clsx";
-import { forwardRef as forwardRef23, useEffect as useEffect8, useRef as useRef6 } from "react";
-import { jsx as jsx23, jsxs as jsxs20 } from "react/jsx-runtime";
+import { forwardRef as forwardRef23, useEffect as useEffect8, useRef as useRef6, useState as useState11 } from "react";
+import { Fragment as Fragment2, jsx as jsx23, jsxs as jsxs20 } from "react/jsx-runtime";
+var variantClasses11 = {
+  bordered: "input-bordered",
+  ghost: "input-ghost",
+  floating: "border-secondary-400"
+};
+var colorClasses5 = {
+  default: "",
+  primary: "input-primary",
+  secondary: "input-secondary",
+  accent: "input-accent",
+  info: "input-info",
+  success: "input-success",
+  warning: "input-warning",
+  error: "input-error"
+};
+var sizeClasses10 = {
+  xs: "input-xs",
+  sm: "input-sm",
+  md: "input-md",
+  lg: "input-lg",
+  xl: "input-xl"
+};
+var HiddenTimeInput = ({
+  inputRef,
+  currentValue,
+  handleChange,
+  handleFocus,
+  handleBlur,
+  min,
+  max,
+  inputId,
+  error,
+  inputType,
+  props
+}) => /* @__PURE__ */ jsx23(
+  "input",
+  {
+    ...props,
+    ref: inputRef,
+    type: inputType,
+    className: "datetime-native",
+    value: currentValue,
+    onChange: handleChange,
+    onFocus: handleFocus,
+    onBlur: handleBlur,
+    min,
+    max,
+    id: inputId,
+    "aria-invalid": error ? "true" : void 0
+  }
+);
+var ErrorHelperText2 = ({ error, helperText, inputId }) => /* @__PURE__ */ jsxs20(Fragment2, { children: [
+  error && /* @__PURE__ */ jsx23("label", { className: "label", id: `${inputId}-error`, children: /* @__PURE__ */ jsx23("span", { className: "label-text-alt text-error", children: error }) }),
+  !error && helperText && /* @__PURE__ */ jsx23("label", { className: "label", id: `${inputId}-helper`, children: /* @__PURE__ */ jsx23("span", { className: "label-text-alt", children: helperText }) })
+] });
+var DatetimeInput = forwardRef23(
+  ({
+    type = "time",
+    variant = "floating",
+    color,
+    size = "lg",
+    value,
+    defaultValue,
+    onChange,
+    min,
+    max,
+    label,
+    error,
+    helperText,
+    className,
+    id,
+    fullWidth = false,
+    ...props
+  }, ref) => {
+    const [isFocused, setIsFocused] = useState11(false);
+    const [internalValue, setInternalValue] = useState11(defaultValue || value || "");
+    const inputRef = useRef6(null);
+    useEffect8(() => {
+      if (value !== void 0) {
+        setInternalValue(value);
+      }
+    }, [value]);
+    const currentValue = value !== void 0 ? value : internalValue;
+    const inputId = id || (label ? `datetime-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
+    const handleChange = (e) => {
+      const newValue = e.target.value;
+      if (value === void 0) {
+        setInternalValue(newValue);
+      }
+      if (onChange) {
+        onChange(newValue);
+      }
+    };
+    const openPicker = () => {
+      setIsFocused(true);
+      inputRef.current?.showPicker();
+    };
+    const handleFocus = (e) => {
+      setIsFocused(true);
+      props.onFocus?.(e);
+    };
+    const handleBlur = (e) => {
+      setIsFocused(false);
+      props.onBlur?.(e);
+    };
+    const isActive = currentValue || isFocused;
+    const inputClasses = clsx23(
+      size === "lg" && "h-15",
+      variantClasses11[variant],
+      error ? colorClasses5.error : color && colorClasses5[color],
+      sizeClasses10[size],
+      className
+    );
+    const commonInputProps = {
+      inputRef,
+      currentValue,
+      handleChange,
+      handleFocus,
+      handleBlur,
+      min,
+      max,
+      error,
+      inputType: type,
+      props
+    };
+    if (variant === "floating") {
+      return /* @__PURE__ */ jsxs20("div", { className: "form-control w-full", children: [
+        /* @__PURE__ */ jsxs20("label", { className: `floating-label ${isActive ? "active" : ""}`, children: [
+          /* @__PURE__ */ jsx23("span", { className: "outer-label", children: label }),
+          /* @__PURE__ */ jsxs20(
+            "div",
+            {
+              className: clsx23(
+                "input input-bordered relative flex cursor-pointer outline-none",
+                "items-center gap-2 px-4 py-3 transition-colors",
+                fullWidth ? "w-full" : "inline-flex",
+                inputClasses
+              ),
+              onClick: openPicker,
+              children: [
+                /* @__PURE__ */ jsxs20(
+                  "span",
+                  {
+                    className: `${currentValue ? "pt-4 pl-1" : ""} datetime-content flex flex-1 justify-start select-none`,
+                    children: [
+                      !currentValue && /* @__PURE__ */ jsx23("span", { className: "internal-label", children: label }),
+                      currentValue && /* @__PURE__ */ jsx23("span", { className: "datetime-value text-secondary-400 text-base font-medium", children: currentValue })
+                    ]
+                  }
+                ),
+                /* @__PURE__ */ jsx23(HiddenTimeInput, { ...commonInputProps, inputId }),
+                /* @__PURE__ */ jsx23(ClockIcon, { className: "h-5 w-5 shrink-0" })
+              ]
+            }
+          )
+        ] }),
+        /* @__PURE__ */ jsx23(ErrorHelperText2, { error, helperText, inputId })
+      ] });
+    }
+    return /* @__PURE__ */ jsxs20("div", { className: "form-control w-full", children: [
+      label && /* @__PURE__ */ jsx23("label", { className: "label", htmlFor: inputId, children: /* @__PURE__ */ jsx23("span", { className: "label-text font-medium", children: label }) }),
+      /* @__PURE__ */ jsx23("div", { className: "relative inline-block w-full", children: /* @__PURE__ */ jsxs20(
+        "div",
+        {
+          className: clsx23(
+            "input flex w-full items-center justify-between px-4 py-3 outline-none",
+            inputClasses
+          ),
+          onClick: openPicker,
+          children: [
+            /* @__PURE__ */ jsx23(
+              "span",
+              {
+                className: `${currentValue ? "pl-1" : ""} datetime-content flex flex-1 justify-start select-none`,
+                children: currentValue ? /* @__PURE__ */ jsx23("span", { className: "datetime-value text-secondary-400 text-base font-medium", children: currentValue }) : /* @__PURE__ */ jsx23("span", { className: "text-base-content/40 text-base", children: "--:--" })
+              }
+            ),
+            /* @__PURE__ */ jsx23(HiddenTimeInput, { ...commonInputProps, inputId }),
+            /* @__PURE__ */ jsx23(ClockIcon, { className: "h-5 w-5 shrink-0" })
+          ]
+        }
+      ) }),
+      /* @__PURE__ */ jsx23(ErrorHelperText2, { error, helperText, inputId })
+    ] });
+  }
+);
+DatetimeInput.displayName = "DatetimeInput";
+
+// src/components/Dialog.tsx
+import clsx24 from "clsx";
+import { forwardRef as forwardRef24, useEffect as useEffect9, useRef as useRef7 } from "react";
+import { jsx as jsx24, jsxs as jsxs21 } from "react/jsx-runtime";
 var verticalPositionClasses = {
   top: "modal-top",
   middle: "modal-middle",
@@ -2528,7 +2721,7 @@ var horizontalPositionClasses = {
   center: "",
   end: "modal-end"
 };
-var sizeClasses10 = {
+var sizeClasses11 = {
   xs: "max-w-xs",
   sm: "max-w-sm",
   md: "max-w-md",
@@ -2540,32 +2733,32 @@ var sizeClasses10 = {
   "5xl": "max-w-5xl",
   full: "max-w-full w-full h-full rounded-none"
 };
-var DialogTitle = forwardRef23(
+var DialogTitle = forwardRef24(
   ({ children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx23("h3", { ref, className: clsx23("text-lg font-bold", className), ...props, children });
+    return /* @__PURE__ */ jsx24("h3", { ref, className: clsx24("text-lg font-bold", className), ...props, children });
   }
 );
 DialogTitle.displayName = "DialogTitle";
-var DialogDescription = forwardRef23(
+var DialogDescription = forwardRef24(
   ({ children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx23("p", { ref, className: clsx23("py-4", className), ...props, children });
+    return /* @__PURE__ */ jsx24("p", { ref, className: clsx24("py-4", className), ...props, children });
   }
 );
 DialogDescription.displayName = "DialogDescription";
-var DialogActions = forwardRef23(
+var DialogActions = forwardRef24(
   ({ children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx23("div", { ref, className: clsx23("modal-action", className), ...props, children });
+    return /* @__PURE__ */ jsx24("div", { ref, className: clsx24("modal-action", className), ...props, children });
   }
 );
 DialogActions.displayName = "DialogActions";
-var DialogCloseButton = forwardRef23(
+var DialogCloseButton = forwardRef24(
   ({ children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx23(
+    return /* @__PURE__ */ jsx24(
       "button",
       {
         ref,
         type: "button",
-        className: clsx23("btn btn-sm btn-circle btn-ghost absolute top-2 right-2", className),
+        className: clsx24("btn btn-sm btn-circle btn-ghost absolute top-2 right-2", className),
         "aria-label": "Close dialog",
         ...props,
         children: children || "\u2715"
@@ -2574,7 +2767,7 @@ var DialogCloseButton = forwardRef23(
   }
 );
 DialogCloseButton.displayName = "DialogCloseButton";
-var Dialog = forwardRef23(
+var Dialog = forwardRef24(
   ({
     open,
     onClose,
@@ -2591,9 +2784,9 @@ var Dialog = forwardRef23(
     className,
     ...props
   }, ref) => {
-    const dialogRef = useRef6(null);
+    const dialogRef = useRef7(null);
     const internalRef = ref || dialogRef;
-    useEffect8(() => {
+    useEffect9(() => {
       const dialog = internalRef.current;
       if (!dialog) return;
       if (open) {
@@ -2602,7 +2795,7 @@ var Dialog = forwardRef23(
         dialog.close();
       }
     }, [open, internalRef]);
-    useEffect8(() => {
+    useEffect9(() => {
       const dialog = internalRef.current;
       if (!dialog || !open) return;
       const handleKeyDown = (e) => {
@@ -2625,43 +2818,43 @@ var Dialog = forwardRef23(
         onClose?.();
       }
     };
-    const modalBoxClasses = clsx23(
+    const modalBoxClasses = clsx24(
       "modal-box overflow-x-hidden",
-      maxWidth || size && sizeClasses10[size],
+      maxWidth || size && sizeClasses11[size],
       responsive && "sm:modal-middle modal-bottom"
     );
-    const modalClasses = clsx23(
+    const modalClasses = clsx24(
       "modal",
       !responsive && verticalPositionClasses[position],
       horizontalPositionClasses[horizontalPosition],
       responsive && "modal-bottom sm:modal-middle",
       className
     );
-    return /* @__PURE__ */ jsxs20("dialog", { ref: internalRef, className: modalClasses, onClick: handleBackdropClick, ...props, children: [
-      /* @__PURE__ */ jsxs20("div", { className: modalBoxClasses, children: [
-        showCloseButton && /* @__PURE__ */ jsx23(DialogCloseButton, { onClick: onClose, children: closeButtonContent }),
+    return /* @__PURE__ */ jsxs21("dialog", { ref: internalRef, className: modalClasses, onClick: handleBackdropClick, ...props, children: [
+      /* @__PURE__ */ jsxs21("div", { className: modalBoxClasses, children: [
+        showCloseButton && /* @__PURE__ */ jsx24(DialogCloseButton, { onClick: onClose, children: closeButtonContent }),
         children
       ] }),
-      closeOnClickOutside && /* @__PURE__ */ jsx23("form", { method: "dialog", className: "modal-backdrop", children: /* @__PURE__ */ jsx23("button", { type: "button", onClick: onClose, children: "close" }) })
+      closeOnClickOutside && /* @__PURE__ */ jsx24("form", { method: "dialog", className: "modal-backdrop", children: /* @__PURE__ */ jsx24("button", { type: "button", onClick: onClose, children: "close" }) })
     ] });
   }
 );
 Dialog.displayName = "Dialog";
 
 // src/components/Drawer.tsx
-import clsx24 from "clsx";
-import { forwardRef as forwardRef24 } from "react";
-import { jsx as jsx24, jsxs as jsxs21 } from "react/jsx-runtime";
-var Drawer = forwardRef24(
+import clsx25 from "clsx";
+import { forwardRef as forwardRef25 } from "react";
+import { jsx as jsx25, jsxs as jsxs22 } from "react/jsx-runtime";
+var Drawer = forwardRef25(
   ({ open, onClose, position = "left", content, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsxs21(
+    return /* @__PURE__ */ jsxs22(
       "div",
       {
         ref,
-        className: clsx24("drawer", position === "right" && "drawer-end", className),
+        className: clsx25("drawer", position === "right" && "drawer-end", className),
         ...props,
         children: [
-          /* @__PURE__ */ jsx24(
+          /* @__PURE__ */ jsx25(
             "input",
             {
               type: "checkbox",
@@ -2675,9 +2868,9 @@ var Drawer = forwardRef24(
               readOnly: true
             }
           ),
-          /* @__PURE__ */ jsx24("div", { className: "drawer-content", children }),
-          /* @__PURE__ */ jsxs21("div", { className: "drawer-side z-40", children: [
-            /* @__PURE__ */ jsx24("label", { className: "drawer-overlay", onClick: onClose }),
+          /* @__PURE__ */ jsx25("div", { className: "drawer-content", children }),
+          /* @__PURE__ */ jsxs22("div", { className: "drawer-side z-40", children: [
+            /* @__PURE__ */ jsx25("label", { className: "drawer-overlay", onClick: onClose }),
             content
           ] })
         ]
@@ -2688,9 +2881,9 @@ var Drawer = forwardRef24(
 Drawer.displayName = "Drawer";
 
 // src/components/DropdownMenu.tsx
-import clsx25 from "clsx";
-import { forwardRef as forwardRef25, useEffect as useEffect9, useRef as useRef7, useState as useState11 } from "react";
-import { jsx as jsx25, jsxs as jsxs22 } from "react/jsx-runtime";
+import clsx26 from "clsx";
+import { forwardRef as forwardRef26, useEffect as useEffect10, useRef as useRef8, useState as useState12 } from "react";
+import { jsx as jsx26, jsxs as jsxs23 } from "react/jsx-runtime";
 var positionClasses = {
   top: "dropdown-top",
   bottom: "dropdown-bottom",
@@ -2698,7 +2891,7 @@ var positionClasses = {
   right: "dropdown-right",
   end: "dropdown-end"
 };
-var Dropdown = forwardRef25(
+var Dropdown = forwardRef26(
   ({
     trigger,
     position = "bottom",
@@ -2709,10 +2902,10 @@ var Dropdown = forwardRef25(
     className,
     ...props
   }, ref) => {
-    const [internalOpen, setInternalOpen] = useState11(false);
-    const dropdownRef = useRef7(null);
+    const [internalOpen, setInternalOpen] = useState12(false);
+    const dropdownRef = useRef8(null);
     const isOpen = open !== void 0 ? open : internalOpen;
-    useEffect9(() => {
+    useEffect10(() => {
       const handleClickOutside = (event) => {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
           if (open === void 0) {
@@ -2735,11 +2928,11 @@ var Dropdown = forwardRef25(
         onOpenChange?.(newOpen);
       }
     };
-    return /* @__PURE__ */ jsxs22(
+    return /* @__PURE__ */ jsxs23(
       "div",
       {
         ref: dropdownRef,
-        className: clsx25(
+        className: clsx26(
           "dropdown",
           positionClasses[position],
           hover && "dropdown-hover",
@@ -2748,7 +2941,7 @@ var Dropdown = forwardRef25(
         ),
         ...props,
         children: [
-          /* @__PURE__ */ jsx25("div", { tabIndex: 0, role: "button", onClick: handleTriggerClick, children: trigger }),
+          /* @__PURE__ */ jsx26("div", { tabIndex: 0, role: "button", onClick: handleTriggerClick, children: trigger }),
           children
         ]
       }
@@ -2756,14 +2949,14 @@ var Dropdown = forwardRef25(
   }
 );
 Dropdown.displayName = "Dropdown";
-var DropdownMenu = forwardRef25(
+var DropdownMenu = forwardRef26(
   ({ children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx25(
+    return /* @__PURE__ */ jsx26(
       "ul",
       {
         ref,
         tabIndex: 0,
-        className: clsx25(
+        className: clsx26(
           "dropdown-content menu bg-base-100 rounded-box z-1 w-auto max-w-75 min-w-52 truncate p-2 shadow",
           className
         ),
@@ -2776,11 +2969,11 @@ var DropdownMenu = forwardRef25(
 DropdownMenu.displayName = "DropdownMenu";
 
 // src/components/DynamicFormField.tsx
-import clsx29 from "clsx";
-import { forwardRef as forwardRef29 } from "react";
+import clsx30 from "clsx";
+import { forwardRef as forwardRef30 } from "react";
 
 // ../../node_modules/react-hook-form/dist/index.esm.mjs
-import React25 from "react";
+import React26 from "react";
 var isCheckBoxInput = (element) => element.type === "checkbox";
 var isDateObject = (value) => value instanceof Date;
 var isNullOrUndefined = (value) => value == null;
@@ -2858,9 +3051,9 @@ var VALIDATION_MODE = {
   onTouched: "onTouched",
   all: "all"
 };
-var HookFormControlContext = React25.createContext(null);
+var HookFormControlContext = React26.createContext(null);
 HookFormControlContext.displayName = "HookFormControlContext";
-var useFormControlContext = () => React25.useContext(HookFormControlContext);
+var useFormControlContext = () => React26.useContext(HookFormControlContext);
 var getProxyFormState = (formState, control, localProxyFormState, isRoot = true) => {
   const result = {
     defaultValues: control._defaultValues
@@ -2879,12 +3072,12 @@ var getProxyFormState = (formState, control, localProxyFormState, isRoot = true)
   }
   return result;
 };
-var useIsomorphicLayoutEffect = typeof window !== "undefined" ? React25.useLayoutEffect : React25.useEffect;
+var useIsomorphicLayoutEffect = typeof window !== "undefined" ? React26.useLayoutEffect : React26.useEffect;
 function useFormState(props) {
   const formControl = useFormControlContext();
   const { control = formControl, disabled, name, exact } = props || {};
-  const [formState, updateFormState] = React25.useState(control._formState);
-  const _localProxyFormState = React25.useRef({
+  const [formState, updateFormState] = React26.useState(control._formState);
+  const _localProxyFormState = React26.useRef({
     isDirty: false,
     isLoading: false,
     dirtyFields: false,
@@ -2905,10 +3098,10 @@ function useFormState(props) {
       });
     }
   }), [name, disabled, exact]);
-  React25.useEffect(() => {
+  React26.useEffect(() => {
     _localProxyFormState.current.isValid && control._setValid(true);
   }, [control]);
-  return React25.useMemo(() => getProxyFormState(formState, control, _localProxyFormState.current, false), [formState, control]);
+  return React26.useMemo(() => getProxyFormState(formState, control, _localProxyFormState.current, false), [formState, control]);
 }
 var isString = (value) => typeof value === "string";
 var generateWatchOutput = (names, _names, formValues, isGlobal, defaultValue) => {
@@ -2957,21 +3150,21 @@ function deepEqual(object1, object2, _internal_visited = /* @__PURE__ */ new Wea
 function useWatch(props) {
   const formControl = useFormControlContext();
   const { control = formControl, name, defaultValue, disabled, exact, compute } = props || {};
-  const _defaultValue = React25.useRef(defaultValue);
-  const _compute = React25.useRef(compute);
-  const _computeFormValues = React25.useRef(void 0);
-  const _prevControl = React25.useRef(control);
-  const _prevName = React25.useRef(name);
+  const _defaultValue = React26.useRef(defaultValue);
+  const _compute = React26.useRef(compute);
+  const _computeFormValues = React26.useRef(void 0);
+  const _prevControl = React26.useRef(control);
+  const _prevName = React26.useRef(name);
   _compute.current = compute;
-  const [value, updateValue] = React25.useState(() => {
+  const [value, updateValue] = React26.useState(() => {
     const defaultValue2 = control._getWatch(name, _defaultValue.current);
     return _compute.current ? _compute.current(defaultValue2) : defaultValue2;
   });
-  const getCurrentOutput = React25.useCallback((values) => {
+  const getCurrentOutput = React26.useCallback((values) => {
     const formValues = generateWatchOutput(name, control._names, values || control._formValues, false, _defaultValue.current);
     return _compute.current ? _compute.current(formValues) : formValues;
   }, [control._formValues, control._names, name]);
-  const refreshValue = React25.useCallback((values) => {
+  const refreshValue = React26.useCallback((values) => {
     if (!disabled) {
       const formValues = generateWatchOutput(name, control._names, values || control._formValues, false, _defaultValue.current);
       if (_compute.current) {
@@ -3002,10 +3195,10 @@ function useWatch(props) {
       }
     });
   }, [control, exact, name, refreshValue]);
-  React25.useEffect(() => control._removeUnmounted());
+  React26.useEffect(() => control._removeUnmounted());
   const controlChanged = _prevControl.current !== control;
   const prevName = _prevName.current;
-  const computedOutput = React25.useMemo(() => {
+  const computedOutput = React26.useMemo(() => {
     if (disabled) {
       return null;
     }
@@ -3019,7 +3212,7 @@ function useController(props) {
   const formControl = useFormControlContext();
   const { name, disabled, control = formControl, shouldUnregister, defaultValue, exact = true } = props;
   const isArrayField = isNameInFieldArray(control._names.array, name);
-  const defaultValueMemo = React25.useMemo(() => get(control._formValues, name, get(control._defaultValues, name, defaultValue)), [control, name, defaultValue]);
+  const defaultValueMemo = React26.useMemo(() => get(control._formValues, name, get(control._defaultValues, name, defaultValue)), [control, name, defaultValue]);
   const value = useWatch({
     control,
     name,
@@ -3031,15 +3224,15 @@ function useController(props) {
     name,
     exact
   });
-  const _props = React25.useRef(props);
-  const _previousNameRef = React25.useRef(void 0);
-  const _registerProps = React25.useRef(control.register(name, {
+  const _props = React26.useRef(props);
+  const _previousNameRef = React26.useRef(void 0);
+  const _registerProps = React26.useRef(control.register(name, {
     ...props.rules,
     value,
     ...isBoolean(props.disabled) ? { disabled: props.disabled } : {}
   }));
   _props.current = props;
-  const fieldState = React25.useMemo(() => Object.defineProperties({}, {
+  const fieldState = React26.useMemo(() => Object.defineProperties({}, {
     invalid: {
       enumerable: true,
       get: () => !!get(formState.errors, name)
@@ -3061,21 +3254,21 @@ function useController(props) {
       get: () => get(formState.errors, name)
     }
   }), [formState, name]);
-  const onChange = React25.useCallback((event) => _registerProps.current.onChange({
+  const onChange = React26.useCallback((event) => _registerProps.current.onChange({
     target: {
       value: getEventValue(event),
       name
     },
     type: EVENTS.CHANGE
   }), [name]);
-  const onBlur = React25.useCallback(() => _registerProps.current.onBlur({
+  const onBlur = React26.useCallback(() => _registerProps.current.onBlur({
     target: {
       value: get(control._formValues, name),
       name
     },
     type: EVENTS.BLUR
   }), [name, control._formValues]);
-  const ref = React25.useCallback((elm) => {
+  const ref = React26.useCallback((elm) => {
     const field2 = get(control._fields, name);
     if (field2 && field2._f && elm) {
       field2._f.ref = {
@@ -3086,7 +3279,7 @@ function useController(props) {
       };
     }
   }, [control._fields, name]);
-  const field = React25.useMemo(() => ({
+  const field = React26.useMemo(() => ({
     name,
     value,
     ...isBoolean(disabled) || formState.disabled ? { disabled: formState.disabled || disabled } : {},
@@ -3094,7 +3287,7 @@ function useController(props) {
     onBlur,
     ref
   }), [name, disabled, formState.disabled, onChange, onBlur, ref, value]);
-  React25.useEffect(() => {
+  React26.useEffect(() => {
     const _shouldUnregisterField = control._options.shouldUnregister || shouldUnregister;
     const previousName = _previousNameRef.current;
     if (previousName && previousName !== name && !isArrayField) {
@@ -3124,20 +3317,20 @@ function useController(props) {
       (isArrayField ? _shouldUnregisterField && !control._state.action : _shouldUnregisterField) ? control.unregister(name) : updateMounted(name, false);
     };
   }, [name, control, isArrayField, shouldUnregister]);
-  React25.useEffect(() => {
+  React26.useEffect(() => {
     control._setDisabledField({
       disabled,
       name
     });
   }, [disabled, name, control]);
-  return React25.useMemo(() => ({
+  return React26.useMemo(() => ({
     field,
     formState,
     fieldState
   }), [field, formState, fieldState]);
 }
 var Controller = (props) => props.render(useController(props));
-var HookFormContext = React25.createContext(null);
+var HookFormContext = React26.createContext(null);
 HookFormContext.displayName = "HookFormContext";
 var defaultOptions = {
   mode: VALIDATION_MODE.onSubmit,
@@ -3146,9 +3339,9 @@ var defaultOptions = {
 };
 
 // src/components/RadioGroup.tsx
-import clsx26 from "clsx";
-import { createContext, forwardRef as forwardRef26, useContext } from "react";
-import { jsx as jsx26, jsxs as jsxs23 } from "react/jsx-runtime";
+import clsx27 from "clsx";
+import { createContext, forwardRef as forwardRef27, useContext } from "react";
+import { jsx as jsx27, jsxs as jsxs24 } from "react/jsx-runtime";
 var RadioGroupContext = createContext(null);
 var useRadioGroup = () => {
   const context = useContext(RadioGroupContext);
@@ -3157,7 +3350,7 @@ var useRadioGroup = () => {
   }
   return context;
 };
-var variantClasses11 = {
+var variantClasses12 = {
   primary: "radio-primary",
   secondary: "radio-secondary",
   accent: "radio-accent",
@@ -3168,13 +3361,13 @@ var variantClasses11 = {
   subtle: ""
   // Handled specially in Radio component
 };
-var sizeClasses11 = {
+var sizeClasses12 = {
   xs: "radio-xs",
   sm: "radio-sm",
   md: "radio-md",
   lg: "radio-lg"
 };
-var RadioGroup = forwardRef26(
+var RadioGroup = forwardRef27(
   ({
     name,
     value,
@@ -3186,11 +3379,11 @@ var RadioGroup = forwardRef26(
     className,
     ...props
   }, ref) => {
-    return /* @__PURE__ */ jsx26(RadioGroupContext.Provider, { value: { name, value, onChange, variant, size }, children: /* @__PURE__ */ jsx26(
+    return /* @__PURE__ */ jsx27(RadioGroupContext.Provider, { value: { name, value, onChange, variant, size }, children: /* @__PURE__ */ jsx27(
       "div",
       {
         ref,
-        className: clsx26(
+        className: clsx27(
           "flex",
           orientation === "vertical" ? "flex-col gap-2" : "flex-row gap-4",
           className
@@ -3203,7 +3396,7 @@ var RadioGroup = forwardRef26(
   }
 );
 RadioGroup.displayName = "RadioGroup";
-var Radio = forwardRef26(
+var Radio = forwardRef27(
   ({ value, label, className, id, ...props }, ref) => {
     const { name, value: groupValue, onChange, variant, size } = useRadioGroup();
     const radioId = id || `radio-${name}-${value}`;
@@ -3213,21 +3406,21 @@ var Radio = forwardRef26(
     };
     const getRadioClasses = () => {
       if (variant === "subtle") {
-        return clsx26(
+        return clsx27(
           "radio",
-          size && sizeClasses11[size],
+          size && sizeClasses12[size],
           isChecked ? "radio-accent" : "!border-gray-400 !bg-transparent checked:!border-accent checked:!bg-accent",
           className
         );
       }
-      return clsx26(
+      return clsx27(
         "radio",
-        variant && variantClasses11[variant],
-        size && sizeClasses11[size],
+        variant && variantClasses12[variant],
+        size && sizeClasses12[size],
         className
       );
     };
-    const radio = /* @__PURE__ */ jsx26(
+    const radio = /* @__PURE__ */ jsx27(
       "input",
       {
         ref,
@@ -3242,9 +3435,9 @@ var Radio = forwardRef26(
       }
     );
     if (label) {
-      return /* @__PURE__ */ jsxs23("label", { htmlFor: radioId, className: "label cursor-pointer justify-start gap-2", children: [
+      return /* @__PURE__ */ jsxs24("label", { htmlFor: radioId, className: "label cursor-pointer justify-start gap-2", children: [
         radio,
-        /* @__PURE__ */ jsx26("span", { className: "label-text", children: label })
+        /* @__PURE__ */ jsx27("span", { className: "label-text", children: label })
       ] });
     }
     return radio;
@@ -3254,9 +3447,9 @@ Radio.displayName = "Radio";
 
 // src/components/Select.tsx
 import { ChevronDownIcon as ChevronDownIcon2 } from "@heroicons/react/20/solid";
-import clsx27 from "clsx";
-import { forwardRef as forwardRef27, useEffect as useEffect10, useRef as useRef8, useState as useState12 } from "react";
-import { Fragment as Fragment2, jsx as jsx27, jsxs as jsxs24 } from "react/jsx-runtime";
+import clsx28 from "clsx";
+import { forwardRef as forwardRef28, useEffect as useEffect11, useRef as useRef9, useState as useState13 } from "react";
+import { Fragment as Fragment3, jsx as jsx28, jsxs as jsxs25 } from "react/jsx-runtime";
 var floatingVariantClasses = {
   floating: "border-secondary-400"
 };
@@ -3297,9 +3490,9 @@ var selectSizeClasses = {
   lg: "select-lg",
   xl: "select-xl"
 };
-var ErrorHelperText2 = ({ error, helperText, inputId }) => /* @__PURE__ */ jsxs24(Fragment2, { children: [
-  error && /* @__PURE__ */ jsx27("label", { className: "label", id: `${inputId}-error`, children: /* @__PURE__ */ jsx27("span", { className: "label-text-alt text-error", children: error }) }),
-  !error && helperText && /* @__PURE__ */ jsx27("label", { className: "label", id: `${inputId}-helper`, children: /* @__PURE__ */ jsx27("span", { className: "label-text-alt", children: helperText }) })
+var ErrorHelperText3 = ({ error, helperText, inputId }) => /* @__PURE__ */ jsxs25(Fragment3, { children: [
+  error && /* @__PURE__ */ jsx28("label", { className: "label", id: `${inputId}-error`, children: /* @__PURE__ */ jsx28("span", { className: "label-text-alt text-error", children: error }) }),
+  !error && helperText && /* @__PURE__ */ jsx28("label", { className: "label", id: `${inputId}-helper`, children: /* @__PURE__ */ jsx28("span", { className: "label-text-alt", children: helperText }) })
 ] });
 var SelectOptions = ({
   options,
@@ -3308,9 +3501,9 @@ var SelectOptions = ({
   label,
   showPlaceholder = true,
   hidePlaceholder = false
-}) => /* @__PURE__ */ jsxs24(Fragment2, { children: [
-  showPlaceholder && (placeholder || label) && /* @__PURE__ */ jsx27("option", { value: "", disabled: true, hidden: hidePlaceholder, children: placeholder || label || "Select an option" }),
-  options ? options.map((option) => /* @__PURE__ */ jsx27(
+}) => /* @__PURE__ */ jsxs25(Fragment3, { children: [
+  showPlaceholder && (placeholder || label) && /* @__PURE__ */ jsx28("option", { value: "", disabled: true, hidden: hidePlaceholder, children: placeholder || label || "Select an option" }),
+  options ? options.map((option) => /* @__PURE__ */ jsx28(
     "option",
     {
       value: option.value,
@@ -3335,7 +3528,7 @@ var HiddenNativeSelect = ({
   placeholder,
   label,
   props
-}) => /* @__PURE__ */ jsx27(
+}) => /* @__PURE__ */ jsx28(
   "select",
   {
     ref: (node) => {
@@ -3354,7 +3547,7 @@ var HiddenNativeSelect = ({
     className: "select-native",
     "aria-invalid": error ? "true" : void 0,
     ...props,
-    children: /* @__PURE__ */ jsx27(
+    children: /* @__PURE__ */ jsx28(
       SelectOptions,
       {
         options,
@@ -3367,7 +3560,7 @@ var HiddenNativeSelect = ({
     )
   }
 );
-var Select = forwardRef27(
+var Select = forwardRef28(
   ({
     variant = "bordered",
     color,
@@ -3387,11 +3580,11 @@ var Select = forwardRef27(
     fullWidth = false,
     ...props
   }, ref) => {
-    const [isFocused, setIsFocused] = useState12(false);
-    const [internalValue, setInternalValue] = useState12(defaultValue || value || "");
-    const selectRef = useRef8(null);
+    const [isFocused, setIsFocused] = useState13(false);
+    const [internalValue, setInternalValue] = useState13(defaultValue || value || "");
+    const selectRef = useRef9(null);
     const selectId = id || (label ? `select-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
-    useEffect10(() => {
+    useEffect11(() => {
       if (value !== void 0) {
         setInternalValue(value);
       }
@@ -3428,20 +3621,20 @@ var Select = forwardRef27(
     };
     const selectedLabel = getSelectedLabel();
     if (variant === "floating") {
-      const inputClasses = clsx27(
+      const inputClasses = clsx28(
         size === "lg" && "h-15",
         floatingVariantClasses.floating,
         error ? floatingColorClasses.error : color ? floatingColorClasses[color] : floatingColorClasses.default,
         floatingSizeClasses[size],
         className
       );
-      return /* @__PURE__ */ jsxs24("div", { className: "form-control w-full", children: [
-        /* @__PURE__ */ jsxs24("label", { className: `floating-label ${isActive ? "active" : ""}`, children: [
-          /* @__PURE__ */ jsx27("span", { className: "outer-label", children: label }),
-          /* @__PURE__ */ jsxs24(
+      return /* @__PURE__ */ jsxs25("div", { className: "form-control w-full", children: [
+        /* @__PURE__ */ jsxs25("label", { className: `floating-label ${isActive ? "active" : ""}`, children: [
+          /* @__PURE__ */ jsx28("span", { className: "outer-label", children: label }),
+          /* @__PURE__ */ jsxs25(
             "div",
             {
-              className: clsx27(
+              className: clsx28(
                 "select select-bordered outline-nonerelative flex w-full cursor-pointer",
                 "bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat outline-none",
                 "items-center gap-2 px-4 py-3 transition-colors",
@@ -3452,17 +3645,17 @@ var Select = forwardRef27(
               ),
               onClick: openSelect,
               children: [
-                /* @__PURE__ */ jsxs24(
+                /* @__PURE__ */ jsxs25(
                   "span",
                   {
                     className: `${currentValue ? "pt-4 pl-1" : ""} select-content flex flex-1 justify-start select-none`,
                     children: [
-                      /* @__PURE__ */ jsx27("span", { className: "internal-label", children: label || placeholder }),
-                      currentValue && /* @__PURE__ */ jsx27("span", { className: "select-value text-secondary-400 text-base", children: selectedLabel })
+                      /* @__PURE__ */ jsx28("span", { className: "internal-label", children: label || placeholder }),
+                      currentValue && /* @__PURE__ */ jsx28("span", { className: "select-value text-secondary-400 text-base", children: selectedLabel })
                     ]
                   }
                 ),
-                /* @__PURE__ */ jsx27(
+                /* @__PURE__ */ jsx28(
                   HiddenNativeSelect,
                   {
                     selectId,
@@ -3480,15 +3673,15 @@ var Select = forwardRef27(
                     children
                   }
                 ),
-                showArrow && /* @__PURE__ */ jsx27(ChevronDownIcon2, { className: "h-5 w-5 shrink-0" })
+                showArrow && /* @__PURE__ */ jsx28(ChevronDownIcon2, { className: "h-5 w-5 shrink-0" })
               ]
             }
           )
         ] }),
-        /* @__PURE__ */ jsx27(ErrorHelperText2, { error, helperText, inputId: selectId })
+        /* @__PURE__ */ jsx28(ErrorHelperText3, { error, helperText, inputId: selectId })
       ] });
     }
-    const selectClasses = clsx27(
+    const selectClasses = clsx28(
       "select w-full outline-none bg-size-[1.5em_1.5em] bg-position-[right_1rem_center] bg-no-repeat",
       "bg-none",
       // Important: Override DaisyUI's default background image
@@ -3499,10 +3692,10 @@ var Select = forwardRef27(
       // rightPadding,
       className
     );
-    return /* @__PURE__ */ jsxs24("div", { className: "form-control w-full", children: [
-      label && /* @__PURE__ */ jsx27("label", { className: "label", htmlFor: selectId, children: /* @__PURE__ */ jsx27("span", { className: "label-text font-medium", children: label }) }),
-      /* @__PURE__ */ jsxs24("div", { className: "relative w-full", children: [
-        /* @__PURE__ */ jsx27(
+    return /* @__PURE__ */ jsxs25("div", { className: "form-control w-full", children: [
+      label && /* @__PURE__ */ jsx28("label", { className: "label", htmlFor: selectId, children: /* @__PURE__ */ jsx28("span", { className: "label-text font-medium", children: label }) }),
+      /* @__PURE__ */ jsxs25("div", { className: "relative w-full", children: [
+        /* @__PURE__ */ jsx28(
           "select",
           {
             style: { backgroundImage: "none !important" },
@@ -3515,7 +3708,7 @@ var Select = forwardRef27(
             className: selectClasses,
             "aria-invalid": error ? "true" : void 0,
             ...props,
-            children: /* @__PURE__ */ jsx27(
+            children: /* @__PURE__ */ jsx28(
               SelectOptions,
               {
                 options,
@@ -3528,7 +3721,7 @@ var Select = forwardRef27(
             )
           }
         ),
-        showArrow && /* @__PURE__ */ jsx27(
+        showArrow && /* @__PURE__ */ jsx28(
           ChevronDownIcon2,
           {
             className: "text-base-content/70 pointer-events-none absolute top-1/2 right-3 h-5 w-5 -translate-y-1/2",
@@ -3536,22 +3729,22 @@ var Select = forwardRef27(
           }
         )
       ] }),
-      /* @__PURE__ */ jsx27(ErrorHelperText2, { error, helperText, inputId: selectId })
+      /* @__PURE__ */ jsx28(ErrorHelperText3, { error, helperText, inputId: selectId })
     ] });
   }
 );
 Select.displayName = "Select";
 
 // src/components/Textarea.tsx
-import clsx28 from "clsx";
-import { forwardRef as forwardRef28 } from "react";
-import { jsx as jsx28, jsxs as jsxs25 } from "react/jsx-runtime";
-var variantClasses12 = {
+import clsx29 from "clsx";
+import { forwardRef as forwardRef29 } from "react";
+import { jsx as jsx29, jsxs as jsxs26 } from "react/jsx-runtime";
+var variantClasses13 = {
   bordered: "textarea-bordered",
   ghost: "textarea-ghost",
   floating: ""
 };
-var colorClasses5 = {
+var colorClasses6 = {
   primary: "textarea-primary",
   secondary: "textarea-secondary",
   accent: "textarea-accent",
@@ -3560,27 +3753,27 @@ var colorClasses5 = {
   warning: "textarea-warning",
   error: "textarea-error"
 };
-var sizeClasses12 = {
+var sizeClasses13 = {
   xs: "textarea-xs",
   sm: "textarea-sm",
   md: "textarea-md",
   lg: "textarea-lg"
 };
-var Textarea = forwardRef28(
+var Textarea = forwardRef29(
   ({ variant = "bordered", color, size = "md", label, error, helperText, className, id, ...props }, ref) => {
     const textareaId = id || (label ? `textarea-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
-    const textareaClasses = clsx28(
+    const textareaClasses = clsx29(
       "textarea w-full",
-      variant !== "floating" && variantClasses12[variant],
-      error ? colorClasses5.error : color && colorClasses5[color],
-      sizeClasses12[size],
+      variant !== "floating" && variantClasses13[variant],
+      error ? colorClasses6.error : color && colorClasses6[color],
+      sizeClasses13[size],
       className
     );
     if (variant === "floating") {
-      return /* @__PURE__ */ jsxs25("div", { className: "form-control w-full", children: [
-        /* @__PURE__ */ jsxs25("label", { className: "floating-label", children: [
-          /* @__PURE__ */ jsx28("span", { children: label }),
-          /* @__PURE__ */ jsx28(
+      return /* @__PURE__ */ jsxs26("div", { className: "form-control w-full", children: [
+        /* @__PURE__ */ jsxs26("label", { className: "floating-label", children: [
+          /* @__PURE__ */ jsx29("span", { children: label }),
+          /* @__PURE__ */ jsx29(
             "textarea",
             {
               ref,
@@ -3591,26 +3784,26 @@ var Textarea = forwardRef28(
             }
           )
         ] }),
-        error && /* @__PURE__ */ jsx28("span", { className: "label-text-alt text-error mt-1 text-xs", children: error }),
-        !error && helperText && /* @__PURE__ */ jsx28("span", { className: "label-text-alt mt-1 text-xs", children: helperText })
+        error && /* @__PURE__ */ jsx29("span", { className: "label-text-alt text-error mt-1 text-xs", children: error }),
+        !error && helperText && /* @__PURE__ */ jsx29("span", { className: "label-text-alt mt-1 text-xs", children: helperText })
       ] });
     }
-    return /* @__PURE__ */ jsx28("textarea", { ref, id: textareaId, className: textareaClasses, ...props });
+    return /* @__PURE__ */ jsx29("textarea", { ref, id: textareaId, className: textareaClasses, ...props });
   }
 );
 Textarea.displayName = "Textarea";
 
 // src/components/DynamicFormField.tsx
-import { jsx as jsx29, jsxs as jsxs26 } from "react/jsx-runtime";
-var FieldWrapper = forwardRef29(
+import { jsx as jsx30, jsxs as jsxs27 } from "react/jsx-runtime";
+var FieldWrapper = forwardRef30(
   ({ label, description, error, required, className, children }, ref) => {
-    return /* @__PURE__ */ jsxs26("div", { ref, className: clsx29("form-control w-full space-y-1", className), children: [
-      label && /* @__PURE__ */ jsxs26("label", { className: "label-text text-sm font-medium", children: [
+    return /* @__PURE__ */ jsxs27("div", { ref, className: clsx30("form-control w-full space-y-1", className), children: [
+      label && /* @__PURE__ */ jsxs27("label", { className: "label-text text-sm font-medium", children: [
         label,
-        required && /* @__PURE__ */ jsx29("span", { className: "text-error ml-1", children: "*" })
+        required && /* @__PURE__ */ jsx30("span", { className: "text-error ml-1", children: "*" })
       ] }),
       children,
-      error ? /* @__PURE__ */ jsx29("p", { className: "text-error text-sm", role: "alert", children: error }) : description ? /* @__PURE__ */ jsx29("p", { className: "text-base-content/60 text-sm", children: description }) : null
+      error ? /* @__PURE__ */ jsx30("p", { className: "text-error text-sm", role: "alert", children: error }) : description ? /* @__PURE__ */ jsx30("p", { className: "text-base-content/60 text-sm", children: description }) : null
     ] });
   }
 );
@@ -3659,9 +3852,9 @@ var DynamicFormField = ({
   const renderField = () => {
     switch (type) {
       case "hidden":
-        return /* @__PURE__ */ jsx29("input", { type: "hidden", name, value });
+        return /* @__PURE__ */ jsx30("input", { type: "hidden", name, value });
       case "textarea":
-        return /* @__PURE__ */ jsx29(
+        return /* @__PURE__ */ jsx30(
           Textarea,
           {
             ref: inputRef,
@@ -3682,7 +3875,7 @@ var DynamicFormField = ({
           }
         );
       case "select":
-        return /* @__PURE__ */ jsx29(
+        return /* @__PURE__ */ jsx30(
           Select,
           {
             ref: inputRef,
@@ -3701,7 +3894,7 @@ var DynamicFormField = ({
           }
         );
       case "checkbox":
-        return /* @__PURE__ */ jsx29(
+        return /* @__PURE__ */ jsx30(
           Checkbox,
           {
             ref: inputRef,
@@ -3719,7 +3912,7 @@ var DynamicFormField = ({
           }
         );
       case "radio":
-        return /* @__PURE__ */ jsx29(
+        return /* @__PURE__ */ jsx30(
           RadioGroup,
           {
             name,
@@ -3727,7 +3920,7 @@ var DynamicFormField = ({
             onChange: handleRadioChange,
             variant: error ? "error" : void 0,
             ...componentProps,
-            children: options.map((option) => /* @__PURE__ */ jsx29(
+            children: options.map((option) => /* @__PURE__ */ jsx30(
               Radio,
               {
                 value: option.value,
@@ -3740,7 +3933,7 @@ var DynamicFormField = ({
         );
       // Input types: text, email, password, number, tel, url, date, time, datetime-local
       default:
-        return /* @__PURE__ */ jsx29(
+        return /* @__PURE__ */ jsx30(
           Input,
           {
             ref: inputRef,
@@ -3763,9 +3956,9 @@ var DynamicFormField = ({
     }
   };
   if (type === "checkbox") {
-    return /* @__PURE__ */ jsx29(FieldWrapper, { description, error, className, children: renderField() });
+    return /* @__PURE__ */ jsx30(FieldWrapper, { description, error, className, children: renderField() });
   }
-  return /* @__PURE__ */ jsx29(
+  return /* @__PURE__ */ jsx30(
     FieldWrapper,
     {
       label,
@@ -3783,14 +3976,14 @@ var ControlledDynamicFormField = ({
   control,
   error
 }) => {
-  return /* @__PURE__ */ jsx29(
+  return /* @__PURE__ */ jsx30(
     Controller,
     {
       name: field.name,
       control,
       rules: field.validation,
       defaultValue: field.defaultValue ?? getDefaultValueForType(field.type),
-      render: ({ field: controllerField }) => /* @__PURE__ */ jsx29(
+      render: ({ field: controllerField }) => /* @__PURE__ */ jsx30(
         DynamicFormField,
         {
           field,
@@ -3831,7 +4024,7 @@ var columnClasses = {
   3: "grid-cols-1 md:grid-cols-2 lg:grid-cols-3",
   4: "grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
 };
-var DynamicForm = forwardRef29(
+var DynamicForm = forwardRef30(
   ({
     fields,
     onSubmit,
@@ -3862,17 +4055,17 @@ var DynamicForm = forwardRef29(
         onSubmit(data);
       }
     };
-    return /* @__PURE__ */ jsxs26("form", { ref, onSubmit: handleFormSubmit, className: clsx29("w-full", className), ...props, children: [
-      /* @__PURE__ */ jsx29(
+    return /* @__PURE__ */ jsxs27("form", { ref, onSubmit: handleFormSubmit, className: clsx30("w-full", className), ...props, children: [
+      /* @__PURE__ */ jsx30(
         "div",
         {
-          className: clsx29(
+          className: clsx30(
             layoutClasses[layout],
             gapClasses[gap],
             layout === "grid" && columnClasses[columns]
           ),
           children: fields.map(
-            (field) => control ? /* @__PURE__ */ jsx29(
+            (field) => control ? /* @__PURE__ */ jsx30(
               ControlledDynamicFormField,
               {
                 field,
@@ -3880,7 +4073,7 @@ var DynamicForm = forwardRef29(
                 error: errors[field.name]?.message
               },
               field.name
-            ) : /* @__PURE__ */ jsx29(
+            ) : /* @__PURE__ */ jsx30(
               DynamicFormField,
               {
                 field,
@@ -3892,11 +4085,11 @@ var DynamicForm = forwardRef29(
         }
       ),
       children,
-      renderActions ? renderActions() : showSubmitButton ? /* @__PURE__ */ jsx29("div", { className: "mt-6 flex justify-end", children: /* @__PURE__ */ jsx29(
+      renderActions ? renderActions() : showSubmitButton ? /* @__PURE__ */ jsx30("div", { className: "mt-6 flex justify-end", children: /* @__PURE__ */ jsx30(
         "button",
         {
           type: "submit",
-          className: clsx29("btn btn-primary", isSubmitting && "loading"),
+          className: clsx30("btn btn-primary", isSubmitting && "loading"),
           disabled: isSubmitting,
           children: isSubmitting ? "Submitting..." : submitText
         }
@@ -3907,22 +4100,22 @@ var DynamicForm = forwardRef29(
 DynamicForm.displayName = "DynamicForm";
 
 // src/components/Empty.tsx
-import clsx30 from "clsx";
-import { forwardRef as forwardRef30 } from "react";
-import { jsx as jsx30, jsxs as jsxs27 } from "react/jsx-runtime";
-var Empty = forwardRef30(
+import clsx31 from "clsx";
+import { forwardRef as forwardRef31 } from "react";
+import { jsx as jsx31, jsxs as jsxs28 } from "react/jsx-runtime";
+var Empty = forwardRef31(
   ({ icon, title, description, action, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsxs27(
+    return /* @__PURE__ */ jsxs28(
       "div",
       {
         ref,
-        className: clsx30("flex flex-col items-center justify-center px-4 py-12", className),
+        className: clsx31("flex flex-col items-center justify-center px-4 py-12", className),
         ...props,
         children: [
-          icon && /* @__PURE__ */ jsx30("div", { className: "text-base-content/50 mb-4", children: icon }),
-          title && /* @__PURE__ */ jsx30("h3", { className: "mb-2 text-lg font-semibold", children: title }),
-          description && /* @__PURE__ */ jsx30("p", { className: "text-base-content/70 mb-4 text-center text-sm", children: description }),
-          action && /* @__PURE__ */ jsx30("div", { className: "mt-4", children: action }),
+          icon && /* @__PURE__ */ jsx31("div", { className: "text-base-content/50 mb-4", children: icon }),
+          title && /* @__PURE__ */ jsx31("h3", { className: "mb-2 text-lg font-semibold", children: title }),
+          description && /* @__PURE__ */ jsx31("p", { className: "text-base-content/70 mb-4 text-center text-sm", children: description }),
+          action && /* @__PURE__ */ jsx31("div", { className: "mt-4", children: action }),
           children
         ]
       }
@@ -3932,64 +4125,64 @@ var Empty = forwardRef30(
 Empty.displayName = "Empty";
 
 // src/components/Field.tsx
-import clsx31 from "clsx";
-import { createContext as createContext2, forwardRef as forwardRef31, useContext as useContext2, useId } from "react";
-import { jsx as jsx31, jsxs as jsxs28 } from "react/jsx-runtime";
+import clsx32 from "clsx";
+import { createContext as createContext2, forwardRef as forwardRef32, useContext as useContext2, useId } from "react";
+import { jsx as jsx32, jsxs as jsxs29 } from "react/jsx-runtime";
 var FieldContext = createContext2(null);
 function useFieldContext() {
   return useContext2(FieldContext);
 }
-var Field = forwardRef31(
+var Field = forwardRef32(
   ({ name, error, required, children, className, ...props }, ref) => {
     const generatedId = useId();
     const id = name || generatedId;
-    return /* @__PURE__ */ jsx31(FieldContext.Provider, { value: { id, error, required }, children: /* @__PURE__ */ jsx31("div", { ref, className: clsx31("form-control w-full space-y-2", className), ...props, children }) });
+    return /* @__PURE__ */ jsx32(FieldContext.Provider, { value: { id, error, required }, children: /* @__PURE__ */ jsx32("div", { ref, className: clsx32("form-control w-full space-y-2", className), ...props, children }) });
   }
 );
 Field.displayName = "Field";
-var FieldLabel = forwardRef31(
+var FieldLabel = forwardRef32(
   ({ children, className, ...props }, ref) => {
     const context = useFieldContext();
-    return /* @__PURE__ */ jsxs28(
+    return /* @__PURE__ */ jsxs29(
       "label",
       {
         ref,
         htmlFor: context?.id,
-        className: clsx31("label-text text-sm font-medium", className),
+        className: clsx32("label-text text-sm font-medium", className),
         ...props,
         children: [
           children,
-          context?.required && /* @__PURE__ */ jsx31("span", { className: "text-error ml-1", children: "*" })
+          context?.required && /* @__PURE__ */ jsx32("span", { className: "text-error ml-1", children: "*" })
         ]
       }
     );
   }
 );
 FieldLabel.displayName = "FieldLabel";
-var FieldDescription = forwardRef31(
+var FieldDescription = forwardRef32(
   ({ children, className, ...props }, ref) => {
     const context = useFieldContext();
     if (context?.error) return null;
-    return /* @__PURE__ */ jsx31("p", { ref, className: clsx31("text-base-content/60 text-sm", className), ...props, children });
+    return /* @__PURE__ */ jsx32("p", { ref, className: clsx32("text-base-content/60 text-sm", className), ...props, children });
   }
 );
 FieldDescription.displayName = "FieldDescription";
-var FieldError = forwardRef31(
+var FieldError = forwardRef32(
   ({ message, children, className, ...props }, ref) => {
     const context = useFieldContext();
     const errorMessage = message || context?.error || children;
     if (!errorMessage) return null;
-    return /* @__PURE__ */ jsx31("p", { ref, className: clsx31("text-error text-sm", className), role: "alert", ...props, children: errorMessage });
+    return /* @__PURE__ */ jsx32("p", { ref, className: clsx32("text-error text-sm", className), role: "alert", ...props, children: errorMessage });
   }
 );
 FieldError.displayName = "FieldError";
-var FieldGroup = forwardRef31(
+var FieldGroup = forwardRef32(
   ({ direction = "vertical", children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx31(
+    return /* @__PURE__ */ jsx32(
       "div",
       {
         ref,
-        className: clsx31(
+        className: clsx32(
           "space-y-4",
           direction === "horizontal" && "flex flex-row gap-4 space-y-0",
           className
@@ -4001,19 +4194,19 @@ var FieldGroup = forwardRef31(
   }
 );
 FieldGroup.displayName = "FieldGroup";
-var FieldSeparator = forwardRef31(
+var FieldSeparator = forwardRef32(
   ({ className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx31("div", { ref, className: clsx31("divider", className), ...props });
+    return /* @__PURE__ */ jsx32("div", { ref, className: clsx32("divider", className), ...props });
   }
 );
 FieldSeparator.displayName = "FieldSeparator";
-var FieldSet = forwardRef31(
+var FieldSet = forwardRef32(
   ({ children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx31(
+    return /* @__PURE__ */ jsx32(
       "fieldset",
       {
         ref,
-        className: clsx31("border-base-300 space-y-4 rounded-lg border p-4", className),
+        className: clsx32("border-base-300 space-y-4 rounded-lg border p-4", className),
         ...props,
         children
       }
@@ -4021,50 +4214,50 @@ var FieldSet = forwardRef31(
   }
 );
 FieldSet.displayName = "FieldSet";
-var FieldLegend = forwardRef31(
+var FieldLegend = forwardRef32(
   ({ children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx31("legend", { ref, className: clsx31("px-2 text-lg font-semibold", className), ...props, children });
+    return /* @__PURE__ */ jsx32("legend", { ref, className: clsx32("px-2 text-lg font-semibold", className), ...props, children });
   }
 );
 FieldLegend.displayName = "FieldLegend";
 
 // src/components/Form.tsx
-import clsx32 from "clsx";
-import React32, { createContext as createContext3, forwardRef as forwardRef32, useContext as useContext3, useId as useId2 } from "react";
-import { jsx as jsx32, jsxs as jsxs29 } from "react/jsx-runtime";
+import clsx33 from "clsx";
+import React33, { createContext as createContext3, forwardRef as forwardRef33, useContext as useContext3, useId as useId2 } from "react";
+import { jsx as jsx33, jsxs as jsxs30 } from "react/jsx-runtime";
 var FormFieldContext = createContext3(null);
 function useFormFieldContext() {
   return useContext3(FormFieldContext);
 }
-var Form = forwardRef32(
+var Form = forwardRef33(
   ({ children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx32("form", { ref, className: clsx32("space-y-4", className), ...props, children });
+    return /* @__PURE__ */ jsx33("form", { ref, className: clsx33("space-y-4", className), ...props, children });
   }
 );
 Form.displayName = "Form";
-var FormField = forwardRef32(
+var FormField = forwardRef33(
   ({ name, error, children, className, ...props }, ref) => {
     const generatedId = useId2();
     const id = `${name}-${generatedId}`;
-    return /* @__PURE__ */ jsx32(FormFieldContext.Provider, { value: { id, name, error }, children: /* @__PURE__ */ jsx32("div", { ref, className, ...props, children }) });
+    return /* @__PURE__ */ jsx33(FormFieldContext.Provider, { value: { id, name, error }, children: /* @__PURE__ */ jsx33("div", { ref, className, ...props, children }) });
   }
 );
 FormField.displayName = "FormField";
-var FormItem = forwardRef32(
+var FormItem = forwardRef33(
   ({ children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx32("div", { ref, className: clsx32("form-control w-full space-y-2", className), ...props, children });
+    return /* @__PURE__ */ jsx33("div", { ref, className: clsx33("form-control w-full space-y-2", className), ...props, children });
   }
 );
 FormItem.displayName = "FormItem";
-var FormLabel = forwardRef32(
+var FormLabel = forwardRef33(
   ({ children, className, ...props }, ref) => {
     const context = useFormFieldContext();
-    return /* @__PURE__ */ jsx32(
+    return /* @__PURE__ */ jsx33(
       "label",
       {
         ref,
         htmlFor: context?.id,
-        className: clsx32(
+        className: clsx33(
           "label-text text-sm font-medium",
           context?.error && "text-error",
           className
@@ -4076,39 +4269,39 @@ var FormLabel = forwardRef32(
   }
 );
 FormLabel.displayName = "FormLabel";
-var FormControl = forwardRef32(
+var FormControl = forwardRef33(
   ({ children, className, ...props }, ref) => {
     const context = useFormFieldContext();
-    const child = React32.Children.only(children);
-    const clonedChild = React32.isValidElement(child) ? React32.cloneElement(child, {
+    const child = React33.Children.only(children);
+    const clonedChild = React33.isValidElement(child) ? React33.cloneElement(child, {
       id: context?.id,
       name: context?.name,
       "aria-describedby": context?.error ? `${context.id}-error` : void 0,
       "aria-invalid": context?.error ? true : void 0
     }) : child;
-    return /* @__PURE__ */ jsx32("div", { ref, className, ...props, children: clonedChild });
+    return /* @__PURE__ */ jsx33("div", { ref, className, ...props, children: clonedChild });
   }
 );
 FormControl.displayName = "FormControl";
-var FormDescription = forwardRef32(
+var FormDescription = forwardRef33(
   ({ children, className, ...props }, ref) => {
     const context = useFormFieldContext();
     if (context?.error) return null;
-    return /* @__PURE__ */ jsx32("p", { ref, className: clsx32("text-base-content/60 text-sm", className), ...props, children });
+    return /* @__PURE__ */ jsx33("p", { ref, className: clsx33("text-base-content/60 text-sm", className), ...props, children });
   }
 );
 FormDescription.displayName = "FormDescription";
-var FormMessage = forwardRef32(
+var FormMessage = forwardRef33(
   ({ message, children, className, ...props }, ref) => {
     const context = useFormFieldContext();
     const errorMessage = message || context?.error || children;
     if (!errorMessage) return null;
-    return /* @__PURE__ */ jsx32(
+    return /* @__PURE__ */ jsx33(
       "p",
       {
         ref,
         id: context?.id ? `${context.id}-error` : void 0,
-        className: clsx32("text-error text-sm", className),
+        className: clsx33("text-error text-sm", className),
         role: "alert",
         ...props,
         children: errorMessage
@@ -4117,19 +4310,19 @@ var FormMessage = forwardRef32(
   }
 );
 FormMessage.displayName = "FormMessage";
-var FormSection = forwardRef32(
+var FormSection = forwardRef33(
   ({ title, description, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsxs29("div", { ref, className: clsx32("space-y-4", className), ...props, children: [
-      (title || description) && /* @__PURE__ */ jsxs29("div", { className: "space-y-1", children: [
-        title && /* @__PURE__ */ jsx32("h3", { className: "text-lg font-semibold", children: title }),
-        description && /* @__PURE__ */ jsx32("p", { className: "text-base-content/60 text-sm", children: description })
+    return /* @__PURE__ */ jsxs30("div", { ref, className: clsx33("space-y-4", className), ...props, children: [
+      (title || description) && /* @__PURE__ */ jsxs30("div", { className: "space-y-1", children: [
+        title && /* @__PURE__ */ jsx33("h3", { className: "text-lg font-semibold", children: title }),
+        description && /* @__PURE__ */ jsx33("p", { className: "text-base-content/60 text-sm", children: description })
       ] }),
-      /* @__PURE__ */ jsx32("div", { className: "space-y-4", children })
+      /* @__PURE__ */ jsx33("div", { className: "space-y-4", children })
     ] });
   }
 );
 FormSection.displayName = "FormSection";
-var FormActions = forwardRef32(
+var FormActions = forwardRef33(
   ({ align = "end", children, className, ...props }, ref) => {
     const alignClasses = {
       start: "justify-start",
@@ -4137,11 +4330,11 @@ var FormActions = forwardRef32(
       end: "justify-end",
       between: "justify-between"
     };
-    return /* @__PURE__ */ jsx32(
+    return /* @__PURE__ */ jsx33(
       "div",
       {
         ref,
-        className: clsx32("flex items-center gap-2 pt-4", alignClasses[align], className),
+        className: clsx33("flex items-center gap-2 pt-4", alignClasses[align], className),
         ...props,
         children
       }
@@ -4151,10 +4344,10 @@ var FormActions = forwardRef32(
 FormActions.displayName = "FormActions";
 
 // src/components/FullPageLoader.tsx
-import clsx33 from "clsx";
-import { forwardRef as forwardRef33 } from "react";
-import { jsx as jsx33, jsxs as jsxs30 } from "react/jsx-runtime";
-var sizeClasses13 = {
+import clsx34 from "clsx";
+import { forwardRef as forwardRef34 } from "react";
+import { jsx as jsx34, jsxs as jsxs31 } from "react/jsx-runtime";
+var sizeClasses14 = {
   xs: "loading-xs",
   sm: "loading-sm",
   md: "loading-md",
@@ -4169,7 +4362,7 @@ var typeClasses = {
   bars: "loading-bars",
   infinity: "loading-infinity"
 };
-var variantClasses13 = {
+var variantClasses14 = {
   default: "",
   primary: "text-primary",
   secondary: "text-secondary",
@@ -4186,7 +4379,7 @@ var textSizeClasses = {
   lg: "text-lg",
   xl: "text-xl"
 };
-var FullPageLoader = forwardRef33(
+var FullPageLoader = forwardRef34(
   ({
     visible = true,
     size = "lg",
@@ -4202,11 +4395,11 @@ var FullPageLoader = forwardRef33(
   }, ref) => {
     if (!visible) return null;
     const opacityValue = Math.min(100, Math.max(0, backgroundOpacity));
-    return /* @__PURE__ */ jsxs30(
+    return /* @__PURE__ */ jsxs31(
       "div",
       {
         ref,
-        className: clsx33("fixed inset-0", className),
+        className: clsx34("fixed inset-0", className),
         style: {
           zIndex,
           ...style
@@ -4216,37 +4409,37 @@ var FullPageLoader = forwardRef33(
         "aria-busy": "true",
         ...props,
         children: [
-          /* @__PURE__ */ jsx33(
+          /* @__PURE__ */ jsx34(
             "div",
             {
-              className: clsx33("bg-base-100 absolute inset-0", blur && "backdrop-blur-sm"),
+              className: clsx34("bg-base-100 absolute inset-0", blur && "backdrop-blur-sm"),
               style: {
                 opacity: opacityValue / 100
               }
             }
           ),
-          /* @__PURE__ */ jsx33("div", { className: "pointer-events-none absolute inset-0 flex items-center justify-center", children: /* @__PURE__ */ jsxs30("div", { className: "flex flex-col items-center justify-center gap-0", children: [
-            /* @__PURE__ */ jsx33(
+          /* @__PURE__ */ jsx34("div", { className: "pointer-events-none absolute inset-0 flex items-center justify-center", children: /* @__PURE__ */ jsxs31("div", { className: "flex flex-col items-center justify-center gap-0", children: [
+            /* @__PURE__ */ jsx34(
               "span",
               {
-                className: clsx33(
+                className: clsx34(
                   "loading",
                   typeClasses[type],
-                  sizeClasses13[size],
-                  variantClasses13[variant]
+                  sizeClasses14[size],
+                  variantClasses14[variant]
                 ),
                 "aria-hidden": "true"
               }
             ),
-            text && /* @__PURE__ */ jsx33(
+            text && /* @__PURE__ */ jsx34(
               "p",
               {
-                className: clsx33("mt-4 font-medium", textSizeClasses[size], variantClasses13[variant]),
+                className: clsx34("mt-4 font-medium", textSizeClasses[size], variantClasses14[variant]),
                 children: text
               }
             )
           ] }) }),
-          /* @__PURE__ */ jsx33("span", { className: "sr-only", children: text || "Loading..." })
+          /* @__PURE__ */ jsx34("span", { className: "sr-only", children: text || "Loading..." })
         ]
       }
     );
@@ -4255,15 +4448,15 @@ var FullPageLoader = forwardRef33(
 FullPageLoader.displayName = "FullPageLoader";
 
 // src/components/HoverCard.tsx
-import clsx34 from "clsx";
-import { forwardRef as forwardRef34, useEffect as useEffect11, useRef as useRef9, useState as useState13 } from "react";
-import { jsx as jsx34, jsxs as jsxs31 } from "react/jsx-runtime";
-var HoverCard = forwardRef34(
+import clsx35 from "clsx";
+import { forwardRef as forwardRef35, useEffect as useEffect12, useRef as useRef10, useState as useState14 } from "react";
+import { jsx as jsx35, jsxs as jsxs32 } from "react/jsx-runtime";
+var HoverCard = forwardRef35(
   ({ trigger, openDelay = 200, closeDelay = 300, children, className, ...props }, ref) => {
-    const [isOpen, setIsOpen] = useState13(false);
-    const openTimeoutRef = useRef9(void 0);
-    const closeTimeoutRef = useRef9(void 0);
-    useEffect11(() => {
+    const [isOpen, setIsOpen] = useState14(false);
+    const openTimeoutRef = useRef10(void 0);
+    const closeTimeoutRef = useRef10(void 0);
+    useEffect12(() => {
       return () => {
         if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
         if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
@@ -4285,17 +4478,17 @@ var HoverCard = forwardRef34(
         setIsOpen(false);
       }, closeDelay);
     };
-    return /* @__PURE__ */ jsxs31(
+    return /* @__PURE__ */ jsxs32(
       "div",
       {
         ref,
-        className: clsx34("relative inline-block", className),
+        className: clsx35("relative inline-block", className),
         onMouseEnter: handleMouseEnter,
         onMouseLeave: handleMouseLeave,
         ...props,
         children: [
           trigger,
-          isOpen && /* @__PURE__ */ jsx34("div", { className: "absolute top-full left-0 z-50 mt-2", children: /* @__PURE__ */ jsx34("div", { className: "animate-in fade-in-0 zoom-in-95", children }) })
+          isOpen && /* @__PURE__ */ jsx35("div", { className: "absolute top-full left-0 z-50 mt-2", children: /* @__PURE__ */ jsx35("div", { className: "animate-in fade-in-0 zoom-in-95", children }) })
         ]
       }
     );
@@ -4304,21 +4497,21 @@ var HoverCard = forwardRef34(
 HoverCard.displayName = "HoverCard";
 
 // src/components/InputGroup.tsx
-import clsx35 from "clsx";
-import { forwardRef as forwardRef35 } from "react";
-import { jsx as jsx35, jsxs as jsxs32 } from "react/jsx-runtime";
-var InputGroup = forwardRef35(
+import clsx36 from "clsx";
+import { forwardRef as forwardRef36 } from "react";
+import { jsx as jsx36, jsxs as jsxs33 } from "react/jsx-runtime";
+var InputGroup = forwardRef36(
   ({ left, right, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsxs32(
+    return /* @__PURE__ */ jsxs33(
       "label",
       {
         ref,
-        className: clsx35("input input-bordered flex items-center gap-2", className),
+        className: clsx36("input input-bordered flex items-center gap-2", className),
         ...props,
         children: [
-          left && /* @__PURE__ */ jsx35("span", { className: "text-base-content/70", children: left }),
+          left && /* @__PURE__ */ jsx36("span", { className: "text-base-content/70", children: left }),
           children,
-          right && /* @__PURE__ */ jsx35("span", { className: "text-base-content/70", children: right })
+          right && /* @__PURE__ */ jsx36("span", { className: "text-base-content/70", children: right })
         ]
       }
     );
@@ -4327,13 +4520,13 @@ var InputGroup = forwardRef35(
 InputGroup.displayName = "InputGroup";
 
 // src/components/InputOTP.tsx
-import clsx36 from "clsx";
-import { forwardRef as forwardRef36, useRef as useRef10, useState as useState14 } from "react";
-import { jsx as jsx36 } from "react/jsx-runtime";
-var InputOTP = forwardRef36(
+import clsx37 from "clsx";
+import { forwardRef as forwardRef37, useRef as useRef11, useState as useState15 } from "react";
+import { jsx as jsx37 } from "react/jsx-runtime";
+var InputOTP = forwardRef37(
   ({ length = 6, onChange, onComplete, value = "", className, id, ...props }, ref) => {
-    const [otp, setOtp] = useState14(value.split("").slice(0, length));
-    const inputRefs = useRef10([]);
+    const [otp, setOtp] = useState15(value.split("").slice(0, length));
+    const inputRefs = useRef11([]);
     const inputId = id || `otp-${Math.random().toString(36).substr(2, 9)}`;
     const handleChange = (index, digit) => {
       if (digit && !/^\d$/.test(digit)) return;
@@ -4373,16 +4566,16 @@ var InputOTP = forwardRef36(
       const lastIndex = Math.min(digits.length, length - 1);
       inputRefs.current[lastIndex]?.focus();
     };
-    return /* @__PURE__ */ jsx36(
+    return /* @__PURE__ */ jsx37(
       "div",
       {
         ref,
         id: inputId,
-        className: clsx36("flex gap-2", className),
+        className: clsx37("flex gap-2", className),
         role: "group",
         "aria-label": "OTP input",
         ...props,
-        children: Array.from({ length }).map((_, index) => /* @__PURE__ */ jsx36(
+        children: Array.from({ length }).map((_, index) => /* @__PURE__ */ jsx37(
           "input",
           {
             ref: (el) => {
@@ -4408,25 +4601,25 @@ var InputOTP = forwardRef36(
 InputOTP.displayName = "InputOTP";
 
 // src/components/Item.tsx
-import clsx37 from "clsx";
-import { forwardRef as forwardRef37 } from "react";
-import { jsx as jsx37, jsxs as jsxs33 } from "react/jsx-runtime";
-var Item = forwardRef37(
+import clsx38 from "clsx";
+import { forwardRef as forwardRef38 } from "react";
+import { jsx as jsx38, jsxs as jsxs34 } from "react/jsx-runtime";
+var Item = forwardRef38(
   ({ icon, title, description, rightContent, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsxs33(
+    return /* @__PURE__ */ jsxs34(
       "div",
       {
         ref,
-        className: clsx37("hover:bg-base-200 flex items-center gap-3 rounded-lg p-3", className),
+        className: clsx38("hover:bg-base-200 flex items-center gap-3 rounded-lg p-3", className),
         ...props,
         children: [
-          icon && /* @__PURE__ */ jsx37("div", { className: "shrink-0", children: icon }),
-          /* @__PURE__ */ jsxs33("div", { className: "min-w-0 flex-1", children: [
-            title && /* @__PURE__ */ jsx37("div", { className: "font-medium", children: title }),
-            description && /* @__PURE__ */ jsx37("div", { className: "text-base-content/70 text-sm", children: description }),
+          icon && /* @__PURE__ */ jsx38("div", { className: "shrink-0", children: icon }),
+          /* @__PURE__ */ jsxs34("div", { className: "min-w-0 flex-1", children: [
+            title && /* @__PURE__ */ jsx38("div", { className: "font-medium", children: title }),
+            description && /* @__PURE__ */ jsx38("div", { className: "text-base-content/70 text-sm", children: description }),
             children
           ] }),
-          rightContent && /* @__PURE__ */ jsx37("div", { className: "shrink-0", children: rightContent })
+          rightContent && /* @__PURE__ */ jsx38("div", { className: "shrink-0", children: rightContent })
         ]
       }
     );
@@ -4435,43 +4628,43 @@ var Item = forwardRef37(
 Item.displayName = "Item";
 
 // src/components/Kbd.tsx
-import clsx38 from "clsx";
-import { forwardRef as forwardRef38 } from "react";
-import { jsx as jsx38 } from "react/jsx-runtime";
-var sizeClasses14 = {
+import clsx39 from "clsx";
+import { forwardRef as forwardRef39 } from "react";
+import { jsx as jsx39 } from "react/jsx-runtime";
+var sizeClasses15 = {
   xs: "kbd-xs",
   sm: "kbd-sm",
   md: "kbd-md",
   lg: "kbd-lg"
 };
-var Kbd = forwardRef38(
+var Kbd = forwardRef39(
   ({ size = "md", children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx38("kbd", { ref, className: clsx38("kbd", sizeClasses14[size], className), ...props, children });
+    return /* @__PURE__ */ jsx39("kbd", { ref, className: clsx39("kbd", sizeClasses15[size], className), ...props, children });
   }
 );
 Kbd.displayName = "Kbd";
 
 // src/components/Menubar.tsx
-import clsx39 from "clsx";
-import { forwardRef as forwardRef39 } from "react";
-import { jsx as jsx39 } from "react/jsx-runtime";
-var sizeClasses15 = {
+import clsx40 from "clsx";
+import { forwardRef as forwardRef40 } from "react";
+import { jsx as jsx40 } from "react/jsx-runtime";
+var sizeClasses16 = {
   xs: "menu-xs",
   sm: "menu-sm",
   md: "menu-md",
   lg: "menu-lg"
 };
-var Menubar = forwardRef39(
+var Menubar = forwardRef40(
   ({ orientation = "horizontal", size = "md", compact: compact2, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx39(
+    return /* @__PURE__ */ jsx40(
       "ul",
       {
         ref,
-        className: clsx39(
+        className: clsx40(
           "menu",
           orientation === "horizontal" && "menu-horizontal",
           orientation === "vertical" && "menu-vertical",
-          sizeClasses15[size],
+          sizeClasses16[size],
           compact2 && "menu-compact",
           "bg-base-100",
           className
@@ -4483,23 +4676,23 @@ var Menubar = forwardRef39(
   }
 );
 Menubar.displayName = "Menubar";
-var MenubarItem = forwardRef39(
+var MenubarItem = forwardRef40(
   ({ href, disabled, active, children, className, ...props }, ref) => {
-    const content = href ? /* @__PURE__ */ jsx39("a", { href, children }) : /* @__PURE__ */ jsx39("a", { children });
-    return /* @__PURE__ */ jsx39("li", { ref, className: clsx39(disabled && "disabled", className), ...props, children: /* @__PURE__ */ jsx39("a", { className: clsx39(active && "active"), children }) });
+    const content = href ? /* @__PURE__ */ jsx40("a", { href, children }) : /* @__PURE__ */ jsx40("a", { children });
+    return /* @__PURE__ */ jsx40("li", { ref, className: clsx40(disabled && "disabled", className), ...props, children: /* @__PURE__ */ jsx40("a", { className: clsx40(active && "active"), children }) });
   }
 );
 MenubarItem.displayName = "MenubarItem";
 
 // src/components/NativeSelect.tsx
-import clsx40 from "clsx";
-import { forwardRef as forwardRef40 } from "react";
-import { jsx as jsx40 } from "react/jsx-runtime";
-var variantClasses14 = {
+import clsx41 from "clsx";
+import { forwardRef as forwardRef41 } from "react";
+import { jsx as jsx41 } from "react/jsx-runtime";
+var variantClasses15 = {
   bordered: "select-bordered",
   ghost: "select-ghost"
 };
-var colorClasses6 = {
+var colorClasses7 = {
   primary: "select-primary",
   secondary: "select-secondary",
   accent: "select-accent",
@@ -4508,27 +4701,27 @@ var colorClasses6 = {
   warning: "select-warning",
   error: "select-error"
 };
-var sizeClasses16 = {
+var sizeClasses17 = {
   xs: "select-xs",
   sm: "select-sm",
   md: "select-md",
   lg: "select-lg"
 };
-var NativeSelect = forwardRef40(
+var NativeSelect = forwardRef41(
   ({ variant = "bordered", color, size = "md", options, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx40(
+    return /* @__PURE__ */ jsx41(
       "select",
       {
         ref,
-        className: clsx40(
+        className: clsx41(
           "select w-full",
-          variantClasses14[variant],
-          color && colorClasses6[color],
-          sizeClasses16[size],
+          variantClasses15[variant],
+          color && colorClasses7[color],
+          sizeClasses17[size],
           className
         ),
         ...props,
-        children: options ? options.map((option) => /* @__PURE__ */ jsx40("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
+        children: options ? options.map((option) => /* @__PURE__ */ jsx41("option", { value: option.value, disabled: option.disabled, children: option.label }, option.value)) : children
       }
     );
   }
@@ -4536,10 +4729,10 @@ var NativeSelect = forwardRef40(
 NativeSelect.displayName = "NativeSelect";
 
 // src/components/Navbar.tsx
-import clsx41 from "clsx";
-import { forwardRef as forwardRef41 } from "react";
-import { jsx as jsx41 } from "react/jsx-runtime";
-var colorClasses7 = {
+import clsx42 from "clsx";
+import { forwardRef as forwardRef42 } from "react";
+import { jsx as jsx42 } from "react/jsx-runtime";
+var colorClasses8 = {
   default: "bg-base-100",
   neutral: "bg-neutral text-neutral-content",
   primary: "bg-primary text-primary-content",
@@ -4550,7 +4743,7 @@ var colorClasses7 = {
   warning: "bg-warning text-warning-content",
   error: "bg-error text-error-content"
 };
-var Navbar = forwardRef41(
+var Navbar = forwardRef42(
   ({
     color = "default",
     shadow = false,
@@ -4561,13 +4754,13 @@ var Navbar = forwardRef41(
     children,
     ...props
   }, ref) => {
-    return /* @__PURE__ */ jsx41(
+    return /* @__PURE__ */ jsx42(
       "div",
       {
         ref,
-        className: clsx41(
+        className: clsx42(
           "navbar",
-          colorClasses7[color],
+          colorClasses8[color],
           shadow && "shadow-lg",
           bordered && "border-base-300 border-b",
           sticky && "sticky top-0 z-50",
@@ -4581,52 +4774,52 @@ var Navbar = forwardRef41(
   }
 );
 Navbar.displayName = "Navbar";
-var NavbarStart = forwardRef41(
+var NavbarStart = forwardRef42(
   ({ className, children, ...props }, ref) => {
-    return /* @__PURE__ */ jsx41("div", { ref, className: clsx41("navbar-start", className), ...props, children });
+    return /* @__PURE__ */ jsx42("div", { ref, className: clsx42("navbar-start", className), ...props, children });
   }
 );
 NavbarStart.displayName = "NavbarStart";
-var NavbarCenter = forwardRef41(
+var NavbarCenter = forwardRef42(
   ({ className, children, ...props }, ref) => {
-    return /* @__PURE__ */ jsx41("div", { ref, className: clsx41("navbar-center", className), ...props, children });
+    return /* @__PURE__ */ jsx42("div", { ref, className: clsx42("navbar-center", className), ...props, children });
   }
 );
 NavbarCenter.displayName = "NavbarCenter";
-var NavbarEnd = forwardRef41(
+var NavbarEnd = forwardRef42(
   ({ className, children, ...props }, ref) => {
-    return /* @__PURE__ */ jsx41("div", { ref, className: clsx41("navbar-end", className), ...props, children });
+    return /* @__PURE__ */ jsx42("div", { ref, className: clsx42("navbar-end", className), ...props, children });
   }
 );
 NavbarEnd.displayName = "NavbarEnd";
 
 // src/components/NavigationMenu.tsx
-import clsx42 from "clsx";
-import { forwardRef as forwardRef42 } from "react";
-import { jsx as jsx42 } from "react/jsx-runtime";
-var NavigationMenu = forwardRef42(
+import clsx43 from "clsx";
+import { forwardRef as forwardRef43 } from "react";
+import { jsx as jsx43 } from "react/jsx-runtime";
+var NavigationMenu = forwardRef43(
   ({ children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx42("nav", { ref, className: clsx42("navbar bg-base-100", className), ...props, children: /* @__PURE__ */ jsx42("ul", { className: "menu menu-horizontal px-1", children }) });
+    return /* @__PURE__ */ jsx43("nav", { ref, className: clsx43("navbar bg-base-100", className), ...props, children: /* @__PURE__ */ jsx43("ul", { className: "menu menu-horizontal px-1", children }) });
   }
 );
 NavigationMenu.displayName = "NavigationMenu";
-var NavigationMenuItem = forwardRef42(
+var NavigationMenuItem = forwardRef43(
   ({ href, active, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx42("li", { ref, className, ...props, children: href ? /* @__PURE__ */ jsx42("a", { href, className: clsx42(active && "active"), children }) : /* @__PURE__ */ jsx42("span", { className: clsx42(active && "active"), children }) });
+    return /* @__PURE__ */ jsx43("li", { ref, className, ...props, children: href ? /* @__PURE__ */ jsx43("a", { href, className: clsx43(active && "active"), children }) : /* @__PURE__ */ jsx43("span", { className: clsx43(active && "active"), children }) });
   }
 );
 NavigationMenuItem.displayName = "NavigationMenuItem";
 
 // src/components/Popover.tsx
-import clsx43 from "clsx";
-import { forwardRef as forwardRef43, useEffect as useEffect12, useRef as useRef11, useState as useState15 } from "react";
-import { jsx as jsx43, jsxs as jsxs34 } from "react/jsx-runtime";
-var Popover = forwardRef43(
+import clsx44 from "clsx";
+import { forwardRef as forwardRef44, useEffect as useEffect13, useRef as useRef12, useState as useState16 } from "react";
+import { jsx as jsx44, jsxs as jsxs35 } from "react/jsx-runtime";
+var Popover = forwardRef44(
   ({ trigger, open, onOpenChange, children, className, ...props }, ref) => {
-    const [internalOpen, setInternalOpen] = useState15(false);
-    const popoverRef = useRef11(null);
+    const [internalOpen, setInternalOpen] = useState16(false);
+    const popoverRef = useRef12(null);
     const isOpen = open !== void 0 ? open : internalOpen;
-    useEffect12(() => {
+    useEffect13(() => {
       const handleClickOutside = (event) => {
         if (popoverRef.current && !popoverRef.current.contains(event.target)) {
           if (open === void 0) {
@@ -4647,19 +4840,19 @@ var Popover = forwardRef43(
       }
       onOpenChange?.(newOpen);
     };
-    return /* @__PURE__ */ jsxs34("div", { ref: popoverRef, className: clsx43("relative inline-block", className), ...props, children: [
-      /* @__PURE__ */ jsx43("div", { onClick: handleTriggerClick, children: trigger }),
-      isOpen && /* @__PURE__ */ jsx43("div", { className: "absolute z-50 mt-2 min-w-50", children: /* @__PURE__ */ jsx43("div", { className: "bg-base-100 border-base-300 rounded-lg border p-4 shadow-lg", children }) })
+    return /* @__PURE__ */ jsxs35("div", { ref: popoverRef, className: clsx44("relative inline-block", className), ...props, children: [
+      /* @__PURE__ */ jsx44("div", { onClick: handleTriggerClick, children: trigger }),
+      isOpen && /* @__PURE__ */ jsx44("div", { className: "absolute z-50 mt-2 min-w-50", children: /* @__PURE__ */ jsx44("div", { className: "bg-base-100 border-base-300 rounded-lg border p-4 shadow-lg", children }) })
     ] });
   }
 );
 Popover.displayName = "Popover";
 
 // src/components/Progress.tsx
-import clsx44 from "clsx";
-import { forwardRef as forwardRef44 } from "react";
-import { jsx as jsx44 } from "react/jsx-runtime";
-var variantClasses15 = {
+import clsx45 from "clsx";
+import { forwardRef as forwardRef45 } from "react";
+import { jsx as jsx45 } from "react/jsx-runtime";
+var variantClasses16 = {
   primary: "progress-primary",
   secondary: "progress-secondary",
   accent: "progress-accent",
@@ -4668,13 +4861,13 @@ var variantClasses15 = {
   warning: "progress-warning",
   error: "progress-error"
 };
-var Progress = forwardRef44(
+var Progress = forwardRef45(
   ({ variant = "primary", value, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx44(
+    return /* @__PURE__ */ jsx45(
       "progress",
       {
         ref,
-        className: clsx44("progress w-full", variantClasses15[variant], className),
+        className: clsx45("progress w-full", variantClasses16[variant], className),
         value,
         max: 100,
         ...props
@@ -4685,25 +4878,25 @@ var Progress = forwardRef44(
 Progress.displayName = "Progress";
 
 // src/components/Separator.tsx
-import clsx45 from "clsx";
-import { forwardRef as forwardRef45 } from "react";
-import { jsx as jsx45 } from "react/jsx-runtime";
-var variantClasses16 = {
+import clsx46 from "clsx";
+import { forwardRef as forwardRef46 } from "react";
+import { jsx as jsx46 } from "react/jsx-runtime";
+var variantClasses17 = {
   default: "",
   primary: "divider-primary",
   secondary: "divider-secondary",
   accent: "divider-accent"
 };
-var Separator = forwardRef45(
+var Separator = forwardRef46(
   ({ orientation = "horizontal", variant = "default", text, className, children, ...props }, ref) => {
-    return /* @__PURE__ */ jsx45(
+    return /* @__PURE__ */ jsx46(
       "div",
       {
         ref,
-        className: clsx45(
+        className: clsx46(
           "divider",
           orientation === "vertical" && "divider-horizontal",
-          variantClasses16[variant],
+          variantClasses17[variant],
           className
         ),
         ...props,
@@ -4715,14 +4908,14 @@ var Separator = forwardRef45(
 Separator.displayName = "Separator";
 
 // src/components/Sheet.tsx
-import clsx46 from "clsx";
-import { forwardRef as forwardRef46, useEffect as useEffect13, useRef as useRef12 } from "react";
-import { jsx as jsx46, jsxs as jsxs35 } from "react/jsx-runtime";
-var Sheet = forwardRef46(
+import clsx47 from "clsx";
+import { forwardRef as forwardRef47, useEffect as useEffect14, useRef as useRef13 } from "react";
+import { jsx as jsx47, jsxs as jsxs36 } from "react/jsx-runtime";
+var Sheet = forwardRef47(
   ({ open, onClose, position = "right", title, children, className, ...props }, ref) => {
-    const dialogRef = useRef12(null);
+    const dialogRef = useRef13(null);
     const internalRef = ref || dialogRef;
-    useEffect13(() => {
+    useEffect14(() => {
       const dialog = internalRef.current;
       if (!dialog) return;
       if (open) {
@@ -4757,21 +4950,21 @@ var Sheet = forwardRef46(
           return "h-full max-h-full w-96 max-w-[90vw]";
       }
     };
-    return /* @__PURE__ */ jsxs35(
+    return /* @__PURE__ */ jsxs36(
       "dialog",
       {
         ref: internalRef,
-        className: clsx46("modal", getPositionClasses(), className),
+        className: clsx47("modal", getPositionClasses(), className),
         ...props,
         children: [
-          /* @__PURE__ */ jsxs35("div", { className: clsx46("modal-box", getBoxClasses(), "rounded-none"), children: [
-            title && /* @__PURE__ */ jsxs35("div", { className: "mb-4 flex items-center justify-between", children: [
-              /* @__PURE__ */ jsx46("h3", { className: "text-lg font-bold", children: title }),
-              /* @__PURE__ */ jsx46("button", { onClick: onClose, className: "btn btn-sm btn-circle btn-ghost", children: "\u2715" })
+          /* @__PURE__ */ jsxs36("div", { className: clsx47("modal-box", getBoxClasses(), "rounded-none"), children: [
+            title && /* @__PURE__ */ jsxs36("div", { className: "mb-4 flex items-center justify-between", children: [
+              /* @__PURE__ */ jsx47("h3", { className: "text-lg font-bold", children: title }),
+              /* @__PURE__ */ jsx47("button", { onClick: onClose, className: "btn btn-sm btn-circle btn-ghost", children: "\u2715" })
             ] }),
-            /* @__PURE__ */ jsx46("div", { className: "overflow-y-auto", children })
+            /* @__PURE__ */ jsx47("div", { className: "overflow-y-auto", children })
           ] }),
-          /* @__PURE__ */ jsx46("form", { method: "dialog", className: "modal-backdrop", children: /* @__PURE__ */ jsx46("button", { type: "button", onClick: onClose, children: "close" }) })
+          /* @__PURE__ */ jsx47("form", { method: "dialog", className: "modal-backdrop", children: /* @__PURE__ */ jsx47("button", { type: "button", onClick: onClose, children: "close" }) })
         ]
       }
     );
@@ -4780,54 +4973,54 @@ var Sheet = forwardRef46(
 Sheet.displayName = "Sheet";
 
 // src/components/Sidebar.tsx
-import clsx47 from "clsx";
-import { forwardRef as forwardRef47 } from "react";
-import { Fragment as Fragment3, jsx as jsx47, jsxs as jsxs36 } from "react/jsx-runtime";
-var Sidebar = forwardRef47(
+import clsx48 from "clsx";
+import { forwardRef as forwardRef48 } from "react";
+import { Fragment as Fragment4, jsx as jsx48, jsxs as jsxs37 } from "react/jsx-runtime";
+var Sidebar = forwardRef48(
   ({ collapsed, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx47(
+    return /* @__PURE__ */ jsx48(
       "div",
       {
         ref,
-        className: clsx47(
+        className: clsx48(
           "bg-base-200 h-full transition-all duration-300",
           collapsed ? "w-16" : "w-64",
           className
         ),
         ...props,
-        children: /* @__PURE__ */ jsx47("ul", { className: "menu h-full p-4", children })
+        children: /* @__PURE__ */ jsx48("ul", { className: "menu h-full p-4", children })
       }
     );
   }
 );
 Sidebar.displayName = "Sidebar";
-var SidebarItem = forwardRef47(
+var SidebarItem = forwardRef48(
   ({ icon, href, active, children, className, ...props }, ref) => {
-    const content = /* @__PURE__ */ jsxs36(Fragment3, { children: [
-      icon && /* @__PURE__ */ jsx47("span", { className: "shrink-0", children: icon }),
-      /* @__PURE__ */ jsx47("span", { children })
+    const content = /* @__PURE__ */ jsxs37(Fragment4, { children: [
+      icon && /* @__PURE__ */ jsx48("span", { className: "shrink-0", children: icon }),
+      /* @__PURE__ */ jsx48("span", { children })
     ] });
-    return /* @__PURE__ */ jsx47("li", { ref, className, ...props, children: href ? /* @__PURE__ */ jsx47("a", { href, className: clsx47(active && "active"), children: content }) : /* @__PURE__ */ jsx47("span", { className: clsx47(active && "active"), children: content }) });
+    return /* @__PURE__ */ jsx48("li", { ref, className, ...props, children: href ? /* @__PURE__ */ jsx48("a", { href, className: clsx48(active && "active"), children: content }) : /* @__PURE__ */ jsx48("span", { className: clsx48(active && "active"), children: content }) });
   }
 );
 SidebarItem.displayName = "SidebarItem";
 
 // src/components/Skeleton.tsx
-import clsx48 from "clsx";
-import { forwardRef as forwardRef48 } from "react";
-import { jsx as jsx48 } from "react/jsx-runtime";
-var Skeleton = forwardRef48(
+import clsx49 from "clsx";
+import { forwardRef as forwardRef49 } from "react";
+import { jsx as jsx49 } from "react/jsx-runtime";
+var Skeleton = forwardRef49(
   ({ width, height, shape = "rectangle", className, style, ...props }, ref) => {
     const dimensionStyle = {
       width: typeof width === "number" ? `${width}px` : width,
       height: typeof height === "number" ? `${height}px` : height,
       ...style
     };
-    return /* @__PURE__ */ jsx48(
+    return /* @__PURE__ */ jsx49(
       "div",
       {
         ref,
-        className: clsx48("skeleton", shape === "circle" && "rounded-full", className),
+        className: clsx49("skeleton", shape === "circle" && "rounded-full", className),
         style: dimensionStyle,
         ...props
       }
@@ -4837,10 +5030,10 @@ var Skeleton = forwardRef48(
 Skeleton.displayName = "Skeleton";
 
 // src/components/Slider.tsx
-import clsx49 from "clsx";
-import { forwardRef as forwardRef49 } from "react";
-import { jsx as jsx49 } from "react/jsx-runtime";
-var variantClasses17 = {
+import clsx50 from "clsx";
+import { forwardRef as forwardRef50 } from "react";
+import { jsx as jsx50 } from "react/jsx-runtime";
+var variantClasses18 = {
   primary: "range-primary",
   secondary: "range-secondary",
   accent: "range-accent",
@@ -4849,20 +5042,20 @@ var variantClasses17 = {
   warning: "range-warning",
   error: "range-error"
 };
-var sizeClasses17 = {
+var sizeClasses18 = {
   xs: "range-xs",
   sm: "range-sm",
   md: "range-md",
   lg: "range-lg"
 };
-var Slider = forwardRef49(
+var Slider = forwardRef50(
   ({ variant = "primary", size = "md", className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx49(
+    return /* @__PURE__ */ jsx50(
       "input",
       {
         ref,
         type: "range",
-        className: clsx49("range", variantClasses17[variant], sizeClasses17[size], className),
+        className: clsx50("range", variantClasses18[variant], sizeClasses18[size], className),
         ...props
       }
     );
@@ -4871,10 +5064,10 @@ var Slider = forwardRef49(
 Slider.displayName = "Slider";
 
 // src/components/Spinner.tsx
-import clsx50 from "clsx";
-import { forwardRef as forwardRef50 } from "react";
-import { jsx as jsx50 } from "react/jsx-runtime";
-var sizeClasses18 = {
+import clsx51 from "clsx";
+import { forwardRef as forwardRef51 } from "react";
+import { jsx as jsx51 } from "react/jsx-runtime";
+var sizeClasses19 = {
   xs: "loading-xs",
   sm: "loading-sm",
   md: "loading-md",
@@ -4889,7 +5082,7 @@ var typeClasses2 = {
   bars: "loading-bars",
   infinity: "loading-infinity"
 };
-var colorClasses8 = {
+var colorClasses9 = {
   primary: "text-primary",
   secondary: "text-secondary",
   accent: "text-accent",
@@ -4899,17 +5092,17 @@ var colorClasses8 = {
   warning: "text-warning",
   error: "text-error"
 };
-var Spinner = forwardRef50(
+var Spinner = forwardRef51(
   ({ size = "md", type = "spinner", color, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx50(
+    return /* @__PURE__ */ jsx51(
       "span",
       {
         ref,
-        className: clsx50(
+        className: clsx51(
           "loading",
           typeClasses2[type],
-          sizeClasses18[size],
-          color && colorClasses8[color],
+          sizeClasses19[size],
+          color && colorClasses9[color],
           className
         ),
         ...props
@@ -4920,10 +5113,10 @@ var Spinner = forwardRef50(
 Spinner.displayName = "Spinner";
 
 // src/components/Switch.tsx
-import clsx51 from "clsx";
-import { forwardRef as forwardRef51 } from "react";
-import { jsx as jsx51, jsxs as jsxs37 } from "react/jsx-runtime";
-var variantClasses18 = {
+import clsx52 from "clsx";
+import { forwardRef as forwardRef52 } from "react";
+import { jsx as jsx52, jsxs as jsxs38 } from "react/jsx-runtime";
+var variantClasses19 = {
   primary: "toggle-primary",
   secondary: "toggle-secondary",
   accent: "toggle-accent",
@@ -4933,46 +5126,46 @@ var variantClasses18 = {
   warning: "toggle-warning",
   error: "toggle-error"
 };
-var sizeClasses19 = {
+var sizeClasses20 = {
   xs: "toggle-xs",
   sm: "toggle-sm",
   md: "toggle-md",
   lg: "toggle-lg",
   xl: "toggle-xl"
 };
-var Switch = forwardRef51(
+var Switch = forwardRef52(
   ({ variant, size = "md", label, checkedIcon, uncheckedIcon, className, ...props }, ref) => {
     if (checkedIcon || uncheckedIcon) {
-      return /* @__PURE__ */ jsxs37(
+      return /* @__PURE__ */ jsxs38(
         "label",
         {
-          className: clsx51(
+          className: clsx52(
             "toggle text-base-content",
-            variant && variantClasses18[variant],
-            sizeClasses19[size],
+            variant && variantClasses19[variant],
+            sizeClasses20[size],
             className
           ),
           children: [
-            /* @__PURE__ */ jsx51("input", { ref, type: "checkbox", ...props }),
+            /* @__PURE__ */ jsx52("input", { ref, type: "checkbox", ...props }),
             checkedIcon,
             uncheckedIcon
           ]
         }
       );
     }
-    const switchElement = /* @__PURE__ */ jsx51(
+    const switchElement = /* @__PURE__ */ jsx52(
       "input",
       {
         ref,
         type: "checkbox",
-        className: clsx51("toggle", variant && variantClasses18[variant], sizeClasses19[size], className),
+        className: clsx52("toggle", variant && variantClasses19[variant], sizeClasses20[size], className),
         ...props
       }
     );
     if (label) {
-      return /* @__PURE__ */ jsxs37("label", { className: "label cursor-pointer justify-start gap-2", children: [
+      return /* @__PURE__ */ jsxs38("label", { className: "label cursor-pointer justify-start gap-2", children: [
         switchElement,
-        /* @__PURE__ */ jsx51("span", { className: "label-text", children: label })
+        /* @__PURE__ */ jsx52("span", { className: "label-text", children: label })
       ] });
     }
     return switchElement;
@@ -4981,24 +5174,24 @@ var Switch = forwardRef51(
 Switch.displayName = "Switch";
 
 // src/components/Table.tsx
-import clsx52 from "clsx";
-import { forwardRef as forwardRef52 } from "react";
-import { jsx as jsx52, jsxs as jsxs38 } from "react/jsx-runtime";
-var sizeClasses20 = {
+import clsx53 from "clsx";
+import { forwardRef as forwardRef53 } from "react";
+import { jsx as jsx53, jsxs as jsxs39 } from "react/jsx-runtime";
+var sizeClasses21 = {
   xs: "table-xs",
   sm: "table-sm",
   md: "table-md",
   lg: "table-lg"
 };
-var Table = forwardRef52(
+var Table = forwardRef53(
   ({ size = "md", zebra, pinRows, pinCols, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx52(
+    return /* @__PURE__ */ jsx53(
       "table",
       {
         ref,
-        className: clsx52(
+        className: clsx53(
           "table",
-          sizeClasses20[size],
+          sizeClasses21[size],
           zebra && "table-zebra",
           pinRows && "table-pin-rows",
           pinCols && "table-pin-cols",
@@ -5017,16 +5210,16 @@ function DataTable({
   getRowKey,
   ...tableProps
 }) {
-  return /* @__PURE__ */ jsxs38(Table, { ...tableProps, children: [
-    /* @__PURE__ */ jsx52("thead", { children: /* @__PURE__ */ jsx52("tr", { children: columns.map((column) => /* @__PURE__ */ jsx52("th", { children: column.header }, column.key)) }) }),
-    /* @__PURE__ */ jsx52("tbody", { children: data.map((item) => /* @__PURE__ */ jsx52("tr", { children: columns.map((column) => /* @__PURE__ */ jsx52("td", { children: column.render ? column.render(item) : item[column.key] }, column.key)) }, getRowKey(item))) })
+  return /* @__PURE__ */ jsxs39(Table, { ...tableProps, children: [
+    /* @__PURE__ */ jsx53("thead", { children: /* @__PURE__ */ jsx53("tr", { children: columns.map((column) => /* @__PURE__ */ jsx53("th", { children: column.header }, column.key)) }) }),
+    /* @__PURE__ */ jsx53("tbody", { children: data.map((item) => /* @__PURE__ */ jsx53("tr", { children: columns.map((column) => /* @__PURE__ */ jsx53("td", { children: column.render ? column.render(item) : item[column.key] }, column.key)) }, getRowKey(item))) })
   ] });
 }
 
 // src/components/Tabs.tsx
-import clsx53 from "clsx";
-import { createContext as createContext4, forwardRef as forwardRef53, useContext as useContext4, useId as useId3, useState as useState16 } from "react";
-import { jsx as jsx53 } from "react/jsx-runtime";
+import clsx54 from "clsx";
+import { createContext as createContext4, forwardRef as forwardRef54, useContext as useContext4, useId as useId3, useState as useState17 } from "react";
+import { jsx as jsx54 } from "react/jsx-runtime";
 var TabsContext = createContext4(null);
 var useTabs = () => {
   const context = useContext4(TabsContext);
@@ -5035,12 +5228,12 @@ var useTabs = () => {
   }
   return context;
 };
-var variantClasses19 = {
+var variantClasses20 = {
   bordered: "tabs-border",
   lifted: "tabs-lift",
   boxed: "tabs-box"
 };
-var sizeClasses21 = {
+var sizeClasses22 = {
   xs: "tabs-xs",
   sm: "tabs-sm",
   md: "tabs-md",
@@ -5061,7 +5254,7 @@ var activeColorClasses = {
   warning: "checked:text-warning checked:font-medium checked:[border-color:hsl(var(--wa))]",
   error: "checked:text-error checked:font-medium checked:[border-color:hsl(var(--er))]"
 };
-var Tabs = forwardRef53(
+var Tabs = forwardRef54(
   ({
     defaultValue = "",
     value,
@@ -5074,7 +5267,7 @@ var Tabs = forwardRef53(
     className,
     ...props
   }, ref) => {
-    const [internalActiveTab, setInternalActiveTab] = useState16(defaultValue);
+    const [internalActiveTab, setInternalActiveTab] = useState17(defaultValue);
     const activeTab = value !== void 0 ? value : internalActiveTab;
     const groupName = useId3();
     const handleTabChange = (newValue) => {
@@ -5083,7 +5276,7 @@ var Tabs = forwardRef53(
       }
       onChange?.(newValue);
     };
-    return /* @__PURE__ */ jsx53(
+    return /* @__PURE__ */ jsx54(
       TabsContext.Provider,
       {
         value: {
@@ -5095,14 +5288,14 @@ var Tabs = forwardRef53(
           activeColor,
           groupName
         },
-        children: /* @__PURE__ */ jsx53(
+        children: /* @__PURE__ */ jsx54(
           "div",
           {
             ref,
-            className: clsx53(
+            className: clsx54(
               "tabs",
-              variantClasses19[variant],
-              sizeClasses21[size],
+              variantClasses20[variant],
+              sizeClasses22[size],
               positionClasses2[position],
               className
             ),
@@ -5115,11 +5308,11 @@ var Tabs = forwardRef53(
   }
 );
 Tabs.displayName = "Tabs";
-var Tab = forwardRef53(
+var Tab = forwardRef54(
   ({ value, label, disabled = false, className, ...props }, ref) => {
     const { activeTab, setActiveTab, groupName, activeColor } = useTabs();
     const isActive = activeTab === value;
-    return /* @__PURE__ */ jsx53(
+    return /* @__PURE__ */ jsx54(
       "input",
       {
         ref,
@@ -5130,7 +5323,7 @@ var Tab = forwardRef53(
         checked: isActive,
         onChange: () => !disabled && setActiveTab(value),
         disabled,
-        className: clsx53(
+        className: clsx54(
           "tab",
           isActive && "tab-active",
           disabled && "tab-disabled",
@@ -5143,15 +5336,15 @@ var Tab = forwardRef53(
   }
 );
 Tab.displayName = "Tab";
-var TabPanel = forwardRef53(
+var TabPanel = forwardRef54(
   ({ value, children, className, ...props }, ref) => {
     const { activeTab } = useTabs();
-    return /* @__PURE__ */ jsx53(
+    return /* @__PURE__ */ jsx54(
       "div",
       {
         ref,
         role: "tabpanel",
-        className: clsx53(
+        className: clsx54(
           "tab-content bg-base-100 border-base-300 p-6",
           activeTab !== value && "hidden",
           className
@@ -5172,9 +5365,9 @@ import {
   InformationCircleIcon as InformationCircleIcon2,
   XMarkIcon
 } from "@heroicons/react/24/outline";
-import clsx54 from "clsx";
-import { createContext as createContext5, forwardRef as forwardRef54, useContext as useContext5, useEffect as useEffect14, useState as useState17 } from "react";
-import { jsx as jsx54, jsxs as jsxs39 } from "react/jsx-runtime";
+import clsx55 from "clsx";
+import { createContext as createContext5, forwardRef as forwardRef55, useContext as useContext5, useEffect as useEffect15, useState as useState18 } from "react";
+import { jsx as jsx55, jsxs as jsxs40 } from "react/jsx-runtime";
 var ToastContext = createContext5(null);
 var useToast = () => {
   const context = useContext5(ToastContext);
@@ -5183,7 +5376,7 @@ var useToast = () => {
   }
   return context;
 };
-var variantClasses20 = {
+var variantClasses21 = {
   info: "alert-info",
   success: "alert-success",
   warning: "alert-warning",
@@ -5209,19 +5402,19 @@ var positionClasses3 = {
   "bottom-center": "toast-bottom toast-center",
   "bottom-end": "toast-bottom toast-end"
 };
-var ToastItem = forwardRef54(
+var ToastItem = forwardRef55(
   ({ message, variant = "info", duration = 3e3, onDismiss, className, ...props }, ref) => {
     const Icon = variantIcons[variant];
-    useEffect14(() => {
+    useEffect15(() => {
       if (duration && onDismiss) {
         const timer = setTimeout(onDismiss, duration);
         return () => clearTimeout(timer);
       }
     }, [duration, onDismiss]);
-    return /* @__PURE__ */ jsxs39("div", { ref, className: clsx54("alert", variantClasses20[variant], className), ...props, children: [
-      /* @__PURE__ */ jsx54(Icon, { className: "h-6 w-6" }),
-      /* @__PURE__ */ jsx54("span", { children: message }),
-      onDismiss && /* @__PURE__ */ jsx54("button", { onClick: onDismiss, className: "btn btn-sm btn-circle btn-ghost ml-auto", children: /* @__PURE__ */ jsx54(XMarkIcon, { className: "h-5 w-5" }) })
+    return /* @__PURE__ */ jsxs40("div", { ref, className: clsx55("alert", variantClasses21[variant], className), ...props, children: [
+      /* @__PURE__ */ jsx55(Icon, { className: "h-6 w-6" }),
+      /* @__PURE__ */ jsx55("span", { children: message }),
+      onDismiss && /* @__PURE__ */ jsx55("button", { onClick: onDismiss, className: "btn btn-sm btn-circle btn-ghost ml-auto", children: /* @__PURE__ */ jsx55(XMarkIcon, { className: "h-5 w-5" }) })
     ] });
   }
 );
@@ -5230,7 +5423,7 @@ var ToastProvider = ({
   children,
   position = "bottom-end"
 }) => {
-  const [toasts, setToasts] = useState17([]);
+  const [toasts, setToasts] = useState18([]);
   const addToast = (toast) => {
     const id = Math.random().toString(36).substring(7);
     setToasts((prev) => [...prev, { ...toast, id }]);
@@ -5238,9 +5431,9 @@ var ToastProvider = ({
   const removeToast = (id) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
-  return /* @__PURE__ */ jsxs39(ToastContext.Provider, { value: { toasts, addToast, removeToast }, children: [
+  return /* @__PURE__ */ jsxs40(ToastContext.Provider, { value: { toasts, addToast, removeToast }, children: [
     children,
-    toasts.length > 0 && /* @__PURE__ */ jsx54("div", { className: clsx54("toast z-50", positionClasses3[position]), children: toasts.map((toast) => /* @__PURE__ */ jsx54(
+    toasts.length > 0 && /* @__PURE__ */ jsx55("div", { className: clsx55("toast z-50", positionClasses3[position]), children: toasts.map((toast) => /* @__PURE__ */ jsx55(
       ToastItem,
       {
         message: toast.message,
@@ -5254,9 +5447,9 @@ var ToastProvider = ({
 };
 
 // src/components/Toggle.tsx
-import clsx55 from "clsx";
-import { createContext as createContext6, forwardRef as forwardRef55, useContext as useContext6, useState as useState18 } from "react";
-import { jsx as jsx55 } from "react/jsx-runtime";
+import clsx56 from "clsx";
+import { createContext as createContext6, forwardRef as forwardRef56, useContext as useContext6, useState as useState19 } from "react";
+import { jsx as jsx56 } from "react/jsx-runtime";
 var ToggleGroupContext = createContext6(null);
 var useToggleGroup = () => {
   const context = useContext6(ToggleGroupContext);
@@ -5265,20 +5458,20 @@ var useToggleGroup = () => {
   }
   return context;
 };
-var sizeClasses22 = {
+var sizeClasses23 = {
   xs: "btn-xs",
   sm: "btn-sm",
   md: "btn-md",
   lg: "btn-lg"
 };
-var variantClasses21 = {
+var variantClasses22 = {
   primary: "btn-primary",
   secondary: "btn-secondary",
   accent: "btn-accent"
 };
-var Toggle = forwardRef55(
+var Toggle = forwardRef56(
   ({ pressed, onPressedChange, size = "md", variant, children, className, ...props }, ref) => {
-    const [internalPressed, setInternalPressed] = useState18(false);
+    const [internalPressed, setInternalPressed] = useState19(false);
     const isPressed = pressed !== void 0 ? pressed : internalPressed;
     const handleClick = () => {
       const newPressed = !isPressed;
@@ -5287,17 +5480,17 @@ var Toggle = forwardRef55(
       }
       onPressedChange?.(newPressed);
     };
-    return /* @__PURE__ */ jsx55(
+    return /* @__PURE__ */ jsx56(
       "button",
       {
         ref,
         type: "button",
         onClick: handleClick,
         "aria-pressed": isPressed,
-        className: clsx55(
+        className: clsx56(
           "btn",
-          sizeClasses22[size],
-          variant && variantClasses21[variant],
+          sizeClasses23[size],
+          variant && variantClasses22[variant],
           isPressed && "btn-active",
           className
         ),
@@ -5308,7 +5501,7 @@ var Toggle = forwardRef55(
   }
 );
 Toggle.displayName = "Toggle";
-var ToggleGroup = forwardRef55(
+var ToggleGroup = forwardRef56(
   ({ type, value, onChange, size = "md", variant, children, className, ...props }, ref) => {
     const handleItemChange = (itemValue) => {
       if (type === "single") {
@@ -5319,31 +5512,31 @@ var ToggleGroup = forwardRef55(
         onChange?.(newValues);
       }
     };
-    return /* @__PURE__ */ jsx55(
+    return /* @__PURE__ */ jsx56(
       ToggleGroupContext.Provider,
       {
         value: { type, value, onChange: handleItemChange, size, variant },
-        children: /* @__PURE__ */ jsx55("div", { ref, className: clsx55("join", className), role: "group", ...props, children })
+        children: /* @__PURE__ */ jsx56("div", { ref, className: clsx56("join", className), role: "group", ...props, children })
       }
     );
   }
 );
 ToggleGroup.displayName = "ToggleGroup";
-var ToggleGroupItem = forwardRef55(
+var ToggleGroupItem = forwardRef56(
   ({ value, children, className, ...props }, ref) => {
     const { type, value: groupValue, onChange, size, variant } = useToggleGroup();
     const isPressed = type === "single" ? groupValue === value : Array.isArray(groupValue) && groupValue.includes(value);
-    return /* @__PURE__ */ jsx55(
+    return /* @__PURE__ */ jsx56(
       "button",
       {
         ref,
         type: "button",
         onClick: () => onChange?.(value),
         "aria-pressed": isPressed,
-        className: clsx55(
+        className: clsx56(
           "btn join-item",
-          size && sizeClasses22[size],
-          variant && variantClasses21[variant],
+          size && sizeClasses23[size],
+          variant && variantClasses22[variant],
           isPressed && "btn-active",
           className
         ),
@@ -5356,16 +5549,16 @@ var ToggleGroupItem = forwardRef55(
 ToggleGroupItem.displayName = "ToggleGroupItem";
 
 // src/components/Tooltip.tsx
-import clsx56 from "clsx";
-import { forwardRef as forwardRef56 } from "react";
-import { jsx as jsx56 } from "react/jsx-runtime";
+import clsx57 from "clsx";
+import { forwardRef as forwardRef57 } from "react";
+import { jsx as jsx57 } from "react/jsx-runtime";
 var positionClasses4 = {
   top: "tooltip-top",
   bottom: "tooltip-bottom",
   left: "tooltip-left",
   right: "tooltip-right"
 };
-var variantClasses22 = {
+var variantClasses23 = {
   primary: "tooltip-primary",
   secondary: "tooltip-secondary",
   accent: "tooltip-accent",
@@ -5374,16 +5567,16 @@ var variantClasses22 = {
   warning: "tooltip-warning",
   error: "tooltip-error"
 };
-var Tooltip = forwardRef56(
+var Tooltip = forwardRef57(
   ({ content, position = "top", variant, open, children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx56(
+    return /* @__PURE__ */ jsx57(
       "div",
       {
         ref,
-        className: clsx56(
+        className: clsx57(
           "tooltip",
           positionClasses4[position],
-          variant && variantClasses22[variant],
+          variant && variantClasses23[variant],
           open && "tooltip-open",
           className
         ),
@@ -5397,10 +5590,10 @@ var Tooltip = forwardRef56(
 Tooltip.displayName = "Tooltip";
 
 // src/components/Typography.tsx
-import clsx57 from "clsx";
-import { forwardRef as forwardRef57 } from "react";
-import { jsx as jsx57 } from "react/jsx-runtime";
-var variantClasses23 = {
+import clsx58 from "clsx";
+import { forwardRef as forwardRef58 } from "react";
+import { jsx as jsx58 } from "react/jsx-runtime";
+var variantClasses24 = {
   h1: "text-4xl font-bold",
   h2: "text-3xl font-bold",
   h3: "text-2xl font-bold",
@@ -5430,10 +5623,10 @@ var defaultElements = {
   small: "small",
   muted: "p"
 };
-var Typography = forwardRef57(
+var Typography = forwardRef58(
   ({ variant = "p", as, children, className, ...props }, ref) => {
     const Component = as || defaultElements[variant];
-    return /* @__PURE__ */ jsx57(Component, { ref, className: clsx57(variantClasses23[variant], className), ...props, children });
+    return /* @__PURE__ */ jsx58(Component, { ref, className: clsx58(variantClasses24[variant], className), ...props, children });
   }
 );
 Typography.displayName = "Typography";
@@ -5647,6 +5840,7 @@ export {
   DataTable,
   DateInput,
   DatePicker,
+  DatetimeInput,
   Dialog,
   DialogActions,
   DialogCloseButton,

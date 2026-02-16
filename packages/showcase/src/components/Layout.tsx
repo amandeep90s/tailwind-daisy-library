@@ -20,6 +20,7 @@ const components = [
   { name: "Data Table", path: "/data-table" },
   { name: "Date Input", path: "/date-input" },
   { name: "Date Picker", path: "/date-picker" },
+  { name: "Datetime Input", path: "/datetime-input" },
   { name: "Dialog", path: "/dialog" },
   { name: "Drawer", path: "/drawer" },
   { name: "Dropdown Menu", path: "/dropdown-menu" },

@@ -22,6 +22,7 @@ import { ContextMenuPage } from "./pages/ContextMenuPage";
 import { DataTablePage } from "./pages/DataTablePage";
 import { DateInputPage } from "./pages/DateInputPage";
 import { DatePickerPage } from "./pages/DatePickerPage";
+import { DatetimeInputPage } from "./pages/DatetimeInputPage";
 import { DialogPage } from "./pages/DialogPage";
 import { DrawerPage } from "./pages/DrawerPage";
 import { DropdownMenuPage } from "./pages/DropdownMenuPage";
@@ -88,6 +89,7 @@ function App() {
         <Route path="data-table" element={<DataTablePage />} />
         <Route path="date-input" element={<DateInputPage />} />
         <Route path="date-picker" element={<DatePickerPage />} />
+        <Route path="datetime-input" element={<DatetimeInputPage />} />
         <Route path="dialog" element={<DialogPage />} />
         <Route path="drawer" element={<DrawerPage />} />
         <Route path="dropdown-menu" element={<DropdownMenuPage />} />
