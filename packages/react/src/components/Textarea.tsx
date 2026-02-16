@@ -38,7 +38,7 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
 const variantClasses: Record<TextareaVariant, string> = {
   bordered: "textarea-bordered",
   ghost: "textarea-ghost",
-  floating: "",
+  floating: "textarea-bordered",
 };
 
 const colorClasses: Record<TextareaColor, string> = {
@@ -89,24 +89,69 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       return (
         <div className="form-control w-full">
           <label className="floating-label">
-            <span>{label}</span>
+            <span className="label-text">{label ?? props.placeholder}</span>
             <textarea
               ref={ref}
               id={textareaId}
-              className={textareaClasses}
+              className={clsx(
+                "textarea w-full",
+                variantClasses[variant],
+                error ? colorClasses.error : color && colorClasses[color],
+                sizeClasses[size],
+                className
+              )}
               aria-invalid={error ? "true" : undefined}
+              aria-describedby={
+                error ? `${textareaId}-error` : helperText ? `${textareaId}-helper` : undefined
+              }
+              placeholder={props.placeholder ?? label}
               {...props}
             />
           </label>
-          {error && <span className="label-text-alt text-error mt-1 text-xs">{error}</span>}
+          {error && (
+            <label className="label" id={`${textareaId}-error`}>
+              <span className="label-text-alt text-error">{error}</span>
+            </label>
+          )}
           {!error && helperText && (
-            <span className="label-text-alt mt-1 text-xs">{helperText}</span>
+            <label className="label" id={`${textareaId}-helper`}>
+              <span className="label-text-alt">{helperText}</span>
+            </label>
           )}
         </div>
       );
     }
 
-    return <textarea ref={ref} id={textareaId} className={textareaClasses} {...props} />;
+    // Standard variants (bordered, ghost)
+    return (
+      <div className="form-control w-full">
+        {label && (
+          <label className="label" htmlFor={textareaId}>
+            <span className="label-text font-medium">{label}</span>
+          </label>
+        )}
+        <textarea
+          ref={ref}
+          id={textareaId}
+          className={textareaClasses}
+          aria-invalid={error ? "true" : undefined}
+          aria-describedby={
+            error ? `${textareaId}-error` : helperText ? `${textareaId}-helper` : undefined
+          }
+          {...props}
+        />
+        {error && (
+          <label className="label" id={`${textareaId}-error`}>
+            <span className="label-text-alt text-error">{error}</span>
+          </label>
+        )}
+        {!error && helperText && (
+          <label className="label" id={`${textareaId}-helper`}>
+            <span className="label-text-alt">{helperText}</span>
+          </label>
+        )}
+      </div>
+    );
   }
 );
 

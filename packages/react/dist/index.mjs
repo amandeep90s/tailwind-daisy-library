@@ -3742,7 +3742,7 @@ import { jsx as jsx29, jsxs as jsxs26 } from "react/jsx-runtime";
 var variantClasses13 = {
   bordered: "textarea-bordered",
   ghost: "textarea-ghost",
-  floating: ""
+  floating: "textarea-bordered"
 };
 var colorClasses6 = {
   primary: "textarea-primary",
@@ -3772,23 +3772,46 @@ var Textarea = forwardRef29(
     if (variant === "floating") {
       return /* @__PURE__ */ jsxs26("div", { className: "form-control w-full", children: [
         /* @__PURE__ */ jsxs26("label", { className: "floating-label", children: [
-          /* @__PURE__ */ jsx29("span", { children: label }),
+          /* @__PURE__ */ jsx29("span", { className: "label-text", children: label ?? props.placeholder }),
           /* @__PURE__ */ jsx29(
             "textarea",
             {
               ref,
               id: textareaId,
-              className: textareaClasses,
+              className: clsx29(
+                "textarea w-full",
+                variantClasses13[variant],
+                error ? colorClasses6.error : color && colorClasses6[color],
+                sizeClasses13[size],
+                className
+              ),
               "aria-invalid": error ? "true" : void 0,
+              "aria-describedby": error ? `${textareaId}-error` : helperText ? `${textareaId}-helper` : void 0,
+              placeholder: props.placeholder ?? label,
               ...props
             }
           )
         ] }),
-        error && /* @__PURE__ */ jsx29("span", { className: "label-text-alt text-error mt-1 text-xs", children: error }),
-        !error && helperText && /* @__PURE__ */ jsx29("span", { className: "label-text-alt mt-1 text-xs", children: helperText })
+        error && /* @__PURE__ */ jsx29("label", { className: "label", id: `${textareaId}-error`, children: /* @__PURE__ */ jsx29("span", { className: "label-text-alt text-error", children: error }) }),
+        !error && helperText && /* @__PURE__ */ jsx29("label", { className: "label", id: `${textareaId}-helper`, children: /* @__PURE__ */ jsx29("span", { className: "label-text-alt", children: helperText }) })
       ] });
     }
-    return /* @__PURE__ */ jsx29("textarea", { ref, id: textareaId, className: textareaClasses, ...props });
+    return /* @__PURE__ */ jsxs26("div", { className: "form-control w-full", children: [
+      label && /* @__PURE__ */ jsx29("label", { className: "label", htmlFor: textareaId, children: /* @__PURE__ */ jsx29("span", { className: "label-text font-medium", children: label }) }),
+      /* @__PURE__ */ jsx29(
+        "textarea",
+        {
+          ref,
+          id: textareaId,
+          className: textareaClasses,
+          "aria-invalid": error ? "true" : void 0,
+          "aria-describedby": error ? `${textareaId}-error` : helperText ? `${textareaId}-helper` : void 0,
+          ...props
+        }
+      ),
+      error && /* @__PURE__ */ jsx29("label", { className: "label", id: `${textareaId}-error`, children: /* @__PURE__ */ jsx29("span", { className: "label-text-alt text-error", children: error }) }),
+      !error && helperText && /* @__PURE__ */ jsx29("label", { className: "label", id: `${textareaId}-helper`, children: /* @__PURE__ */ jsx29("span", { className: "label-text-alt", children: helperText }) })
+    ] });
   }
 );
 Textarea.displayName = "Textarea";

@@ -146,6 +146,17 @@
   padding-top: 0.875rem;
   transition: padding-top 0.2s ease-in-out;
 }
+
+/* Add padding-top to textarea fields inside floating-label containers */
+:is(
+    .floating-label:focus-within,
+    .floating-label:not(:has(input:placeholder-shown, textarea:placeholder-shown))
+  )
+  > textarea {
+  padding-top: 1.5rem;
+  transition: padding-top 0.2s ease-in-out;
+}
+
 :is(
     .floating-label:focus-within,
     .floating-label:not(:has(input:placeholder-shown, textarea:placeholder-shown))
