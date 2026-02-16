@@ -5,7 +5,7 @@ import { jsx, jsxs } from "react/jsx-runtime";
 var variantClasses = {
   bordered: "input-bordered",
   ghost: "input-ghost",
-  floating: ""
+  floating: "input-bordered"
 };
 var colorClasses = {
   default: "",
@@ -40,13 +40,13 @@ var AmountField = forwardRef(
   ({
     variant = "bordered",
     color = "default",
-    size = "md",
+    size = "lg",
     label,
     error,
     helperText,
     value,
     onChange,
-    currencySymbol = "$",
+    currencySymbol,
     decimalPlaces = 2,
     allowNegative = false,
     max,
@@ -120,7 +120,7 @@ var AmountField = forwardRef(
     };
     const inputClasses = clsx(
       "input w-full",
-      variant !== "floating" && variantClasses[variant],
+      variantClasses[variant],
       error ? colorClasses.error : colorClasses[color],
       sizeClasses[size],
       disabled && "input-disabled",
@@ -131,8 +131,9 @@ var AmountField = forwardRef(
         "span",
         {
           className: clsx(
-            "text-base-content pointer-events-none absolute top-1/2 left-3 z-10 -translate-y-1/2 font-medium",
-            disabled && "opacity-50"
+            "text-base-content pointer-events-none absolute top-1/2 z-10 -translate-y-1/2 font-medium",
+            disabled && "opacity-50",
+            "left-4"
           ),
           children: currencySymbol
         }
@@ -150,7 +151,7 @@ var AmountField = forwardRef(
           onBlur: handleBlur,
           disabled,
           placeholder,
-          className: clsx(inputClasses, currencySymbol && "pl-8"),
+          className: clsx(inputClasses, currencySymbol && "pl-10"),
           "aria-invalid": error ? "true" : void 0,
           "aria-describedby": error ? `${inputId}-error` : helperText ? `${inputId}-helper` : void 0,
           ...props
@@ -160,14 +161,15 @@ var AmountField = forwardRef(
     if (variant === "floating") {
       return /* @__PURE__ */ jsxs("div", { className: "form-control w-full", children: [
         /* @__PURE__ */ jsxs("label", { className: "floating-label", children: [
-          /* @__PURE__ */ jsx("span", { children: label }),
-          /* @__PURE__ */ jsxs("div", { className: "relative flex w-full items-center", children: [
-            currencySymbol && /* @__PURE__ */ jsx(
+          /* @__PURE__ */ jsx("span", { children: label ?? placeholder }),
+          currencySymbol ? /* @__PURE__ */ jsxs("div", { className: "relative flex w-full items-center", children: [
+            /* @__PURE__ */ jsx(
               "span",
               {
                 className: clsx(
-                  "text-base-content pointer-events-none absolute top-1/2 left-3 z-10 -translate-y-1/2 font-medium",
-                  disabled && "opacity-50"
+                  "text-base-content pointer-events-none absolute top-1/2 z-10 -translate-y-1/2 font-medium",
+                  disabled && "opacity-50",
+                  "left-4"
                 ),
                 children: currencySymbol
               }
@@ -184,24 +186,42 @@ var AmountField = forwardRef(
                 onFocus: handleFocus,
                 onBlur: handleBlur,
                 disabled,
-                placeholder,
-                className: clsx(inputClasses, currencySymbol && "pl-8"),
+                placeholder: placeholder ?? label,
+                className: clsx(inputClasses, "pl-10"),
                 "aria-invalid": error ? "true" : void 0,
                 "aria-describedby": error ? `${inputId}-error` : helperText ? `${inputId}-helper` : void 0,
                 ...props
               }
             )
-          ] })
+          ] }) : /* @__PURE__ */ jsx(
+            "input",
+            {
+              ref,
+              id: inputId,
+              type: "text",
+              inputMode: "decimal",
+              value: displayValue,
+              onChange: handleChange,
+              onFocus: handleFocus,
+              onBlur: handleBlur,
+              disabled,
+              placeholder: placeholder ?? label,
+              className: inputClasses,
+              "aria-invalid": error ? "true" : void 0,
+              "aria-describedby": error ? `${inputId}-error` : helperText ? `${inputId}-helper` : void 0,
+              ...props
+            }
+          )
         ] }),
-        error && /* @__PURE__ */ jsx("span", { className: "label-text-alt text-error mt-1 text-xs", children: error }),
-        !error && helperText && /* @__PURE__ */ jsx("span", { className: "label-text-alt mt-1 text-xs", children: helperText })
+        error && /* @__PURE__ */ jsx("label", { className: "label", id: `${inputId}-error`, children: /* @__PURE__ */ jsx("span", { className: "label-text-alt text-error", children: error }) }),
+        !error && helperText && /* @__PURE__ */ jsx("label", { className: "label", id: `${inputId}-helper`, children: /* @__PURE__ */ jsx("span", { className: "label-text-alt", children: helperText }) })
       ] });
     }
     if (!label && !error && !helperText) {
       return renderInput();
     }
     return /* @__PURE__ */ jsxs("div", { className: "form-control w-full", children: [
-      label && /* @__PURE__ */ jsx("label", { className: "label", htmlFor: inputId, children: /* @__PURE__ */ jsx("span", { className: "label-text", children: label }) }),
+      label && /* @__PURE__ */ jsx("label", { className: "label", htmlFor: inputId, children: /* @__PURE__ */ jsx("span", { className: "label-text font-medium", children: label }) }),
       renderInput(),
       error && /* @__PURE__ */ jsx("label", { className: "label", id: `${inputId}-error`, children: /* @__PURE__ */ jsx("span", { className: "label-text-alt text-error", children: error }) }),
       !error && helperText && /* @__PURE__ */ jsx("label", { className: "label", id: `${inputId}-helper`, children: /* @__PURE__ */ jsx("span", { className: "label-text-alt text-base-content/60", children: helperText }) })

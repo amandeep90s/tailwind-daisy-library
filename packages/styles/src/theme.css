@@ -182,6 +182,15 @@
   background-color: transparent;
 }
 
+/* Special positioning for AmountField with currency symbol (has > div wrapper) */
+:is(
+    .floating-label:focus-within:has(> div),
+    .floating-label:not(:has(input:placeholder-shown, textarea:placeholder-shown)):has(> div)
+  )
+  > span {
+  left: 2.5rem;
+}
+
 /* Datepicker CSS */
 /* Hide the native date input visually but keep it functional */
 .datepicker-native {

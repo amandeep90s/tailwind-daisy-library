@@ -61,7 +61,7 @@ export interface AmountFieldProps extends Omit<
 const variantClasses: Record<AmountFieldVariant, string> = {
   bordered: "input-bordered",
   ghost: "input-ghost",
-  floating: "",
+  floating: "input-bordered",
 };
 
 const colorClasses: Record<AmountFieldColor, string> = {
@@ -130,13 +130,13 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
     {
       variant = "bordered",
       color = "default",
-      size = "md",
+      size = "lg",
       label,
       error,
       helperText,
       value,
       onChange,
-      currencySymbol = "$",
+      currencySymbol,
       decimalPlaces = 2,
       allowNegative = false,
       max,
@@ -237,7 +237,7 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
 
     const inputClasses = clsx(
       "input w-full",
-      variant !== "floating" && variantClasses[variant],
+      variantClasses[variant],
       error ? colorClasses.error : colorClasses[color],
       sizeClasses[size],
       disabled && "input-disabled",
@@ -249,8 +249,9 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
         {currencySymbol && (
           <span
             className={clsx(
-              "text-base-content pointer-events-none absolute top-1/2 left-3 z-10 -translate-y-1/2 font-medium",
-              disabled && "opacity-50"
+              "text-base-content pointer-events-none absolute top-1/2 z-10 -translate-y-1/2 font-medium",
+              disabled && "opacity-50",
+              "left-4"
             )}
           >
             {currencySymbol}
@@ -267,7 +268,7 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
           onBlur={handleBlur}
           disabled={disabled}
           placeholder={placeholder}
-          className={clsx(inputClasses, currencySymbol && "pl-8")}
+          className={clsx(inputClasses, currencySymbol && "pl-10")}
           aria-invalid={error ? "true" : undefined}
           aria-describedby={
             error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
@@ -282,18 +283,38 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
       return (
         <div className="form-control w-full">
           <label className="floating-label">
-            <span>{label}</span>
-            <div className="relative flex w-full items-center">
-              {currencySymbol && (
+            <span>{label ?? placeholder}</span>
+            {currencySymbol ? (
+              <div className="relative flex w-full items-center">
                 <span
                   className={clsx(
-                    "text-base-content pointer-events-none absolute top-1/2 left-3 z-10 -translate-y-1/2 font-medium",
-                    disabled && "opacity-50"
+                    "text-base-content pointer-events-none absolute top-1/2 z-10 -translate-y-1/2 font-medium",
+                    disabled && "opacity-50",
+                    "left-4"
                   )}
                 >
                   {currencySymbol}
                 </span>
-              )}
+                <input
+                  ref={ref}
+                  id={inputId}
+                  type="text"
+                  inputMode="decimal"
+                  value={displayValue}
+                  onChange={handleChange}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  disabled={disabled}
+                  placeholder={placeholder ?? label}
+                  className={clsx(inputClasses, "pl-10")}
+                  aria-invalid={error ? "true" : undefined}
+                  aria-describedby={
+                    error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
+                  }
+                  {...props}
+                />
+              </div>
+            ) : (
               <input
                 ref={ref}
                 id={inputId}
@@ -304,19 +325,25 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
                 onFocus={handleFocus}
                 onBlur={handleBlur}
                 disabled={disabled}
-                placeholder={placeholder}
-                className={clsx(inputClasses, currencySymbol && "pl-8")}
+                placeholder={placeholder ?? label}
+                className={inputClasses}
                 aria-invalid={error ? "true" : undefined}
                 aria-describedby={
                   error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
                 }
                 {...props}
               />
-            </div>
+            )}
           </label>
-          {error && <span className="label-text-alt text-error mt-1 text-xs">{error}</span>}
+          {error && (
+            <label className="label" id={`${inputId}-error`}>
+              <span className="label-text-alt text-error">{error}</span>
+            </label>
+          )}
           {!error && helperText && (
-            <span className="label-text-alt mt-1 text-xs">{helperText}</span>
+            <label className="label" id={`${inputId}-helper`}>
+              <span className="label-text-alt">{helperText}</span>
+            </label>
           )}
         </div>
       );
@@ -332,7 +359,7 @@ export const AmountField = forwardRef<HTMLInputElement, AmountFieldProps>(
       <div className="form-control w-full">
         {label && (
           <label className="label" htmlFor={inputId}>
-            <span className="label-text">{label}</span>
+            <span className="label-text font-medium">{label}</span>
           </label>
         )}
         {renderInput()}
