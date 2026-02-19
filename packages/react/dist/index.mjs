@@ -2315,14 +2315,14 @@ DateInput.displayName = "DateInput";
 // src/components/DatePicker.tsx
 import { CalendarIcon } from "@heroicons/react/20/solid";
 import clsx22 from "clsx";
-import { forwardRef as forwardRef22, useEffect as useEffect7, useRef as useRef5, useState as useState10 } from "react";
+import { forwardRef as forwardRef22, useCallback as useCallback5, useEffect as useEffect7, useMemo as useMemo2, useRef as useRef5, useState as useState10 } from "react";
 import { Fragment, jsx as jsx22, jsxs as jsxs19 } from "react/jsx-runtime";
-var variantClasses10 = {
+var VARIANT_CLASSES = {
   bordered: "input-bordered",
   ghost: "input-ghost",
   floating: "border-secondary-400"
 };
-var colorClasses4 = {
+var COLOR_CLASSES = {
   default: "",
   primary: "input-primary",
   secondary: "input-secondary",
@@ -2332,63 +2332,83 @@ var colorClasses4 = {
   warning: "input-warning",
   error: "input-error"
 };
-var sizeClasses9 = {
+var SIZE_CLASSES = {
   xs: "input-xs",
   sm: "input-sm",
   md: "input-md",
   lg: "input-lg",
   xl: "input-xl"
 };
+function getSeparator(format) {
+  return format.includes("/") ? "/" : "-";
+}
 function formatDateByPattern(isoDate, format) {
   if (!isoDate) return "";
   const [year, month, day] = isoDate.split("-");
+  const sep = getSeparator(format);
   switch (format) {
     case "dd/mm/yyyy":
-      return `${day}/${month}/${year}`;
+    case "dd-mm-yyyy":
+      return `${day}${sep}${month}${sep}${year}`;
     case "mm/dd/yyyy":
-      return `${month}/${day}/${year}`;
+    case "mm-dd-yyyy":
+      return `${month}${sep}${day}${sep}${year}`;
     case "yyyy-mm-dd":
       return isoDate;
-    case "dd-mm-yyyy":
-      return `${day}-${month}-${year}`;
-    case "mm-dd-yyyy":
-      return `${month}-${day}-${year}`;
     default:
       return `${day}/${month}/${year}`;
   }
 }
-function getPlaceholderByFormat(format) {
-  return format;
-}
-var HiddenDateInput = ({
-  inputRef,
-  currentValue,
-  handleDateChange,
-  handleFocus,
-  handleBlur,
-  min,
-  max,
-  inputId,
-  error,
-  props
-}) => /* @__PURE__ */ jsx22(
-  "input",
-  {
-    ...props,
-    ref: inputRef,
-    type: "date",
-    className: "datepicker-native",
-    value: currentValue,
-    onChange: handleDateChange,
-    onFocus: handleFocus,
-    onBlur: handleBlur,
-    min,
-    max,
-    id: inputId,
-    "aria-invalid": error ? "true" : void 0
+function parseDisplayToISO(displayValue, format) {
+  if (!displayValue || displayValue.length !== format.length) return null;
+  const sep = getSeparator(format);
+  const parts = displayValue.split(sep);
+  if (parts.length !== 3) return null;
+  let day, month, year;
+  switch (format) {
+    case "dd/mm/yyyy":
+    case "dd-mm-yyyy":
+      [day, month, year] = parts;
+      break;
+    case "mm/dd/yyyy":
+    case "mm-dd-yyyy":
+      [month, day, year] = parts;
+      break;
+    case "yyyy-mm-dd":
+      [year, month, day] = parts;
+      break;
+    default:
+      return null;
   }
-);
-var ErrorHelperText = ({ error, helperText, inputId }) => /* @__PURE__ */ jsxs19(Fragment, { children: [
+  const d = parseInt(day, 10);
+  const m = parseInt(month, 10);
+  const y = parseInt(year, 10);
+  if (isNaN(d) || isNaN(m) || isNaN(y)) return null;
+  if (m < 1 || m > 12 || d < 1 || d > 31) return null;
+  if (y < 1e3 || y > 9999) return null;
+  const iso = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  const date = new Date(iso);
+  if (isNaN(date.getTime())) return null;
+  if (date.getDate() !== d || date.getMonth() + 1 !== m || date.getFullYear() !== y) return null;
+  return iso;
+}
+function autoFormatDateInput(raw, format) {
+  const sep = getSeparator(format);
+  const digits = raw.replace(/\D/g, "");
+  if (format === "yyyy-mm-dd") {
+    if (digits.length <= 4) return digits;
+    if (digits.length <= 6) return `${digits.slice(0, 4)}${sep}${digits.slice(4)}`;
+    return `${digits.slice(0, 4)}${sep}${digits.slice(4, 6)}${sep}${digits.slice(6, 8)}`;
+  }
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}${sep}${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}${sep}${digits.slice(2, 4)}${sep}${digits.slice(4, 8)}`;
+}
+var ErrorHelperText = ({
+  error,
+  helperText,
+  inputId
+}) => /* @__PURE__ */ jsxs19(Fragment, { children: [
   error && /* @__PURE__ */ jsx22("label", { className: "label", id: `${inputId}-error`, children: /* @__PURE__ */ jsx22("span", { className: "label-text-alt text-error", children: error }) }),
   !error && helperText && /* @__PURE__ */ jsx22("label", { className: "label", id: `${inputId}-helper`, children: /* @__PURE__ */ jsx22("span", { className: "label-text-alt", children: helperText }) })
 ] });
@@ -2410,67 +2430,135 @@ var DatePicker = forwardRef22(
     fullWidth = false,
     format = "dd/mm/yyyy",
     ...props
-  }, ref) => {
+  }, _ref) => {
+    const isControlled = value !== void 0;
     const [isFocused, setIsFocused] = useState10(false);
-    const [internalValue, setInternalValue] = useState10(defaultValue || value || "");
+    const [internalISO, setInternalISO] = useState10(defaultValue ?? "");
+    const [typedValue, setTypedValue] = useState10(
+      () => formatDateByPattern(defaultValue ?? value ?? "", format)
+    );
     const dateInputRef = useRef5(null);
+    const currentISO = isControlled ? value : internalISO;
     useEffect7(() => {
-      if (value !== void 0) {
-        setInternalValue(value);
+      if (isControlled) {
+        setTypedValue(value ? formatDateByPattern(value, format) : "");
       }
     }, [value]);
-    const currentValue = value !== void 0 ? value : internalValue;
-    const displayValue = currentValue ? formatDateByPattern(currentValue, format) : "";
-    const placeholder = getPlaceholderByFormat(format);
-    const inputId = id || (label ? `datepicker-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
-    const handleDateChange = (e) => {
-      const dateValue = e.target.value;
-      if (value === void 0) {
-        setInternalValue(dateValue);
-      }
-      if (onChange) {
-        if (dateValue) {
-          onChange({
-            iso: dateValue,
-            display: formatDateByPattern(dateValue, format),
-            format
-          });
-        } else {
-          onChange(null);
+    useEffect7(() => {
+      if (currentISO) setTypedValue(formatDateByPattern(currentISO, format));
+    }, [format]);
+    const inputId = useMemo2(
+      () => id ?? (label ? `datepicker-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0),
+      [id, label]
+    );
+    const inputClasses = useMemo2(
+      () => clsx22(
+        size === "lg" && "h-15",
+        VARIANT_CLASSES[variant],
+        error ? COLOR_CLASSES.error : color && COLOR_CLASSES[color],
+        SIZE_CLASSES[size],
+        className
+      ),
+      [variant, color, size, error, className]
+    );
+    const commitISO = useCallback5(
+      (iso, display) => {
+        if (!isControlled) setInternalISO(iso);
+        if (dateInputRef.current) dateInputRef.current.value = iso;
+        onChange?.({ iso, display, format });
+      },
+      [isControlled, format, onChange]
+    );
+    const handleDateChange = useCallback5(
+      (e) => {
+        const iso = e.target.value;
+        if (!isControlled) setInternalISO(iso);
+        const display = iso ? formatDateByPattern(iso, format) : "";
+        setTypedValue(display);
+        onChange?.(iso ? { iso, display, format } : null);
+      },
+      [isControlled, format, onChange]
+    );
+    const handleTypedChange = useCallback5(
+      (e) => {
+        const formatted = autoFormatDateInput(e.target.value, format);
+        setTypedValue(formatted);
+        if (formatted.length === format.length) {
+          const iso = parseDisplayToISO(formatted, format);
+          if (iso) commitISO(iso, formatted);
+        } else if (formatted.length === 0) {
+          if (!isControlled) setInternalISO("");
+          if (dateInputRef.current) dateInputRef.current.value = "";
+          onChange?.(null);
         }
-      }
-    };
-    const openPicker = () => {
+      },
+      [format, isControlled, commitISO, onChange]
+    );
+    const handleTypedBlur = useCallback5(
+      (e) => {
+        if (typedValue) {
+          const iso = parseDisplayToISO(typedValue, format);
+          if (!iso) setTypedValue(currentISO ? formatDateByPattern(currentISO, format) : "");
+        }
+        setIsFocused(false);
+        props.onBlur?.(e);
+      },
+      [typedValue, format, currentISO, props.onBlur]
+    );
+    const handleFocus = useCallback5(
+      (e) => {
+        setIsFocused(true);
+        props.onFocus?.(e);
+      },
+      [props.onFocus]
+    );
+    const openPicker = useCallback5(() => {
       setIsFocused(true);
       dateInputRef.current?.showPicker();
-    };
-    const handleFocus = (e) => {
-      setIsFocused(true);
-      props.onFocus?.(e);
-    };
-    const handleBlur = (e) => {
-      setIsFocused(false);
-      props.onBlur?.(e);
-    };
-    const isActive = currentValue || isFocused;
-    const inputClasses = clsx22(
-      size === "lg" && "h-15",
-      variantClasses10[variant],
-      error ? colorClasses4.error : color && colorClasses4[color],
-      sizeClasses9[size],
-      className
+    }, []);
+    const handleCalendarClick = useCallback5(
+      (e) => {
+        e.stopPropagation();
+        openPicker();
+      },
+      [openPicker]
     );
-    const commonInputProps = {
-      inputRef: dateInputRef,
-      currentValue,
-      handleDateChange,
-      handleFocus,
-      handleBlur,
-      min,
-      max,
-      error,
-      props
-    };
+    const isActive = typedValue || isFocused;
+    const hiddenNativeInput = /* @__PURE__ */ jsx22(
+      "input",
+      {
+        ref: dateInputRef,
+        type: "date",
+        className: "datepicker-native",
+        value: currentISO,
+        onChange: handleDateChange,
+        onFocus: () => setIsFocused(true),
+        onBlur: () => setIsFocused(false),
+        min,
+        max,
+        "aria-hidden": "true",
+        tabIndex: -1
+      }
+    );
+    const visibleTextInput = /* @__PURE__ */ jsx22(
+      "input",
+      {
+        ...props,
+        type: "text",
+        className: "text-secondary-400 min-w-0 flex-1 border-none bg-transparent text-base outline-none focus:ring-0",
+        value: typedValue,
+        onChange: handleTypedChange,
+        onFocus: handleFocus,
+        onBlur: handleTypedBlur,
+        placeholder: variant === "floating" ? void 0 : format,
+        maxLength: format.length,
+        inputMode: "numeric",
+        autoComplete: "off",
+        id: inputId,
+        "aria-invalid": error ? "true" : void 0
+      }
+    );
+    const calendarIcon = /* @__PURE__ */ jsx22(CalendarIcon, { className: "h-5 w-5 shrink-0 cursor-pointer", onClick: handleCalendarClick });
     if (variant === "floating") {
       return /* @__PURE__ */ jsxs19("div", { className: "form-control w-full", children: [
         /* @__PURE__ */ jsxs19("label", { className: `floating-label ${isActive ? "active" : ""}`, children: [
@@ -2479,25 +2567,27 @@ var DatePicker = forwardRef22(
             "div",
             {
               className: clsx22(
-                "input input-bordered relative flex cursor-pointer outline-none",
+                "input input-bordered relative flex outline-none",
                 "items-center gap-2 px-4 py-3 transition-colors",
                 fullWidth ? "w-full" : "inline-flex",
                 inputClasses
               ),
-              onClick: openPicker,
               children: [
                 /* @__PURE__ */ jsxs19(
                   "span",
                   {
-                    className: `${currentValue ? "pt-4 pl-1" : ""} datepicker-content flex flex-1 justify-start select-none`,
+                    className: clsx22(
+                      "datepicker-content flex min-w-0 flex-1",
+                      typedValue && "pt-4 pl-1"
+                    ),
                     children: [
                       /* @__PURE__ */ jsx22("span", { className: "internal-label", children: label }),
-                      currentValue && /* @__PURE__ */ jsx22("span", { className: "date-value text-secondary-400 text-base", children: displayValue })
+                      visibleTextInput
                     ]
                   }
                 ),
-                /* @__PURE__ */ jsx22(HiddenDateInput, { ...commonInputProps, inputId }),
-                /* @__PURE__ */ jsx22(CalendarIcon, { className: "h-5 w-5 shrink-0" })
+                hiddenNativeInput,
+                calendarIcon
               ]
             }
           )
@@ -2511,20 +2601,13 @@ var DatePicker = forwardRef22(
         "div",
         {
           className: clsx22(
-            "input flex w-full items-center justify-between px-4 py-3 outline-none",
+            "input flex w-full items-center gap-2 px-4 py-3 outline-none",
             inputClasses
           ),
-          onClick: openPicker,
           children: [
-            /* @__PURE__ */ jsx22(
-              "span",
-              {
-                className: `${currentValue ? "pl-1" : ""} datepicker-content flex flex-1 justify-start select-none`,
-                children: /* @__PURE__ */ jsx22("span", { className: "date-value text-secondary-400 text-base", children: displayValue || placeholder })
-              }
-            ),
-            /* @__PURE__ */ jsx22(HiddenDateInput, { ...commonInputProps, inputId }),
-            /* @__PURE__ */ jsx22(CalendarIcon, { className: "h-5 w-5 shrink-0" })
+            visibleTextInput,
+            hiddenNativeInput,
+            calendarIcon
           ]
         }
       ) }),
@@ -2537,14 +2620,14 @@ DatePicker.displayName = "DatePicker";
 // src/components/DatetimeInput.tsx
 import { ClockIcon } from "@heroicons/react/24/outline";
 import clsx23 from "clsx";
-import { forwardRef as forwardRef23, useEffect as useEffect8, useRef as useRef6, useState as useState11 } from "react";
+import { forwardRef as forwardRef23, useCallback as useCallback6, useEffect as useEffect8, useMemo as useMemo3, useRef as useRef6, useState as useState11 } from "react";
 import { Fragment as Fragment2, jsx as jsx23, jsxs as jsxs20 } from "react/jsx-runtime";
-var variantClasses11 = {
+var VARIANT_CLASSES2 = {
   bordered: "input-bordered",
   ghost: "input-ghost",
   floating: "border-secondary-400"
 };
-var colorClasses5 = {
+var COLOR_CLASSES2 = {
   default: "",
   primary: "input-primary",
   secondary: "input-secondary",
@@ -2554,43 +2637,73 @@ var colorClasses5 = {
   warning: "input-warning",
   error: "input-error"
 };
-var sizeClasses10 = {
+var SIZE_CLASSES2 = {
   xs: "input-xs",
   sm: "input-sm",
   md: "input-md",
   lg: "input-lg",
   xl: "input-xl"
 };
-var HiddenTimeInput = ({
-  inputRef,
-  currentValue,
-  handleChange,
-  handleFocus,
-  handleBlur,
-  min,
-  max,
-  inputId,
-  error,
-  inputType,
-  props
-}) => /* @__PURE__ */ jsx23(
-  "input",
-  {
-    ...props,
-    ref: inputRef,
-    type: inputType,
-    className: "datetime-native",
-    value: currentValue,
-    onChange: handleChange,
-    onFocus: handleFocus,
-    onBlur: handleBlur,
-    min,
-    max,
-    id: inputId,
-    "aria-invalid": error ? "true" : void 0
+var PLACEHOLDER = {
+  time: "HH:MM",
+  "datetime-local": "DD/MM/YYYY HH:MM"
+};
+function autoFormatTypedInput(raw, type) {
+  const digits = raw.replace(/\D/g, "");
+  if (type === "time") {
+    if (digits.length <= 2) return digits;
+    return `${digits.slice(0, 2)}:${digits.slice(2, 4)}`;
   }
-);
-var ErrorHelperText2 = ({ error, helperText, inputId }) => /* @__PURE__ */ jsxs20(Fragment2, { children: [
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  if (digits.length <= 8) return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+  if (digits.length <= 10)
+    return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)} ${digits.slice(8)}`;
+  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)} ${digits.slice(8, 10)}:${digits.slice(10, 12)}`;
+}
+function parseTypedToNative(display, type) {
+  if (type === "time") {
+    if (display.length !== 5 || !display.includes(":")) return null;
+    const [hh2, mm2] = display.split(":");
+    const h2 = parseInt(hh2, 10);
+    const m = parseInt(mm2, 10);
+    if (isNaN(h2) || isNaN(m) || h2 < 0 || h2 > 23 || m < 0 || m > 59) return null;
+    return display;
+  }
+  const expectedLen = PLACEHOLDER["datetime-local"].length;
+  if (display.length !== expectedLen) return null;
+  const [datePart, timePart] = display.split(" ");
+  if (!datePart || !timePart) return null;
+  const [dd, mm, yyyy] = datePart.split("/");
+  const [hh, min] = timePart.split(":");
+  const d = parseInt(dd, 10);
+  const mo = parseInt(mm, 10);
+  const y = parseInt(yyyy, 10);
+  const h = parseInt(hh, 10);
+  const mi = parseInt(min, 10);
+  if ([d, mo, y, h, mi].some(isNaN)) return null;
+  if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+  if (h < 0 || h > 23 || mi < 0 || mi > 59) return null;
+  if (y < 1e3 || y > 9999) return null;
+  const isoDate = `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
+  const date = new Date(isoDate);
+  if (isNaN(date.getTime()) || date.getDate() !== d || date.getMonth() + 1 !== mo || date.getFullYear() !== y)
+    return null;
+  return `${isoDate}T${hh.padStart(2, "0")}:${min.padStart(2, "0")}`;
+}
+function nativeToDisplay(nativeValue, type) {
+  if (!nativeValue) return "";
+  if (type === "time") return nativeValue;
+  const [datePart, timePart] = nativeValue.split("T");
+  if (!datePart || !timePart) return nativeValue;
+  const [yyyy, mm, dd] = datePart.split("-");
+  return `${dd}/${mm}/${yyyy} ${timePart.slice(0, 5)}`;
+}
+var ErrorHelperText2 = ({
+  error,
+  helperText,
+  inputId
+}) => /* @__PURE__ */ jsxs20(Fragment2, { children: [
   error && /* @__PURE__ */ jsx23("label", { className: "label", id: `${inputId}-error`, children: /* @__PURE__ */ jsx23("span", { className: "label-text-alt text-error", children: error }) }),
   !error && helperText && /* @__PURE__ */ jsx23("label", { className: "label", id: `${inputId}-helper`, children: /* @__PURE__ */ jsx23("span", { className: "label-text-alt", children: helperText }) })
 ] });
@@ -2612,58 +2725,134 @@ var DatetimeInput = forwardRef23(
     id,
     fullWidth = false,
     ...props
-  }, ref) => {
+  }, _ref) => {
+    const isControlled = value !== void 0;
     const [isFocused, setIsFocused] = useState11(false);
-    const [internalValue, setInternalValue] = useState11(defaultValue || value || "");
+    const [internalNative, setInternalNative] = useState11(defaultValue ?? "");
+    const [typedValue, setTypedValue] = useState11(
+      () => nativeToDisplay(defaultValue ?? value ?? "", type)
+    );
     const inputRef = useRef6(null);
+    const currentNative = isControlled ? value : internalNative;
+    const placeholder = PLACEHOLDER[type];
+    const maxTypedLength = placeholder.length;
     useEffect8(() => {
-      if (value !== void 0) {
-        setInternalValue(value);
+      if (isControlled) {
+        setTypedValue(value ? nativeToDisplay(value, type) : "");
       }
     }, [value]);
-    const currentValue = value !== void 0 ? value : internalValue;
-    const inputId = id || (label ? `datetime-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
-    const handleChange = (e) => {
-      const newValue = e.target.value;
-      if (value === void 0) {
-        setInternalValue(newValue);
-      }
-      if (onChange) {
-        onChange(newValue);
-      }
-    };
-    const openPicker = () => {
+    useEffect8(() => {
+      if (currentNative) setTypedValue(nativeToDisplay(currentNative, type));
+    }, [type]);
+    const inputId = useMemo3(
+      () => id ?? (label ? `datetime-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0),
+      [id, label]
+    );
+    const inputClasses = useMemo3(
+      () => clsx23(
+        size === "lg" && "h-15",
+        VARIANT_CLASSES2[variant],
+        error ? COLOR_CLASSES2.error : color && COLOR_CLASSES2[color],
+        SIZE_CLASSES2[size],
+        className
+      ),
+      [variant, color, size, error, className]
+    );
+    const commitNative = useCallback6(
+      (native) => {
+        if (!isControlled) setInternalNative(native);
+        if (inputRef.current) inputRef.current.value = native;
+        onChange?.(native);
+      },
+      [isControlled, onChange]
+    );
+    const handleChange = useCallback6(
+      (e) => {
+        const newValue = e.target.value;
+        if (!isControlled) setInternalNative(newValue);
+        setTypedValue(newValue ? nativeToDisplay(newValue, type) : "");
+        onChange?.(newValue);
+      },
+      [isControlled, type, onChange]
+    );
+    const handleTypedChange = useCallback6(
+      (e) => {
+        const formatted = autoFormatTypedInput(e.target.value, type);
+        setTypedValue(formatted);
+        if (formatted.length === maxTypedLength) {
+          const native = parseTypedToNative(formatted, type);
+          if (native) commitNative(native);
+        } else if (formatted.length === 0) {
+          commitNative("");
+        }
+      },
+      [type, maxTypedLength, commitNative]
+    );
+    const handleTypedBlur = useCallback6(
+      (e) => {
+        if (typedValue) {
+          const native = parseTypedToNative(typedValue, type);
+          if (!native) setTypedValue(currentNative ? nativeToDisplay(currentNative, type) : "");
+        }
+        setIsFocused(false);
+        props.onBlur?.(e);
+      },
+      [typedValue, type, currentNative, props.onBlur]
+    );
+    const handleFocus = useCallback6(
+      (e) => {
+        setIsFocused(true);
+        props.onFocus?.(e);
+      },
+      [props.onFocus]
+    );
+    const openPicker = useCallback6(() => {
       setIsFocused(true);
       inputRef.current?.showPicker();
-    };
-    const handleFocus = (e) => {
-      setIsFocused(true);
-      props.onFocus?.(e);
-    };
-    const handleBlur = (e) => {
-      setIsFocused(false);
-      props.onBlur?.(e);
-    };
-    const isActive = currentValue || isFocused;
-    const inputClasses = clsx23(
-      size === "lg" && "h-15",
-      variantClasses11[variant],
-      error ? colorClasses5.error : color && colorClasses5[color],
-      sizeClasses10[size],
-      className
+    }, []);
+    const handleIconClick = useCallback6(
+      (e) => {
+        e.stopPropagation();
+        openPicker();
+      },
+      [openPicker]
     );
-    const commonInputProps = {
-      inputRef,
-      currentValue,
-      handleChange,
-      handleFocus,
-      handleBlur,
-      min,
-      max,
-      error,
-      inputType: type,
-      props
-    };
+    const isActive = typedValue || isFocused;
+    const hiddenNativeInput = /* @__PURE__ */ jsx23(
+      "input",
+      {
+        ref: inputRef,
+        type,
+        className: "datetime-native",
+        value: currentNative,
+        onChange: handleChange,
+        onFocus: () => setIsFocused(true),
+        onBlur: () => setIsFocused(false),
+        min,
+        max,
+        "aria-hidden": "true",
+        tabIndex: -1
+      }
+    );
+    const visibleTextInput = /* @__PURE__ */ jsx23(
+      "input",
+      {
+        ...props,
+        type: "text",
+        className: "text-secondary-400 min-w-0 flex-1 border-none bg-transparent text-base outline-none focus:ring-0",
+        value: typedValue,
+        onChange: handleTypedChange,
+        onFocus: handleFocus,
+        onBlur: handleTypedBlur,
+        placeholder: variant === "floating" ? void 0 : placeholder,
+        maxLength: maxTypedLength,
+        inputMode: "numeric",
+        autoComplete: "off",
+        id: inputId,
+        "aria-invalid": error ? "true" : void 0
+      }
+    );
+    const clockIcon = /* @__PURE__ */ jsx23(ClockIcon, { className: "h-5 w-5 shrink-0 cursor-pointer", onClick: handleIconClick });
     if (variant === "floating") {
       return /* @__PURE__ */ jsxs20("div", { className: "form-control w-full", children: [
         /* @__PURE__ */ jsxs20("label", { className: `floating-label ${isActive ? "active" : ""}`, children: [
@@ -2672,25 +2861,24 @@ var DatetimeInput = forwardRef23(
             "div",
             {
               className: clsx23(
-                "input input-bordered relative flex cursor-pointer outline-none",
+                "input input-bordered relative flex outline-none",
                 "items-center gap-2 px-4 py-3 transition-colors",
                 fullWidth ? "w-full" : "inline-flex",
                 inputClasses
               ),
-              onClick: openPicker,
               children: [
                 /* @__PURE__ */ jsxs20(
                   "span",
                   {
-                    className: `${currentValue ? "pt-4 pl-1" : ""} datetime-content flex flex-1 justify-start select-none`,
+                    className: clsx23("datetime-content flex min-w-0 flex-1", typedValue && "pt-4 pl-1"),
                     children: [
-                      !currentValue && /* @__PURE__ */ jsx23("span", { className: "internal-label", children: label }),
-                      currentValue && /* @__PURE__ */ jsx23("span", { className: "datetime-value text-secondary-400 text-base font-medium", children: currentValue })
+                      /* @__PURE__ */ jsx23("span", { className: "internal-label", children: label }),
+                      visibleTextInput
                     ]
                   }
                 ),
-                /* @__PURE__ */ jsx23(HiddenTimeInput, { ...commonInputProps, inputId }),
-                /* @__PURE__ */ jsx23(ClockIcon, { className: "h-5 w-5 shrink-0" })
+                hiddenNativeInput,
+                clockIcon
               ]
             }
           )
@@ -2704,20 +2892,13 @@ var DatetimeInput = forwardRef23(
         "div",
         {
           className: clsx23(
-            "input flex w-full items-center justify-between px-4 py-3 outline-none",
+            "input flex w-full items-center gap-2 px-4 py-3 outline-none",
             inputClasses
           ),
-          onClick: openPicker,
           children: [
-            /* @__PURE__ */ jsx23(
-              "span",
-              {
-                className: `${currentValue ? "pl-1" : ""} datetime-content flex flex-1 justify-start select-none`,
-                children: currentValue ? /* @__PURE__ */ jsx23("span", { className: "datetime-value text-secondary-400 text-base font-medium", children: currentValue }) : /* @__PURE__ */ jsx23("span", { className: "text-base-content/40 text-base", children: "--:--" })
-              }
-            ),
-            /* @__PURE__ */ jsx23(HiddenTimeInput, { ...commonInputProps, inputId }),
-            /* @__PURE__ */ jsx23(ClockIcon, { className: "h-5 w-5 shrink-0" })
+            visibleTextInput,
+            hiddenNativeInput,
+            clockIcon
           ]
         }
       ) }),
@@ -2741,7 +2922,7 @@ var horizontalPositionClasses = {
   center: "",
   end: "modal-end"
 };
-var sizeClasses11 = {
+var sizeClasses9 = {
   xs: "max-w-xs",
   sm: "max-w-sm",
   md: "max-w-md",
@@ -2840,7 +3021,7 @@ var Dialog = forwardRef24(
     };
     const modalBoxClasses = clsx24(
       "modal-box overflow-x-hidden",
-      maxWidth || size && sizeClasses11[size],
+      maxWidth || size && sizeClasses9[size],
       responsive && "sm:modal-middle modal-bottom"
     );
     const modalClasses = clsx24(
@@ -3370,7 +3551,7 @@ var useRadioGroup = () => {
   }
   return context;
 };
-var variantClasses12 = {
+var variantClasses10 = {
   primary: "radio-primary",
   secondary: "radio-secondary",
   accent: "radio-accent",
@@ -3381,7 +3562,7 @@ var variantClasses12 = {
   subtle: ""
   // Handled specially in Radio component
 };
-var sizeClasses12 = {
+var sizeClasses10 = {
   xs: "radio-xs",
   sm: "radio-sm",
   md: "radio-md",
@@ -3428,15 +3609,15 @@ var Radio = forwardRef27(
       if (variant === "subtle") {
         return clsx27(
           "radio",
-          size && sizeClasses12[size],
+          size && sizeClasses10[size],
           isChecked ? "radio-accent" : "!border-gray-400 !bg-transparent checked:!border-accent checked:!bg-accent",
           className
         );
       }
       return clsx27(
         "radio",
-        variant && variantClasses12[variant],
-        size && sizeClasses12[size],
+        variant && variantClasses10[variant],
+        size && sizeClasses10[size],
         className
       );
     };
@@ -3759,12 +3940,12 @@ Select.displayName = "Select";
 import clsx29 from "clsx";
 import { forwardRef as forwardRef29 } from "react";
 import { jsx as jsx29, jsxs as jsxs26 } from "react/jsx-runtime";
-var variantClasses13 = {
+var variantClasses11 = {
   bordered: "textarea-bordered",
   ghost: "textarea-ghost",
   floating: "textarea-bordered"
 };
-var colorClasses6 = {
+var colorClasses4 = {
   primary: "textarea-primary",
   secondary: "textarea-secondary",
   accent: "textarea-accent",
@@ -3773,7 +3954,7 @@ var colorClasses6 = {
   warning: "textarea-warning",
   error: "textarea-error"
 };
-var sizeClasses13 = {
+var sizeClasses11 = {
   xs: "textarea-xs",
   sm: "textarea-sm",
   md: "textarea-md",
@@ -3784,9 +3965,9 @@ var Textarea = forwardRef29(
     const textareaId = id || (label ? `textarea-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
     const textareaClasses = clsx29(
       "textarea w-full",
-      variant !== "floating" && variantClasses13[variant],
-      error ? colorClasses6.error : color && colorClasses6[color],
-      sizeClasses13[size],
+      variant !== "floating" && variantClasses11[variant],
+      error ? colorClasses4.error : color && colorClasses4[color],
+      sizeClasses11[size],
       className
     );
     if (variant === "floating") {
@@ -3800,9 +3981,9 @@ var Textarea = forwardRef29(
               id: textareaId,
               className: clsx29(
                 "textarea w-full",
-                variantClasses13[variant],
-                error ? colorClasses6.error : color && colorClasses6[color],
-                sizeClasses13[size],
+                variantClasses11[variant],
+                error ? colorClasses4.error : color && colorClasses4[color],
+                sizeClasses11[size],
                 className
               ),
               "aria-invalid": error ? "true" : void 0,
@@ -4390,7 +4571,7 @@ FormActions.displayName = "FormActions";
 import clsx34 from "clsx";
 import { forwardRef as forwardRef34 } from "react";
 import { jsx as jsx34, jsxs as jsxs31 } from "react/jsx-runtime";
-var sizeClasses14 = {
+var sizeClasses12 = {
   xs: "loading-xs",
   sm: "loading-sm",
   md: "loading-md",
@@ -4405,7 +4586,7 @@ var typeClasses = {
   bars: "loading-bars",
   infinity: "loading-infinity"
 };
-var variantClasses14 = {
+var variantClasses12 = {
   default: "",
   primary: "text-primary",
   secondary: "text-secondary",
@@ -4468,8 +4649,8 @@ var FullPageLoader = forwardRef34(
                 className: clsx34(
                   "loading",
                   typeClasses[type],
-                  sizeClasses14[size],
-                  variantClasses14[variant]
+                  sizeClasses12[size],
+                  variantClasses12[variant]
                 ),
                 "aria-hidden": "true"
               }
@@ -4477,7 +4658,7 @@ var FullPageLoader = forwardRef34(
             text && /* @__PURE__ */ jsx34(
               "p",
               {
-                className: clsx34("mt-4 font-medium", textSizeClasses[size], variantClasses14[variant]),
+                className: clsx34("mt-4 font-medium", textSizeClasses[size], variantClasses12[variant]),
                 children: text
               }
             )
@@ -4674,7 +4855,7 @@ Item.displayName = "Item";
 import clsx39 from "clsx";
 import { forwardRef as forwardRef39 } from "react";
 import { jsx as jsx39 } from "react/jsx-runtime";
-var sizeClasses15 = {
+var sizeClasses13 = {
   xs: "kbd-xs",
   sm: "kbd-sm",
   md: "kbd-md",
@@ -4682,7 +4863,7 @@ var sizeClasses15 = {
 };
 var Kbd = forwardRef39(
   ({ size = "md", children, className, ...props }, ref) => {
-    return /* @__PURE__ */ jsx39("kbd", { ref, className: clsx39("kbd", sizeClasses15[size], className), ...props, children });
+    return /* @__PURE__ */ jsx39("kbd", { ref, className: clsx39("kbd", sizeClasses13[size], className), ...props, children });
   }
 );
 Kbd.displayName = "Kbd";
@@ -4691,7 +4872,7 @@ Kbd.displayName = "Kbd";
 import clsx40 from "clsx";
 import { forwardRef as forwardRef40 } from "react";
 import { jsx as jsx40 } from "react/jsx-runtime";
-var sizeClasses16 = {
+var sizeClasses14 = {
   xs: "menu-xs",
   sm: "menu-sm",
   md: "menu-md",
@@ -4707,7 +4888,7 @@ var Menubar = forwardRef40(
           "menu",
           orientation === "horizontal" && "menu-horizontal",
           orientation === "vertical" && "menu-vertical",
-          sizeClasses16[size],
+          sizeClasses14[size],
           compact2 && "menu-compact",
           "bg-base-100",
           className
@@ -4731,11 +4912,11 @@ MenubarItem.displayName = "MenubarItem";
 import clsx41 from "clsx";
 import { forwardRef as forwardRef41 } from "react";
 import { jsx as jsx41 } from "react/jsx-runtime";
-var variantClasses15 = {
+var variantClasses13 = {
   bordered: "select-bordered",
   ghost: "select-ghost"
 };
-var colorClasses7 = {
+var colorClasses5 = {
   primary: "select-primary",
   secondary: "select-secondary",
   accent: "select-accent",
@@ -4744,7 +4925,7 @@ var colorClasses7 = {
   warning: "select-warning",
   error: "select-error"
 };
-var sizeClasses17 = {
+var sizeClasses15 = {
   xs: "select-xs",
   sm: "select-sm",
   md: "select-md",
@@ -4758,9 +4939,9 @@ var NativeSelect = forwardRef41(
         ref,
         className: clsx41(
           "select w-full",
-          variantClasses15[variant],
-          color && colorClasses7[color],
-          sizeClasses17[size],
+          variantClasses13[variant],
+          color && colorClasses5[color],
+          sizeClasses15[size],
           className
         ),
         ...props,
@@ -4775,7 +4956,7 @@ NativeSelect.displayName = "NativeSelect";
 import clsx42 from "clsx";
 import { forwardRef as forwardRef42 } from "react";
 import { jsx as jsx42 } from "react/jsx-runtime";
-var colorClasses8 = {
+var colorClasses6 = {
   default: "bg-base-100",
   neutral: "bg-neutral text-neutral-content",
   primary: "bg-primary text-primary-content",
@@ -4803,7 +4984,7 @@ var Navbar = forwardRef42(
         ref,
         className: clsx42(
           "navbar",
-          colorClasses8[color],
+          colorClasses6[color],
           shadow && "shadow-lg",
           bordered && "border-base-300 border-b",
           sticky && "sticky top-0 z-50",
@@ -4895,7 +5076,7 @@ Popover.displayName = "Popover";
 import clsx45 from "clsx";
 import { forwardRef as forwardRef45 } from "react";
 import { jsx as jsx45 } from "react/jsx-runtime";
-var variantClasses16 = {
+var variantClasses14 = {
   primary: "progress-primary",
   secondary: "progress-secondary",
   accent: "progress-accent",
@@ -4910,7 +5091,7 @@ var Progress = forwardRef45(
       "progress",
       {
         ref,
-        className: clsx45("progress w-full", variantClasses16[variant], className),
+        className: clsx45("progress w-full", variantClasses14[variant], className),
         value,
         max: 100,
         ...props
@@ -4924,7 +5105,7 @@ Progress.displayName = "Progress";
 import clsx46 from "clsx";
 import { forwardRef as forwardRef46 } from "react";
 import { jsx as jsx46 } from "react/jsx-runtime";
-var variantClasses17 = {
+var variantClasses15 = {
   default: "",
   primary: "divider-primary",
   secondary: "divider-secondary",
@@ -4939,7 +5120,7 @@ var Separator = forwardRef46(
         className: clsx46(
           "divider",
           orientation === "vertical" && "divider-horizontal",
-          variantClasses17[variant],
+          variantClasses15[variant],
           className
         ),
         ...props,
@@ -5076,7 +5257,7 @@ Skeleton.displayName = "Skeleton";
 import clsx50 from "clsx";
 import { forwardRef as forwardRef50 } from "react";
 import { jsx as jsx50 } from "react/jsx-runtime";
-var variantClasses18 = {
+var variantClasses16 = {
   primary: "range-primary",
   secondary: "range-secondary",
   accent: "range-accent",
@@ -5085,7 +5266,7 @@ var variantClasses18 = {
   warning: "range-warning",
   error: "range-error"
 };
-var sizeClasses18 = {
+var sizeClasses16 = {
   xs: "range-xs",
   sm: "range-sm",
   md: "range-md",
@@ -5098,7 +5279,7 @@ var Slider = forwardRef50(
       {
         ref,
         type: "range",
-        className: clsx50("range", variantClasses18[variant], sizeClasses18[size], className),
+        className: clsx50("range", variantClasses16[variant], sizeClasses16[size], className),
         ...props
       }
     );
@@ -5110,7 +5291,7 @@ Slider.displayName = "Slider";
 import clsx51 from "clsx";
 import { forwardRef as forwardRef51 } from "react";
 import { jsx as jsx51 } from "react/jsx-runtime";
-var sizeClasses19 = {
+var sizeClasses17 = {
   xs: "loading-xs",
   sm: "loading-sm",
   md: "loading-md",
@@ -5125,7 +5306,7 @@ var typeClasses2 = {
   bars: "loading-bars",
   infinity: "loading-infinity"
 };
-var colorClasses9 = {
+var colorClasses7 = {
   primary: "text-primary",
   secondary: "text-secondary",
   accent: "text-accent",
@@ -5144,8 +5325,8 @@ var Spinner = forwardRef51(
         className: clsx51(
           "loading",
           typeClasses2[type],
-          sizeClasses19[size],
-          color && colorClasses9[color],
+          sizeClasses17[size],
+          color && colorClasses7[color],
           className
         ),
         ...props
@@ -5159,7 +5340,7 @@ Spinner.displayName = "Spinner";
 import clsx52 from "clsx";
 import { forwardRef as forwardRef52 } from "react";
 import { jsx as jsx52, jsxs as jsxs38 } from "react/jsx-runtime";
-var variantClasses19 = {
+var variantClasses17 = {
   primary: "toggle-primary",
   secondary: "toggle-secondary",
   accent: "toggle-accent",
@@ -5169,7 +5350,7 @@ var variantClasses19 = {
   warning: "toggle-warning",
   error: "toggle-error"
 };
-var sizeClasses20 = {
+var sizeClasses18 = {
   xs: "toggle-xs",
   sm: "toggle-sm",
   md: "toggle-md",
@@ -5184,8 +5365,8 @@ var Switch = forwardRef52(
         {
           className: clsx52(
             "toggle text-base-content",
-            variant && variantClasses19[variant],
-            sizeClasses20[size],
+            variant && variantClasses17[variant],
+            sizeClasses18[size],
             className
           ),
           children: [
@@ -5201,7 +5382,7 @@ var Switch = forwardRef52(
       {
         ref,
         type: "checkbox",
-        className: clsx52("toggle", variant && variantClasses19[variant], sizeClasses20[size], className),
+        className: clsx52("toggle", variant && variantClasses17[variant], sizeClasses18[size], className),
         ...props
       }
     );
@@ -5220,7 +5401,7 @@ Switch.displayName = "Switch";
 import clsx53 from "clsx";
 import { forwardRef as forwardRef53 } from "react";
 import { jsx as jsx53, jsxs as jsxs39 } from "react/jsx-runtime";
-var sizeClasses21 = {
+var sizeClasses19 = {
   xs: "table-xs",
   sm: "table-sm",
   md: "table-md",
@@ -5234,7 +5415,7 @@ var Table = forwardRef53(
         ref,
         className: clsx53(
           "table",
-          sizeClasses21[size],
+          sizeClasses19[size],
           zebra && "table-zebra",
           pinRows && "table-pin-rows",
           pinCols && "table-pin-cols",
@@ -5271,12 +5452,12 @@ var useTabs = () => {
   }
   return context;
 };
-var variantClasses20 = {
+var variantClasses18 = {
   bordered: "tabs-border",
   lifted: "tabs-lift",
   boxed: "tabs-box"
 };
-var sizeClasses22 = {
+var sizeClasses20 = {
   xs: "tabs-xs",
   sm: "tabs-sm",
   md: "tabs-md",
@@ -5337,8 +5518,8 @@ var Tabs = forwardRef54(
             ref,
             className: clsx54(
               "tabs",
-              variantClasses20[variant],
-              sizeClasses22[size],
+              variantClasses18[variant],
+              sizeClasses20[size],
               positionClasses2[position],
               className
             ),
@@ -5419,7 +5600,7 @@ var useToast = () => {
   }
   return context;
 };
-var variantClasses21 = {
+var variantClasses19 = {
   info: "alert-info",
   success: "alert-success",
   warning: "alert-warning",
@@ -5454,7 +5635,7 @@ var ToastItem = forwardRef55(
         return () => clearTimeout(timer);
       }
     }, [duration, onDismiss]);
-    return /* @__PURE__ */ jsxs40("div", { ref, className: clsx55("alert", variantClasses21[variant], className), ...props, children: [
+    return /* @__PURE__ */ jsxs40("div", { ref, className: clsx55("alert", variantClasses19[variant], className), ...props, children: [
       /* @__PURE__ */ jsx55(Icon, { className: "h-6 w-6" }),
       /* @__PURE__ */ jsx55("span", { children: message }),
       onDismiss && /* @__PURE__ */ jsx55("button", { onClick: onDismiss, className: "btn btn-sm btn-circle btn-ghost ml-auto", children: /* @__PURE__ */ jsx55(XMarkIcon, { className: "h-5 w-5" }) })
@@ -5501,13 +5682,13 @@ var useToggleGroup = () => {
   }
   return context;
 };
-var sizeClasses23 = {
+var sizeClasses21 = {
   xs: "btn-xs",
   sm: "btn-sm",
   md: "btn-md",
   lg: "btn-lg"
 };
-var variantClasses22 = {
+var variantClasses20 = {
   primary: "btn-primary",
   secondary: "btn-secondary",
   accent: "btn-accent"
@@ -5532,8 +5713,8 @@ var Toggle = forwardRef56(
         "aria-pressed": isPressed,
         className: clsx56(
           "btn",
-          sizeClasses23[size],
-          variant && variantClasses22[variant],
+          sizeClasses21[size],
+          variant && variantClasses20[variant],
           isPressed && "btn-active",
           className
         ),
@@ -5578,8 +5759,8 @@ var ToggleGroupItem = forwardRef56(
         "aria-pressed": isPressed,
         className: clsx56(
           "btn join-item",
-          size && sizeClasses23[size],
-          variant && variantClasses22[variant],
+          size && sizeClasses21[size],
+          variant && variantClasses20[variant],
           isPressed && "btn-active",
           className
         ),
@@ -5601,7 +5782,7 @@ var positionClasses4 = {
   left: "tooltip-left",
   right: "tooltip-right"
 };
-var variantClasses23 = {
+var variantClasses21 = {
   primary: "tooltip-primary",
   secondary: "tooltip-secondary",
   accent: "tooltip-accent",
@@ -5619,7 +5800,7 @@ var Tooltip = forwardRef57(
         className: clsx57(
           "tooltip",
           positionClasses4[position],
-          variant && variantClasses23[variant],
+          variant && variantClasses21[variant],
           open && "tooltip-open",
           className
         ),
@@ -5636,7 +5817,7 @@ Tooltip.displayName = "Tooltip";
 import clsx58 from "clsx";
 import { forwardRef as forwardRef58 } from "react";
 import { jsx as jsx58 } from "react/jsx-runtime";
-var variantClasses24 = {
+var variantClasses22 = {
   h1: "text-4xl font-bold",
   h2: "text-3xl font-bold",
   h3: "text-2xl font-bold",
@@ -5669,7 +5850,7 @@ var defaultElements = {
 var Typography = forwardRef58(
   ({ variant = "p", as, children, className, ...props }, ref) => {
     const Component = as || defaultElements[variant];
-    return /* @__PURE__ */ jsx58(Component, { ref, className: clsx58(variantClasses24[variant], className), ...props, children });
+    return /* @__PURE__ */ jsx58(Component, { ref, className: clsx58(variantClasses22[variant], className), ...props, children });
   }
 );
 Typography.displayName = "Typography";

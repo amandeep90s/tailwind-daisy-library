@@ -843,63 +843,22 @@ type DatePickerVariant = "bordered" | "ghost" | "floating";
 type DatePickerColor = "primary" | "secondary" | "accent" | "info" | "success" | "warning" | "error";
 type DatePickerSize = "xs" | "sm" | "md" | "lg" | "xl";
 interface DatePickerProps extends Omit<React__default.InputHTMLAttributes<HTMLInputElement>, "type" | "onChange" | "value" | "size"> {
-    /** Style variant */
     variant?: DatePickerVariant;
-    /** Color variant */
     color?: DatePickerColor;
-    /** Size */
     size?: DatePickerSize;
-    /** Selected date value (ISO string yyyy-mm-dd) - for controlled mode */
+    /** Controlled value (ISO yyyy-mm-dd) */
     value?: string;
-    /** Default date value (ISO string yyyy-mm-dd) - for uncontrolled mode */
+    /** Uncontrolled default value (ISO yyyy-mm-dd) */
     defaultValue?: string;
-    /** Callback when date changes */
     onChange?: (dateInfo: DateInfo | null) => void;
-    /** Minimum selectable date (ISO string yyyy-mm-dd) */
     min?: string;
-    /** Maximum selectable date (ISO string yyyy-mm-dd) */
     max?: string;
-    /** Label for floating variant or bordered/ghost variants */
     label?: string;
-    /** Error message */
     error?: string;
-    /** Helper text */
     helperText?: string;
-    /** Date display format */
     format?: DatePickerFormat;
-    /** Fullwidth */
     fullWidth?: boolean;
 }
-/**
- * DatePicker component that displays dates in customizable formats
- * using a native <input type="date"> under the hood (no third-party packages).
- *
- * The native date input always uses yyyy-mm-dd internally,
- * but we overlay a formatted display on top of it.
- *
- * Supports both controlled and uncontrolled modes:
- * - Controlled: Pass `value` and `onChange` props
- * - Uncontrolled: Pass `defaultValue` (or neither)
- *
- * @example
- * ```tsx
- * // Controlled mode with custom format
- * const [date, setDate] = useState("2024-01-01");
- * <DatePicker
- *   variant="floating"
- *   label="Pick a date"
- *   value={date}
- *   format="mm/dd/yyyy"
- *   onChange={(info) => setDate(info?.iso || "")}
- * />
- *
- * // Uncontrolled mode
- * <DatePicker variant="bordered" defaultValue="2024-01-01" format="dd-mm-yyyy" />
- *
- * // Display only (value without onChange)
- * <DatePicker variant="bordered" value="2024-01-01" />
- * ```
- */
 declare const DatePicker: React__default.ForwardRefExoticComponent<DatePickerProps & React__default.RefAttributes<HTMLInputElement>>;
 
 type DatetimeInputType = "time" | "datetime-local";
@@ -907,61 +866,22 @@ type DatetimeInputVariant = "bordered" | "ghost" | "floating";
 type DatetimeInputColor = "primary" | "secondary" | "accent" | "info" | "success" | "warning" | "error";
 type DatetimeInputSize = "xs" | "sm" | "md" | "lg" | "xl";
 interface DatetimeInputProps extends Omit<React__default.InputHTMLAttributes<HTMLInputElement>, "type" | "onChange" | "value" | "size"> {
-    /** Input type: time or datetime-local */
     type?: DatetimeInputType;
-    /** Style variant */
     variant?: DatetimeInputVariant;
-    /** Color variant */
     color?: DatetimeInputColor;
-    /** Size */
     size?: DatetimeInputSize;
-    /** Selected value - for controlled mode */
+    /** Controlled value */
     value?: string;
-    /** Default value - for uncontrolled mode */
+    /** Uncontrolled default value */
     defaultValue?: string;
-    /** Callback when value changes */
     onChange?: (value: string) => void;
-    /** Minimum selectable value */
     min?: string;
-    /** Maximum selectable value */
     max?: string;
-    /** Label for floating variant or bordered/ghost variants */
     label?: string;
-    /** Error message */
     error?: string;
-    /** Helper text */
     helperText?: string;
-    /** Fullwidth */
     fullWidth?: boolean;
 }
-/**
- * DatetimeInput component for time and datetime-local inputs with floating label design.
- *
- * Supports both controlled and uncontrolled modes:
- * - Controlled: Pass `value` and `onChange` props
- * - Uncontrolled: Pass `defaultValue` (or neither)
- *
- * @example
- * ```tsx
- * // Controlled mode with time
- * const [time, setTime] = useState("14:30");
- * <DatetimeInput
- *   type="time"
- *   variant="floating"
- *   label="Select Time"
- *   value={time}
- *   onChange={(value) => setTime(value)}
- * />
- *
- * // Datetime-local
- * <DatetimeInput
- *   type="datetime-local"
- *   variant="floating"
- *   label="Select Date & Time"
- *   defaultValue="2024-01-01T14:30"
- * />
- * ```
- */
 declare const DatetimeInput: React__default.ForwardRefExoticComponent<DatetimeInputProps & React__default.RefAttributes<HTMLInputElement>>;
 
 type DialogVerticalPosition = "top" | "middle" | "bottom";

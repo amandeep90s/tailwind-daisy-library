@@ -1,6 +1,6 @@
 import { CalendarIcon } from "@heroicons/react/20/solid";
 import clsx from "clsx";
-import React, { forwardRef, useEffect, useRef, useState } from "react";
+import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // ============================================================================
 // TYPES
@@ -37,45 +37,34 @@ export interface DatePickerProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "type" | "onChange" | "value" | "size"
 > {
-  /** Style variant */
   variant?: DatePickerVariant;
-  /** Color variant */
   color?: DatePickerColor;
-  /** Size */
   size?: DatePickerSize;
-  /** Selected date value (ISO string yyyy-mm-dd) - for controlled mode */
+  /** Controlled value (ISO yyyy-mm-dd) */
   value?: string;
-  /** Default date value (ISO string yyyy-mm-dd) - for uncontrolled mode */
+  /** Uncontrolled default value (ISO yyyy-mm-dd) */
   defaultValue?: string;
-  /** Callback when date changes */
   onChange?: (dateInfo: DateInfo | null) => void;
-  /** Minimum selectable date (ISO string yyyy-mm-dd) */
   min?: string;
-  /** Maximum selectable date (ISO string yyyy-mm-dd) */
   max?: string;
-  /** Label for floating variant or bordered/ghost variants */
   label?: string;
-  /** Error message */
   error?: string;
-  /** Helper text */
   helperText?: string;
-  /** Date display format */
   format?: DatePickerFormat;
-  /** Fullwidth */
   fullWidth?: boolean;
 }
 
 // ============================================================================
-// CLASS MAPPINGS
+// CONSTANTS
 // ============================================================================
 
-const variantClasses: Record<DatePickerVariant, string> = {
+const VARIANT_CLASSES: Record<DatePickerVariant, string> = {
   bordered: "input-bordered",
   ghost: "input-ghost",
   floating: "border-secondary-400",
 };
 
-const colorClasses: Record<DatePickerColor | "default", string> = {
+const COLOR_CLASSES: Record<DatePickerColor | "default", string> = {
   default: "",
   primary: "input-primary",
   secondary: "input-secondary",
@@ -86,7 +75,7 @@ const colorClasses: Record<DatePickerColor | "default", string> = {
   error: "input-error",
 };
 
-const sizeClasses: Record<DatePickerSize, string> = {
+const SIZE_CLASSES: Record<DatePickerSize, string> = {
   xs: "input-xs",
   sm: "input-sm",
   md: "input-md",
@@ -98,89 +87,95 @@ const sizeClasses: Record<DatePickerSize, string> = {
 // HELPERS
 // ============================================================================
 
-/**
- * Convert ISO date (yyyy-mm-dd) to specified display format
- */
+function getSeparator(format: DatePickerFormat): string {
+  return format.includes("/") ? "/" : "-";
+}
+
 function formatDateByPattern(isoDate: string, format: DatePickerFormat): string {
   if (!isoDate) return "";
-
   const [year, month, day] = isoDate.split("-");
+  const sep = getSeparator(format);
 
   switch (format) {
     case "dd/mm/yyyy":
-      return `${day}/${month}/${year}`;
+    case "dd-mm-yyyy":
+      return `${day}${sep}${month}${sep}${year}`;
     case "mm/dd/yyyy":
-      return `${month}/${day}/${year}`;
+    case "mm-dd-yyyy":
+      return `${month}${sep}${day}${sep}${year}`;
     case "yyyy-mm-dd":
       return isoDate;
-    case "dd-mm-yyyy":
-      return `${day}-${month}-${year}`;
-    case "mm-dd-yyyy":
-      return `${month}-${day}-${year}`;
     default:
       return `${day}/${month}/${year}`;
   }
 }
 
-/**
- * Get placeholder text based on format
- */
-function getPlaceholderByFormat(format: DatePickerFormat): string {
-  return format;
+function parseDisplayToISO(displayValue: string, format: DatePickerFormat): string | null {
+  if (!displayValue || displayValue.length !== format.length) return null;
+
+  const sep = getSeparator(format);
+  const parts = displayValue.split(sep);
+  if (parts.length !== 3) return null;
+
+  let day: string, month: string, year: string;
+
+  switch (format) {
+    case "dd/mm/yyyy":
+    case "dd-mm-yyyy":
+      [day, month, year] = parts;
+      break;
+    case "mm/dd/yyyy":
+    case "mm-dd-yyyy":
+      [month, day, year] = parts;
+      break;
+    case "yyyy-mm-dd":
+      [year, month, day] = parts;
+      break;
+    default:
+      return null;
+  }
+
+  const d = parseInt(day, 10);
+  const m = parseInt(month, 10);
+  const y = parseInt(year, 10);
+
+  if (isNaN(d) || isNaN(m) || isNaN(y)) return null;
+  if (m < 1 || m > 12 || d < 1 || d > 31) return null;
+  if (y < 1000 || y > 9999) return null;
+
+  const iso = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  const date = new Date(iso);
+  if (isNaN(date.getTime())) return null;
+  if (date.getDate() !== d || date.getMonth() + 1 !== m || date.getFullYear() !== y) return null;
+
+  return iso;
+}
+
+function autoFormatDateInput(raw: string, format: DatePickerFormat): string {
+  const sep = getSeparator(format);
+  const digits = raw.replace(/\D/g, "");
+
+  if (format === "yyyy-mm-dd") {
+    if (digits.length <= 4) return digits;
+    if (digits.length <= 6) return `${digits.slice(0, 4)}${sep}${digits.slice(4)}`;
+    return `${digits.slice(0, 4)}${sep}${digits.slice(4, 6)}${sep}${digits.slice(6, 8)}`;
+  }
+
+  // 2-2-4 pattern
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}${sep}${digits.slice(2)}`;
+  return `${digits.slice(0, 2)}${sep}${digits.slice(2, 4)}${sep}${digits.slice(4, 8)}`;
 }
 
 // ============================================================================
-// SUB-COMPONENTS FOR REUSABILITY
+// SUB-COMPONENTS
 // ============================================================================
 
-interface DateInputProps {
-  inputRef: React.RefObject<HTMLInputElement | null>;
-  currentValue: string;
-  handleDateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleFocus: (e: React.FocusEvent<HTMLInputElement>) => void;
-  handleBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
-  min?: string;
-  max?: string;
-  inputId?: string;
-  error?: string;
-  props: any;
-}
-
-const HiddenDateInput: React.FC<DateInputProps> = ({
-  inputRef,
-  currentValue,
-  handleDateChange,
-  handleFocus,
-  handleBlur,
-  min,
-  max,
-  inputId,
+const ErrorHelperText: React.FC<{ error?: string; helperText?: string; inputId?: string }> = ({
   error,
-  props,
+  helperText,
+  inputId,
 }) => (
-  <input
-    {...props}
-    ref={inputRef}
-    type="date"
-    className="datepicker-native"
-    value={currentValue}
-    onChange={handleDateChange}
-    onFocus={handleFocus}
-    onBlur={handleBlur}
-    min={min}
-    max={max}
-    id={inputId}
-    aria-invalid={error ? "true" : undefined}
-  />
-);
-
-interface ErrorHelperTextProps {
-  error?: string;
-  helperText?: string;
-  inputId?: string;
-}
-
-const ErrorHelperText: React.FC<ErrorHelperTextProps> = ({ error, helperText, inputId }) => (
   <>
     {error && (
       <label className="label" id={`${inputId}-error`}>
@@ -199,36 +194,6 @@ const ErrorHelperText: React.FC<ErrorHelperTextProps> = ({ error, helperText, in
 // COMPONENT
 // ============================================================================
 
-/**
- * DatePicker component that displays dates in customizable formats
- * using a native <input type="date"> under the hood (no third-party packages).
- *
- * The native date input always uses yyyy-mm-dd internally,
- * but we overlay a formatted display on top of it.
- *
- * Supports both controlled and uncontrolled modes:
- * - Controlled: Pass `value` and `onChange` props
- * - Uncontrolled: Pass `defaultValue` (or neither)
- *
- * @example
- * ```tsx
- * // Controlled mode with custom format
- * const [date, setDate] = useState("2024-01-01");
- * <DatePicker
- *   variant="floating"
- *   label="Pick a date"
- *   value={date}
- *   format="mm/dd/yyyy"
- *   onChange={(info) => setDate(info?.iso || "")}
- * />
- *
- * // Uncontrolled mode
- * <DatePicker variant="bordered" defaultValue="2024-01-01" format="dd-mm-yyyy" />
- *
- * // Display only (value without onChange)
- * <DatePicker variant="bordered" value="2024-01-01" />
- * ```
- */
 export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
   (
     {
@@ -249,129 +214,197 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
       format = "dd/mm/yyyy",
       ...props
     },
-    ref
+    _ref
   ) => {
+    const isControlled = value !== undefined;
+
     const [isFocused, setIsFocused] = useState(false);
-    const [internalValue, setInternalValue] = useState(defaultValue || value || "");
-    const dateInputRef = useRef<HTMLInputElement>(null);
-
-    // Sync internal state when value prop changes (for controlled mode)
-    useEffect(() => {
-      if (value !== undefined) {
-        setInternalValue(value);
-      }
-    }, [value]);
-
-    // Use controlled value if provided, otherwise use internal state
-    const currentValue = value !== undefined ? value : internalValue;
-    const displayValue = currentValue ? formatDateByPattern(currentValue, format) : "";
-    const placeholder = getPlaceholderByFormat(format);
-
-    const inputId =
-      id || (label ? `datepicker-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined);
-
-    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const dateValue = e.target.value; // yyyy-mm-dd
-
-      // Update internal state if component is uncontrolled
-      if (value === undefined) {
-        setInternalValue(dateValue);
-      }
-
-      // Call onChange if provided
-      if (onChange) {
-        if (dateValue) {
-          onChange({
-            iso: dateValue,
-            display: formatDateByPattern(dateValue, format),
-            format,
-          });
-        } else {
-          onChange(null);
-        }
-      }
-    };
-
-    const openPicker = () => {
-      setIsFocused(true);
-      dateInputRef.current?.showPicker();
-    };
-
-    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-      setIsFocused(true);
-      props.onFocus?.(e);
-    };
-
-    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-      setIsFocused(false);
-      props.onBlur?.(e);
-    };
-
-    const isActive = currentValue || isFocused;
-
-    const inputClasses = clsx(
-      size === "lg" && "h-15",
-      variantClasses[variant],
-      error ? colorClasses.error : color && colorClasses[color],
-      sizeClasses[size],
-      className
+    const [internalISO, setInternalISO] = useState(defaultValue ?? "");
+    const [typedValue, setTypedValue] = useState(() =>
+      formatDateByPattern(defaultValue ?? value ?? "", format)
     );
 
-    const commonInputProps = {
-      inputRef: dateInputRef,
-      currentValue,
-      handleDateChange,
-      handleFocus,
-      handleBlur,
-      min,
-      max,
-      error,
-      props,
-    };
+    const dateInputRef = useRef<HTMLInputElement>(null);
 
-    // Floating label variant with custom UI
+    // Current ISO value (controlled vs uncontrolled)
+    const currentISO = isControlled ? value! : internalISO;
+
+    // Sync display when controlled value changes externally
+    useEffect(() => {
+      if (isControlled) {
+        setTypedValue(value ? formatDateByPattern(value, format) : "");
+      }
+    }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Re-format display when format changes
+    useEffect(() => {
+      if (currentISO) setTypedValue(formatDateByPattern(currentISO, format));
+    }, [format]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const inputId = useMemo(
+      () => id ?? (label ? `datepicker-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined),
+      [id, label]
+    );
+
+    const inputClasses = useMemo(
+      () =>
+        clsx(
+          size === "lg" && "h-15",
+          VARIANT_CLASSES[variant],
+          error ? COLOR_CLASSES.error : color && COLOR_CLASSES[color],
+          SIZE_CLASSES[size],
+          className
+        ),
+      [variant, color, size, error, className]
+    );
+
+    const commitISO = useCallback(
+      (iso: string, display: string) => {
+        if (!isControlled) setInternalISO(iso);
+        if (dateInputRef.current) dateInputRef.current.value = iso;
+        onChange?.({ iso, display, format });
+      },
+      [isControlled, format, onChange]
+    );
+
+    const handleDateChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const iso = e.target.value;
+        if (!isControlled) setInternalISO(iso);
+        const display = iso ? formatDateByPattern(iso, format) : "";
+        setTypedValue(display);
+        onChange?.(iso ? { iso, display, format } : null);
+      },
+      [isControlled, format, onChange]
+    );
+
+    const handleTypedChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const formatted = autoFormatDateInput(e.target.value, format);
+        setTypedValue(formatted);
+
+        if (formatted.length === format.length) {
+          const iso = parseDisplayToISO(formatted, format);
+          if (iso) commitISO(iso, formatted);
+        } else if (formatted.length === 0) {
+          if (!isControlled) setInternalISO("");
+          if (dateInputRef.current) dateInputRef.current.value = "";
+          onChange?.(null);
+        }
+      },
+      [format, isControlled, commitISO, onChange]
+    );
+
+    const handleTypedBlur = useCallback(
+      (e: React.FocusEvent<HTMLInputElement>) => {
+        if (typedValue) {
+          const iso = parseDisplayToISO(typedValue, format);
+          if (!iso) setTypedValue(currentISO ? formatDateByPattern(currentISO, format) : "");
+        }
+        setIsFocused(false);
+        props.onBlur?.(e);
+      },
+      [typedValue, format, currentISO, props.onBlur]
+    );
+
+    const handleFocus = useCallback(
+      (e: React.FocusEvent<HTMLInputElement>) => {
+        setIsFocused(true);
+        props.onFocus?.(e);
+      },
+      [props.onFocus]
+    );
+
+    const openPicker = useCallback(() => {
+      setIsFocused(true);
+      dateInputRef.current?.showPicker();
+    }, []);
+
+    const handleCalendarClick = useCallback(
+      (e: React.MouseEvent) => {
+        e.stopPropagation();
+        openPicker();
+      },
+      [openPicker]
+    );
+
+    const isActive = typedValue || isFocused;
+
+    // ── Shared elements ──────────────────────────────────────────────────────
+
+    const hiddenNativeInput = (
+      <input
+        ref={dateInputRef}
+        type="date"
+        className="datepicker-native"
+        value={currentISO}
+        onChange={handleDateChange}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        min={min}
+        max={max}
+        aria-hidden="true"
+        tabIndex={-1}
+      />
+    );
+
+    const visibleTextInput = (
+      <input
+        {...props}
+        type="text"
+        className="text-secondary-400 min-w-0 flex-1 border-none bg-transparent text-base outline-none focus:ring-0"
+        value={typedValue}
+        onChange={handleTypedChange}
+        onFocus={handleFocus}
+        onBlur={handleTypedBlur}
+        placeholder={variant === "floating" ? undefined : format}
+        maxLength={format.length}
+        inputMode="numeric"
+        autoComplete="off"
+        id={inputId}
+        aria-invalid={error ? "true" : undefined}
+      />
+    );
+
+    const calendarIcon = (
+      <CalendarIcon className="h-5 w-5 shrink-0 cursor-pointer" onClick={handleCalendarClick} />
+    );
+
+    // ── Floating variant ─────────────────────────────────────────────────────
+
     if (variant === "floating") {
       return (
         <div className="form-control w-full">
           <label className={`floating-label ${isActive ? "active" : ""}`}>
-            {/* Outer floating label - visible when active (has value or focused) */}
             <span className="outer-label">{label}</span>
-
             <div
               className={clsx(
-                "input input-bordered relative flex cursor-pointer outline-none",
+                "input input-bordered relative flex outline-none",
                 "items-center gap-2 px-4 py-3 transition-colors",
                 fullWidth ? "w-full" : "inline-flex",
                 inputClasses
               )}
-              onClick={openPicker}
             >
-              {/* Content area */}
               <span
-                className={`${currentValue ? "pt-4 pl-1" : ""} datepicker-content flex flex-1 justify-start select-none`}
-              >
-                {/* Internal label - visible when not active */}
-                <span className="internal-label">{label}</span>
-                {/* Formatted date display */}
-                {currentValue && (
-                  <span className="date-value text-secondary-400 text-base">{displayValue}</span>
+                className={clsx(
+                  "datepicker-content flex min-w-0 flex-1",
+                  typedValue && "pt-4 pl-1"
                 )}
+              >
+                <span className="internal-label">{label}</span>
+                {visibleTextInput}
               </span>
-
-              {/* Hidden native date input */}
-              <HiddenDateInput {...commonInputProps} inputId={inputId} />
-
-              {/* Calendar icon */}
-              <CalendarIcon className="h-5 w-5 shrink-0" />
+              {hiddenNativeInput}
+              {calendarIcon}
             </div>
           </label>
-
           <ErrorHelperText error={error} helperText={helperText} inputId={inputId} />
         </div>
       );
     }
 
-    // Standard variants (bordered, ghost)
+    // ── Bordered / Ghost variants ────────────────────────────────────────────
+
     return (
       <div className="form-control w-full">
         {label && (
@@ -379,33 +412,18 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
             <span className="label-text font-medium">{label}</span>
           </label>
         )}
-
         <div className="relative inline-block w-full">
           <div
             className={clsx(
-              "input flex w-full items-center justify-between px-4 py-3 outline-none",
+              "input flex w-full items-center gap-2 px-4 py-3 outline-none",
               inputClasses
             )}
-            onClick={openPicker}
           >
-            {/* Content area */}
-            <span
-              className={`${currentValue ? "pl-1" : ""} datepicker-content flex flex-1 justify-start select-none`}
-            >
-              {/* Formatted date display */}
-              <span className="date-value text-secondary-400 text-base">
-                {displayValue || placeholder}
-              </span>
-            </span>
-
-            {/* Hidden native date input */}
-            <HiddenDateInput {...commonInputProps} inputId={inputId} />
-
-            {/* Calendar icon */}
-            <CalendarIcon className="h-5 w-5 shrink-0" />
+            {visibleTextInput}
+            {hiddenNativeInput}
+            {calendarIcon}
           </div>
         </div>
-
         <ErrorHelperText error={error} helperText={helperText} inputId={inputId} />
       </div>
     );

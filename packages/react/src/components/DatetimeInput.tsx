@@ -1,13 +1,12 @@
 import { ClockIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
-import React, { forwardRef, useEffect, useRef, useState } from "react";
+import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
 export type DatetimeInputType = "time" | "datetime-local";
-
 export type DatetimeInputVariant = "bordered" | "ghost" | "floating";
 export type DatetimeInputColor =
   | "primary"
@@ -23,45 +22,34 @@ export interface DatetimeInputProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "type" | "onChange" | "value" | "size"
 > {
-  /** Input type: time or datetime-local */
   type?: DatetimeInputType;
-  /** Style variant */
   variant?: DatetimeInputVariant;
-  /** Color variant */
   color?: DatetimeInputColor;
-  /** Size */
   size?: DatetimeInputSize;
-  /** Selected value - for controlled mode */
+  /** Controlled value */
   value?: string;
-  /** Default value - for uncontrolled mode */
+  /** Uncontrolled default value */
   defaultValue?: string;
-  /** Callback when value changes */
   onChange?: (value: string) => void;
-  /** Minimum selectable value */
   min?: string;
-  /** Maximum selectable value */
   max?: string;
-  /** Label for floating variant or bordered/ghost variants */
   label?: string;
-  /** Error message */
   error?: string;
-  /** Helper text */
   helperText?: string;
-  /** Fullwidth */
   fullWidth?: boolean;
 }
 
 // ============================================================================
-// CLASS MAPPINGS
+// CONSTANTS
 // ============================================================================
 
-const variantClasses: Record<DatetimeInputVariant, string> = {
+const VARIANT_CLASSES: Record<DatetimeInputVariant, string> = {
   bordered: "input-bordered",
   ghost: "input-ghost",
   floating: "border-secondary-400",
 };
 
-const colorClasses: Record<DatetimeInputColor | "default", string> = {
+const COLOR_CLASSES: Record<DatetimeInputColor | "default", string> = {
   default: "",
   primary: "input-primary",
   secondary: "input-secondary",
@@ -72,7 +60,7 @@ const colorClasses: Record<DatetimeInputColor | "default", string> = {
   error: "input-error",
 };
 
-const sizeClasses: Record<DatetimeInputSize, string> = {
+const SIZE_CLASSES: Record<DatetimeInputSize, string> = {
   xs: "input-xs",
   sm: "input-sm",
   md: "input-md",
@@ -80,60 +68,94 @@ const sizeClasses: Record<DatetimeInputSize, string> = {
   xl: "input-xl",
 };
 
+const PLACEHOLDER: Record<DatetimeInputType, string> = {
+  time: "HH:MM",
+  "datetime-local": "DD/MM/YYYY HH:MM",
+};
+
 // ============================================================================
-// SUB-COMPONENTS FOR REUSABILITY
+// HELPERS
 // ============================================================================
 
-interface TimeInputProps {
-  inputRef: React.RefObject<HTMLInputElement | null>;
-  currentValue: string;
-  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleFocus: (e: React.FocusEvent<HTMLInputElement>) => void;
-  handleBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
-  min?: string;
-  max?: string;
-  inputId?: string;
-  error?: string;
-  inputType: DatetimeInputType;
-  props: any;
+function autoFormatTypedInput(raw: string, type: DatetimeInputType): string {
+  const digits = raw.replace(/\D/g, "");
+
+  if (type === "time") {
+    if (digits.length <= 2) return digits;
+    return `${digits.slice(0, 2)}:${digits.slice(2, 4)}`;
+  }
+
+  // datetime-local → DD/MM/YYYY HH:MM
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  if (digits.length <= 8) return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+  if (digits.length <= 10)
+    return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)} ${digits.slice(8)}`;
+  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)} ${digits.slice(8, 10)}:${digits.slice(10, 12)}`;
 }
 
-const HiddenTimeInput: React.FC<TimeInputProps> = ({
-  inputRef,
-  currentValue,
-  handleChange,
-  handleFocus,
-  handleBlur,
-  min,
-  max,
-  inputId,
+function parseTypedToNative(display: string, type: DatetimeInputType): string | null {
+  if (type === "time") {
+    if (display.length !== 5 || !display.includes(":")) return null;
+    const [hh, mm] = display.split(":");
+    const h = parseInt(hh, 10);
+    const m = parseInt(mm, 10);
+    if (isNaN(h) || isNaN(m) || h < 0 || h > 23 || m < 0 || m > 59) return null;
+    return display;
+  }
+
+  const expectedLen = PLACEHOLDER["datetime-local"].length; // 16
+  if (display.length !== expectedLen) return null;
+
+  const [datePart, timePart] = display.split(" ");
+  if (!datePart || !timePart) return null;
+
+  const [dd, mm, yyyy] = datePart.split("/");
+  const [hh, min] = timePart.split(":");
+
+  const d = parseInt(dd, 10);
+  const mo = parseInt(mm, 10);
+  const y = parseInt(yyyy, 10);
+  const h = parseInt(hh, 10);
+  const mi = parseInt(min, 10);
+
+  if ([d, mo, y, h, mi].some(isNaN)) return null;
+  if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+  if (h < 0 || h > 23 || mi < 0 || mi > 59) return null;
+  if (y < 1000 || y > 9999) return null;
+
+  const isoDate = `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
+  const date = new Date(isoDate);
+  if (
+    isNaN(date.getTime()) ||
+    date.getDate() !== d ||
+    date.getMonth() + 1 !== mo ||
+    date.getFullYear() !== y
+  )
+    return null;
+
+  return `${isoDate}T${hh.padStart(2, "0")}:${min.padStart(2, "0")}`;
+}
+
+function nativeToDisplay(nativeValue: string, type: DatetimeInputType): string {
+  if (!nativeValue) return "";
+  if (type === "time") return nativeValue;
+
+  const [datePart, timePart] = nativeValue.split("T");
+  if (!datePart || !timePart) return nativeValue;
+  const [yyyy, mm, dd] = datePart.split("-");
+  return `${dd}/${mm}/${yyyy} ${timePart.slice(0, 5)}`;
+}
+
+// ============================================================================
+// SUB-COMPONENTS
+// ============================================================================
+
+const ErrorHelperText: React.FC<{ error?: string; helperText?: string; inputId?: string }> = ({
   error,
-  inputType,
-  props,
+  helperText,
+  inputId,
 }) => (
-  <input
-    {...props}
-    ref={inputRef}
-    type={inputType}
-    className="datetime-native"
-    value={currentValue}
-    onChange={handleChange}
-    onFocus={handleFocus}
-    onBlur={handleBlur}
-    min={min}
-    max={max}
-    id={inputId}
-    aria-invalid={error ? "true" : undefined}
-  />
-);
-
-interface ErrorHelperTextProps {
-  error?: string;
-  helperText?: string;
-  inputId?: string;
-}
-
-const ErrorHelperText: React.FC<ErrorHelperTextProps> = ({ error, helperText, inputId }) => (
   <>
     {error && (
       <label className="label" id={`${inputId}-error`}>
@@ -152,34 +174,6 @@ const ErrorHelperText: React.FC<ErrorHelperTextProps> = ({ error, helperText, in
 // COMPONENT
 // ============================================================================
 
-/**
- * DatetimeInput component for time and datetime-local inputs with floating label design.
- *
- * Supports both controlled and uncontrolled modes:
- * - Controlled: Pass `value` and `onChange` props
- * - Uncontrolled: Pass `defaultValue` (or neither)
- *
- * @example
- * ```tsx
- * // Controlled mode with time
- * const [time, setTime] = useState("14:30");
- * <DatetimeInput
- *   type="time"
- *   variant="floating"
- *   label="Select Time"
- *   value={time}
- *   onChange={(value) => setTime(value)}
- * />
- *
- * // Datetime-local
- * <DatetimeInput
- *   type="datetime-local"
- *   variant="floating"
- *   label="Select Date & Time"
- *   defaultValue="2024-01-01T14:30"
- * />
- * ```
- */
 export const DatetimeInput = forwardRef<HTMLInputElement, DatetimeInputProps>(
   (
     {
@@ -200,122 +194,192 @@ export const DatetimeInput = forwardRef<HTMLInputElement, DatetimeInputProps>(
       fullWidth = false,
       ...props
     },
-    ref
+    _ref
   ) => {
+    const isControlled = value !== undefined;
+
     const [isFocused, setIsFocused] = useState(false);
-    const [internalValue, setInternalValue] = useState(defaultValue || value || "");
-    const inputRef = useRef<HTMLInputElement>(null);
-
-    // Sync internal state when value prop changes (for controlled mode)
-    useEffect(() => {
-      if (value !== undefined) {
-        setInternalValue(value);
-      }
-    }, [value]);
-
-    // Use controlled value if provided, otherwise use internal state
-    const currentValue = value !== undefined ? value : internalValue;
-
-    const inputId =
-      id || (label ? `datetime-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = e.target.value;
-
-      // Update internal state if component is uncontrolled
-      if (value === undefined) {
-        setInternalValue(newValue);
-      }
-
-      // Call onChange if provided
-      if (onChange) {
-        onChange(newValue);
-      }
-    };
-
-    const openPicker = () => {
-      setIsFocused(true);
-      inputRef.current?.showPicker();
-    };
-
-    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-      setIsFocused(true);
-      props.onFocus?.(e);
-    };
-
-    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-      setIsFocused(false);
-      props.onBlur?.(e);
-    };
-
-    const isActive = currentValue || isFocused;
-
-    const inputClasses = clsx(
-      size === "lg" && "h-15",
-      variantClasses[variant],
-      error ? colorClasses.error : color && colorClasses[color],
-      sizeClasses[size],
-      className
+    const [internalNative, setInternalNative] = useState(defaultValue ?? "");
+    const [typedValue, setTypedValue] = useState(() =>
+      nativeToDisplay(defaultValue ?? value ?? "", type)
     );
 
-    const commonInputProps = {
-      inputRef,
-      currentValue,
-      handleChange,
-      handleFocus,
-      handleBlur,
-      min,
-      max,
-      error,
-      inputType: type,
-      props,
-    };
+    const inputRef = useRef<HTMLInputElement>(null);
 
-    // Floating label variant with custom UI
+    const currentNative = isControlled ? value! : internalNative;
+    const placeholder = PLACEHOLDER[type];
+    const maxTypedLength = placeholder.length;
+
+    // Sync display when controlled value changes externally
+    useEffect(() => {
+      if (isControlled) {
+        setTypedValue(value ? nativeToDisplay(value, type) : "");
+      }
+    }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Re-format display when type changes
+    useEffect(() => {
+      if (currentNative) setTypedValue(nativeToDisplay(currentNative, type));
+    }, [type]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const inputId = useMemo(
+      () => id ?? (label ? `datetime-${label.toLowerCase().replace(/\s+/g, "-")}` : undefined),
+      [id, label]
+    );
+
+    const inputClasses = useMemo(
+      () =>
+        clsx(
+          size === "lg" && "h-15",
+          VARIANT_CLASSES[variant],
+          error ? COLOR_CLASSES.error : color && COLOR_CLASSES[color],
+          SIZE_CLASSES[size],
+          className
+        ),
+      [variant, color, size, error, className]
+    );
+
+    const commitNative = useCallback(
+      (native: string) => {
+        if (!isControlled) setInternalNative(native);
+        if (inputRef.current) inputRef.current.value = native;
+        onChange?.(native);
+      },
+      [isControlled, onChange]
+    );
+
+    const handleChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.target.value;
+        if (!isControlled) setInternalNative(newValue);
+        setTypedValue(newValue ? nativeToDisplay(newValue, type) : "");
+        onChange?.(newValue);
+      },
+      [isControlled, type, onChange]
+    );
+
+    const handleTypedChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        const formatted = autoFormatTypedInput(e.target.value, type);
+        setTypedValue(formatted);
+
+        if (formatted.length === maxTypedLength) {
+          const native = parseTypedToNative(formatted, type);
+          if (native) commitNative(native);
+        } else if (formatted.length === 0) {
+          commitNative("");
+        }
+      },
+      [type, maxTypedLength, commitNative]
+    );
+
+    const handleTypedBlur = useCallback(
+      (e: React.FocusEvent<HTMLInputElement>) => {
+        if (typedValue) {
+          const native = parseTypedToNative(typedValue, type);
+          if (!native) setTypedValue(currentNative ? nativeToDisplay(currentNative, type) : "");
+        }
+        setIsFocused(false);
+        props.onBlur?.(e);
+      },
+      [typedValue, type, currentNative, props.onBlur]
+    );
+
+    const handleFocus = useCallback(
+      (e: React.FocusEvent<HTMLInputElement>) => {
+        setIsFocused(true);
+        props.onFocus?.(e);
+      },
+      [props.onFocus]
+    );
+
+    const openPicker = useCallback(() => {
+      setIsFocused(true);
+      inputRef.current?.showPicker();
+    }, []);
+
+    const handleIconClick = useCallback(
+      (e: React.MouseEvent) => {
+        e.stopPropagation();
+        openPicker();
+      },
+      [openPicker]
+    );
+
+    const isActive = typedValue || isFocused;
+
+    // ── Shared elements ──────────────────────────────────────────────────────
+
+    const hiddenNativeInput = (
+      <input
+        ref={inputRef}
+        type={type}
+        className="datetime-native"
+        value={currentNative}
+        onChange={handleChange}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        min={min}
+        max={max}
+        aria-hidden="true"
+        tabIndex={-1}
+      />
+    );
+
+    const visibleTextInput = (
+      <input
+        {...props}
+        type="text"
+        className="text-secondary-400 min-w-0 flex-1 border-none bg-transparent text-base outline-none focus:ring-0"
+        value={typedValue}
+        onChange={handleTypedChange}
+        onFocus={handleFocus}
+        onBlur={handleTypedBlur}
+        placeholder={variant === "floating" ? undefined : placeholder}
+        maxLength={maxTypedLength}
+        inputMode="numeric"
+        autoComplete="off"
+        id={inputId}
+        aria-invalid={error ? "true" : undefined}
+      />
+    );
+
+    const clockIcon = (
+      <ClockIcon className="h-5 w-5 shrink-0 cursor-pointer" onClick={handleIconClick} />
+    );
+
+    // ── Floating variant ─────────────────────────────────────────────────────
+
     if (variant === "floating") {
       return (
         <div className="form-control w-full">
           <label className={`floating-label ${isActive ? "active" : ""}`}>
-            {/* Outer floating label - visible when active (has value or focused) */}
             <span className="outer-label">{label}</span>
-
             <div
               className={clsx(
-                "input input-bordered relative flex cursor-pointer outline-none",
+                "input input-bordered relative flex outline-none",
                 "items-center gap-2 px-4 py-3 transition-colors",
                 fullWidth ? "w-full" : "inline-flex",
                 inputClasses
               )}
-              onClick={openPicker}
             >
-              {/* Content area */}
               <span
-                className={`${currentValue ? "pt-4 pl-1" : ""} datetime-content flex flex-1 justify-start select-none`}
+                className={clsx("datetime-content flex min-w-0 flex-1", typedValue && "pt-4 pl-1")}
               >
-                {/* Internal label - visible when not active */}
-                {!currentValue && <span className="internal-label">{label}</span>}
-                {/* Value display - only show when value exists */}
-                {currentValue && (
-                  <span className="datetime-value text-secondary-400 text-base font-medium">
-                    {currentValue}
-                  </span>
-                )}
+                <span className="internal-label">{label}</span>
+                {visibleTextInput}
               </span>
-
-              {/* Hidden native input */}
-              <HiddenTimeInput {...commonInputProps} inputId={inputId} />
-
-              {/* Lock icon */}
-              <ClockIcon className="h-5 w-5 shrink-0" />
+              {hiddenNativeInput}
+              {clockIcon}
             </div>
           </label>
-
           <ErrorHelperText error={error} helperText={helperText} inputId={inputId} />
         </div>
       );
     }
 
-    // Standard variants (bordered, ghost)
+    // ── Bordered / Ghost variants ────────────────────────────────────────────
+
     return (
       <div className="form-control w-full">
         {label && (
@@ -323,37 +387,18 @@ export const DatetimeInput = forwardRef<HTMLInputElement, DatetimeInputProps>(
             <span className="label-text font-medium">{label}</span>
           </label>
         )}
-
         <div className="relative inline-block w-full">
           <div
             className={clsx(
-              "input flex w-full items-center justify-between px-4 py-3 outline-none",
+              "input flex w-full items-center gap-2 px-4 py-3 outline-none",
               inputClasses
             )}
-            onClick={openPicker}
           >
-            {/* Content area */}
-            <span
-              className={`${currentValue ? "pl-1" : ""} datetime-content flex flex-1 justify-start select-none`}
-            >
-              {/* Value display - only show when value exists */}
-              {currentValue ? (
-                <span className="datetime-value text-secondary-400 text-base font-medium">
-                  {currentValue}
-                </span>
-              ) : (
-                <span className="text-base-content/40 text-base">--:--</span>
-              )}
-            </span>
-
-            {/* Hidden native input */}
-            <HiddenTimeInput {...commonInputProps} inputId={inputId} />
-
-            {/* Lock icon */}
-            <ClockIcon className="h-5 w-5 shrink-0" />
+            {visibleTextInput}
+            {hiddenNativeInput}
+            {clockIcon}
           </div>
         </div>
-
         <ErrorHelperText error={error} helperText={helperText} inputId={inputId} />
       </div>
     );
