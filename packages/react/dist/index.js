@@ -2001,6 +2001,19 @@ var SortableDataTable = (0, import_react20.forwardRef)(
       if (!pagination || pageSize <= 0) return 1;
       return Math.ceil(sortedData.length / pageSize);
     }, [pagination, sortedData.length, pageSize]);
+    const effectivePage = (0, import_react20.useMemo)(() => {
+      if (!pagination || totalPages <= 0) return 1;
+      return Math.min(Math.max(1, currentPage), totalPages);
+    }, [pagination, currentPage, totalPages]);
+    const prevDataLengthRef = (0, import_react20.useRef)(data.length);
+    (0, import_react20.useEffect)(() => {
+      if (prevDataLengthRef.current !== data.length) {
+        prevDataLengthRef.current = data.length;
+        if (controlledCurrentPage === void 0) {
+          setInternalCurrentPage(1);
+        }
+      }
+    }, [data.length, controlledCurrentPage]);
     const handlePageChange = (0, import_react20.useCallback)(
       (page) => {
         if (controlledCurrentPage === void 0) {
@@ -2026,16 +2039,16 @@ var SortableDataTable = (0, import_react20.forwardRef)(
     );
     const paginatedData = (0, import_react20.useMemo)(() => {
       if (!pagination) return sortedData;
-      const startIndex = (currentPage - 1) * pageSize;
+      const startIndex = (effectivePage - 1) * pageSize;
       const endIndex = startIndex + pageSize;
       return sortedData.slice(startIndex, endIndex);
-    }, [pagination, sortedData, currentPage, pageSize]);
+    }, [pagination, sortedData, effectivePage, pageSize]);
     const recordRange = (0, import_react20.useMemo)(() => {
       if (!pagination) return { start: 1, end: sortedData.length, total: sortedData.length };
-      const start = (currentPage - 1) * pageSize + 1;
-      const end = Math.min(currentPage * pageSize, sortedData.length);
+      const start = sortedData.length === 0 ? 0 : (effectivePage - 1) * pageSize + 1;
+      const end = Math.min(effectivePage * pageSize, sortedData.length);
       return { start, end, total: sortedData.length };
-    }, [pagination, currentPage, pageSize, sortedData.length]);
+    }, [pagination, effectivePage, pageSize, sortedData.length]);
     const getRowClass = (item, index) => {
       if (typeof rowClassName === "function") {
         return rowClassName(item, index);
@@ -2071,7 +2084,7 @@ var SortableDataTable = (0, import_react20.forwardRef)(
       return /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("div", { className: (0, import_clsx20.default)("flex justify-center", paginationClassName), children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(
         Pagination,
         {
-          currentPage,
+          currentPage: effectivePage,
           totalPages,
           onChange: handlePageChange,
           siblingCount: paginationSiblingCount
@@ -2104,8 +2117,8 @@ var SortableDataTable = (0, import_react20.forwardRef)(
             {
               type: "button",
               className: "btn btn-ghost btn-sm btn-square",
-              onClick: () => handlePageChange(currentPage - 1),
-              disabled: currentPage === 1,
+              onClick: () => handlePageChange(effectivePage - 1),
+              disabled: effectivePage === 1,
               "aria-label": "Previous page",
               children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(import_outline2.ChevronLeftIcon, { className: "h-5 w-5" })
             }
@@ -2115,8 +2128,8 @@ var SortableDataTable = (0, import_react20.forwardRef)(
             {
               type: "button",
               className: "btn btn-ghost btn-sm btn-square",
-              onClick: () => handlePageChange(currentPage + 1),
-              disabled: currentPage >= totalPages,
+              onClick: () => handlePageChange(effectivePage + 1),
+              disabled: effectivePage >= totalPages,
               "aria-label": "Next page",
               children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)(import_outline2.ChevronRightIcon, { className: "h-5 w-5" })
             }
@@ -2176,10 +2189,10 @@ var SortableDataTable = (0, import_react20.forwardRef)(
               )),
               expandable && /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("th", { className: "w-12" })
             ] }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("tbody", { children: loading ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("tr", { children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("td", { colSpan: totalColumns, className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "loading loading-spinner loading-md" }) }) }) : sortedData.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("tr", { children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("td", { colSpan: totalColumns, className: "text-base-content/60 py-8 text-center", children: emptyMessage }) }) : paginatedData.map((item, index) => {
+            /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("tbody", { children: loading ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("tr", { children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("td", { colSpan: totalColumns, className: "py-8 text-center", children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("span", { className: "loading loading-spinner loading-md" }) }) }) : paginatedData.length === 0 ? /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("tr", { children: /* @__PURE__ */ (0, import_jsx_runtime20.jsx)("td", { colSpan: totalColumns, className: "text-base-content/60 py-8 text-center", children: emptyMessage }) }) : paginatedData.map((item, index) => {
               const rowKey = getRowKey(item);
               const isExpanded = expandedKeys.includes(rowKey);
-              const actualIndex = pagination ? (currentPage - 1) * pageSize + index : index;
+              const actualIndex = pagination ? (effectivePage - 1) * pageSize + index : index;
               return /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(import_react20.default.Fragment, { children: [
                 /* @__PURE__ */ (0, import_jsx_runtime20.jsxs)(
                   "tr",

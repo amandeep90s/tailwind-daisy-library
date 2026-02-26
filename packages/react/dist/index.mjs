@@ -1640,7 +1640,7 @@ ContextMenu.displayName = "ContextMenu";
 // src/components/DataTable.tsx
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import clsx20 from "clsx";
-import React19, { forwardRef as forwardRef20, useCallback as useCallback3, useMemo, useState as useState8 } from "react";
+import React19, { forwardRef as forwardRef20, useCallback as useCallback3, useEffect as useEffect6, useMemo, useRef as useRef4, useState as useState8 } from "react";
 
 // src/components/Pagination.tsx
 import clsx19 from "clsx";
@@ -1863,6 +1863,19 @@ var SortableDataTable = forwardRef20(
       if (!pagination || pageSize <= 0) return 1;
       return Math.ceil(sortedData.length / pageSize);
     }, [pagination, sortedData.length, pageSize]);
+    const effectivePage = useMemo(() => {
+      if (!pagination || totalPages <= 0) return 1;
+      return Math.min(Math.max(1, currentPage), totalPages);
+    }, [pagination, currentPage, totalPages]);
+    const prevDataLengthRef = useRef4(data.length);
+    useEffect6(() => {
+      if (prevDataLengthRef.current !== data.length) {
+        prevDataLengthRef.current = data.length;
+        if (controlledCurrentPage === void 0) {
+          setInternalCurrentPage(1);
+        }
+      }
+    }, [data.length, controlledCurrentPage]);
     const handlePageChange = useCallback3(
       (page) => {
         if (controlledCurrentPage === void 0) {
@@ -1888,16 +1901,16 @@ var SortableDataTable = forwardRef20(
     );
     const paginatedData = useMemo(() => {
       if (!pagination) return sortedData;
-      const startIndex = (currentPage - 1) * pageSize;
+      const startIndex = (effectivePage - 1) * pageSize;
       const endIndex = startIndex + pageSize;
       return sortedData.slice(startIndex, endIndex);
-    }, [pagination, sortedData, currentPage, pageSize]);
+    }, [pagination, sortedData, effectivePage, pageSize]);
     const recordRange = useMemo(() => {
       if (!pagination) return { start: 1, end: sortedData.length, total: sortedData.length };
-      const start = (currentPage - 1) * pageSize + 1;
-      const end = Math.min(currentPage * pageSize, sortedData.length);
+      const start = sortedData.length === 0 ? 0 : (effectivePage - 1) * pageSize + 1;
+      const end = Math.min(effectivePage * pageSize, sortedData.length);
       return { start, end, total: sortedData.length };
-    }, [pagination, currentPage, pageSize, sortedData.length]);
+    }, [pagination, effectivePage, pageSize, sortedData.length]);
     const getRowClass = (item, index) => {
       if (typeof rowClassName === "function") {
         return rowClassName(item, index);
@@ -1933,7 +1946,7 @@ var SortableDataTable = forwardRef20(
       return /* @__PURE__ */ jsx20("div", { className: clsx20("flex justify-center", paginationClassName), children: /* @__PURE__ */ jsx20(
         Pagination,
         {
-          currentPage,
+          currentPage: effectivePage,
           totalPages,
           onChange: handlePageChange,
           siblingCount: paginationSiblingCount
@@ -1966,8 +1979,8 @@ var SortableDataTable = forwardRef20(
             {
               type: "button",
               className: "btn btn-ghost btn-sm btn-square",
-              onClick: () => handlePageChange(currentPage - 1),
-              disabled: currentPage === 1,
+              onClick: () => handlePageChange(effectivePage - 1),
+              disabled: effectivePage === 1,
               "aria-label": "Previous page",
               children: /* @__PURE__ */ jsx20(ChevronLeftIcon, { className: "h-5 w-5" })
             }
@@ -1977,8 +1990,8 @@ var SortableDataTable = forwardRef20(
             {
               type: "button",
               className: "btn btn-ghost btn-sm btn-square",
-              onClick: () => handlePageChange(currentPage + 1),
-              disabled: currentPage >= totalPages,
+              onClick: () => handlePageChange(effectivePage + 1),
+              disabled: effectivePage >= totalPages,
               "aria-label": "Next page",
               children: /* @__PURE__ */ jsx20(ChevronRightIcon, { className: "h-5 w-5" })
             }
@@ -2038,10 +2051,10 @@ var SortableDataTable = forwardRef20(
               )),
               expandable && /* @__PURE__ */ jsx20("th", { className: "w-12" })
             ] }) }),
-            /* @__PURE__ */ jsx20("tbody", { children: loading ? /* @__PURE__ */ jsx20("tr", { children: /* @__PURE__ */ jsx20("td", { colSpan: totalColumns, className: "py-8 text-center", children: /* @__PURE__ */ jsx20("span", { className: "loading loading-spinner loading-md" }) }) }) : sortedData.length === 0 ? /* @__PURE__ */ jsx20("tr", { children: /* @__PURE__ */ jsx20("td", { colSpan: totalColumns, className: "text-base-content/60 py-8 text-center", children: emptyMessage }) }) : paginatedData.map((item, index) => {
+            /* @__PURE__ */ jsx20("tbody", { children: loading ? /* @__PURE__ */ jsx20("tr", { children: /* @__PURE__ */ jsx20("td", { colSpan: totalColumns, className: "py-8 text-center", children: /* @__PURE__ */ jsx20("span", { className: "loading loading-spinner loading-md" }) }) }) : paginatedData.length === 0 ? /* @__PURE__ */ jsx20("tr", { children: /* @__PURE__ */ jsx20("td", { colSpan: totalColumns, className: "text-base-content/60 py-8 text-center", children: emptyMessage }) }) : paginatedData.map((item, index) => {
               const rowKey = getRowKey(item);
               const isExpanded = expandedKeys.includes(rowKey);
-              const actualIndex = pagination ? (currentPage - 1) * pageSize + index : index;
+              const actualIndex = pagination ? (effectivePage - 1) * pageSize + index : index;
               return /* @__PURE__ */ jsxs17(React19.Fragment, { children: [
                 /* @__PURE__ */ jsxs17(
                   "tr",
@@ -2088,7 +2101,7 @@ SortableDataTable.displayName = "SortableDataTable";
 // src/components/DateInput.tsx
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import clsx21 from "clsx";
-import { forwardRef as forwardRef21, useCallback as useCallback4, useEffect as useEffect6, useRef as useRef4, useState as useState9 } from "react";
+import { forwardRef as forwardRef21, useCallback as useCallback4, useEffect as useEffect7, useRef as useRef5, useState as useState9 } from "react";
 import { jsx as jsx21, jsxs as jsxs18 } from "react/jsx-runtime";
 var variantClasses9 = {
   bordered: "input-bordered",
@@ -2192,12 +2205,12 @@ var DateInput = forwardRef21(
   }, ref) => {
     const [inputValue, setInputValue] = useState9("");
     const [isCalendarOpen, setIsCalendarOpen] = useState9(false);
-    const containerRef = useRef4(null);
+    const containerRef = useRef5(null);
     const inputId = id || (label ? `date-input-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
-    useEffect6(() => {
+    useEffect7(() => {
       setInputValue(formatDateToString(value || null, dateFormat));
     }, [value, dateFormat]);
-    useEffect6(() => {
+    useEffect7(() => {
       const handleClickOutside = (event) => {
         if (containerRef.current && !containerRef.current.contains(event.target)) {
           setIsCalendarOpen(false);
@@ -2315,7 +2328,7 @@ DateInput.displayName = "DateInput";
 // src/components/DatePicker.tsx
 import { CalendarIcon } from "@heroicons/react/20/solid";
 import clsx22 from "clsx";
-import { forwardRef as forwardRef22, useCallback as useCallback5, useEffect as useEffect7, useMemo as useMemo2, useRef as useRef5, useState as useState10 } from "react";
+import { forwardRef as forwardRef22, useCallback as useCallback5, useEffect as useEffect8, useMemo as useMemo2, useRef as useRef6, useState as useState10 } from "react";
 import { Fragment, jsx as jsx22, jsxs as jsxs19 } from "react/jsx-runtime";
 var VARIANT_CLASSES = {
   bordered: "input-bordered",
@@ -2437,14 +2450,14 @@ var DatePicker = forwardRef22(
     const [typedValue, setTypedValue] = useState10(
       () => formatDateByPattern(defaultValue ?? value ?? "", format)
     );
-    const dateInputRef = useRef5(null);
+    const dateInputRef = useRef6(null);
     const currentISO = isControlled ? value : internalISO;
-    useEffect7(() => {
+    useEffect8(() => {
       if (isControlled) {
         setTypedValue(value ? formatDateByPattern(value, format) : "");
       }
     }, [value]);
-    useEffect7(() => {
+    useEffect8(() => {
       if (currentISO) setTypedValue(formatDateByPattern(currentISO, format));
     }, [format]);
     const inputId = useMemo2(
@@ -2620,7 +2633,7 @@ DatePicker.displayName = "DatePicker";
 // src/components/DatetimeInput.tsx
 import { ClockIcon } from "@heroicons/react/24/outline";
 import clsx23 from "clsx";
-import { forwardRef as forwardRef23, useCallback as useCallback6, useEffect as useEffect8, useMemo as useMemo3, useRef as useRef6, useState as useState11 } from "react";
+import { forwardRef as forwardRef23, useCallback as useCallback6, useEffect as useEffect9, useMemo as useMemo3, useRef as useRef7, useState as useState11 } from "react";
 import { Fragment as Fragment2, jsx as jsx23, jsxs as jsxs20 } from "react/jsx-runtime";
 var VARIANT_CLASSES2 = {
   bordered: "input-bordered",
@@ -2732,16 +2745,16 @@ var DatetimeInput = forwardRef23(
     const [typedValue, setTypedValue] = useState11(
       () => nativeToDisplay(defaultValue ?? value ?? "", type)
     );
-    const inputRef = useRef6(null);
+    const inputRef = useRef7(null);
     const currentNative = isControlled ? value : internalNative;
     const placeholder = PLACEHOLDER[type];
     const maxTypedLength = placeholder.length;
-    useEffect8(() => {
+    useEffect9(() => {
       if (isControlled) {
         setTypedValue(value ? nativeToDisplay(value, type) : "");
       }
     }, [value]);
-    useEffect8(() => {
+    useEffect9(() => {
       if (currentNative) setTypedValue(nativeToDisplay(currentNative, type));
     }, [type]);
     const inputId = useMemo3(
@@ -2910,7 +2923,7 @@ DatetimeInput.displayName = "DatetimeInput";
 
 // src/components/Dialog.tsx
 import clsx24 from "clsx";
-import { forwardRef as forwardRef24, useEffect as useEffect9, useRef as useRef7 } from "react";
+import { forwardRef as forwardRef24, useEffect as useEffect10, useRef as useRef8 } from "react";
 import { jsx as jsx24, jsxs as jsxs21 } from "react/jsx-runtime";
 var verticalPositionClasses = {
   top: "modal-top",
@@ -2985,9 +2998,9 @@ var Dialog = forwardRef24(
     className,
     ...props
   }, ref) => {
-    const dialogRef = useRef7(null);
+    const dialogRef = useRef8(null);
     const internalRef = ref || dialogRef;
-    useEffect9(() => {
+    useEffect10(() => {
       const dialog = internalRef.current;
       if (!dialog) return;
       if (open) {
@@ -2996,7 +3009,7 @@ var Dialog = forwardRef24(
         dialog.close();
       }
     }, [open, internalRef]);
-    useEffect9(() => {
+    useEffect10(() => {
       const dialog = internalRef.current;
       if (!dialog || !open) return;
       const handleKeyDown = (e) => {
@@ -3083,7 +3096,7 @@ Drawer.displayName = "Drawer";
 
 // src/components/DropdownMenu.tsx
 import clsx26 from "clsx";
-import { forwardRef as forwardRef26, useEffect as useEffect10, useRef as useRef8, useState as useState12 } from "react";
+import { forwardRef as forwardRef26, useEffect as useEffect11, useRef as useRef9, useState as useState12 } from "react";
 import { jsx as jsx26, jsxs as jsxs23 } from "react/jsx-runtime";
 var positionClasses = {
   top: "dropdown-top",
@@ -3104,9 +3117,9 @@ var Dropdown = forwardRef26(
     ...props
   }, ref) => {
     const [internalOpen, setInternalOpen] = useState12(false);
-    const dropdownRef = useRef8(null);
+    const dropdownRef = useRef9(null);
     const isOpen = open !== void 0 ? open : internalOpen;
-    useEffect10(() => {
+    useEffect11(() => {
       const handleClickOutside = (event) => {
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
           if (open === void 0) {
@@ -3649,7 +3662,7 @@ Radio.displayName = "Radio";
 // src/components/Select.tsx
 import { ChevronDownIcon as ChevronDownIcon2 } from "@heroicons/react/20/solid";
 import clsx28 from "clsx";
-import { forwardRef as forwardRef28, useEffect as useEffect11, useRef as useRef9, useState as useState13 } from "react";
+import { forwardRef as forwardRef28, useEffect as useEffect12, useRef as useRef10, useState as useState13 } from "react";
 import { Fragment as Fragment3, jsx as jsx28, jsxs as jsxs25 } from "react/jsx-runtime";
 var floatingVariantClasses = {
   floating: "border-secondary-400"
@@ -3783,9 +3796,9 @@ var Select = forwardRef28(
   }, ref) => {
     const [isFocused, setIsFocused] = useState13(false);
     const [internalValue, setInternalValue] = useState13(defaultValue || value || "");
-    const selectRef = useRef9(null);
+    const selectRef = useRef10(null);
     const selectId = id || (label ? `select-${label.toLowerCase().replace(/\s+/g, "-")}` : void 0);
-    useEffect11(() => {
+    useEffect12(() => {
       if (value !== void 0) {
         setInternalValue(value);
       }
@@ -4673,14 +4686,14 @@ FullPageLoader.displayName = "FullPageLoader";
 
 // src/components/HoverCard.tsx
 import clsx35 from "clsx";
-import { forwardRef as forwardRef35, useEffect as useEffect12, useRef as useRef10, useState as useState14 } from "react";
+import { forwardRef as forwardRef35, useEffect as useEffect13, useRef as useRef11, useState as useState14 } from "react";
 import { jsx as jsx35, jsxs as jsxs32 } from "react/jsx-runtime";
 var HoverCard = forwardRef35(
   ({ trigger, openDelay = 200, closeDelay = 300, children, className, ...props }, ref) => {
     const [isOpen, setIsOpen] = useState14(false);
-    const openTimeoutRef = useRef10(void 0);
-    const closeTimeoutRef = useRef10(void 0);
-    useEffect12(() => {
+    const openTimeoutRef = useRef11(void 0);
+    const closeTimeoutRef = useRef11(void 0);
+    useEffect13(() => {
       return () => {
         if (openTimeoutRef.current) clearTimeout(openTimeoutRef.current);
         if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
@@ -4745,12 +4758,12 @@ InputGroup.displayName = "InputGroup";
 
 // src/components/InputOTP.tsx
 import clsx37 from "clsx";
-import { forwardRef as forwardRef37, useRef as useRef11, useState as useState15 } from "react";
+import { forwardRef as forwardRef37, useRef as useRef12, useState as useState15 } from "react";
 import { jsx as jsx37 } from "react/jsx-runtime";
 var InputOTP = forwardRef37(
   ({ length = 6, onChange, onComplete, value = "", className, id, ...props }, ref) => {
     const [otp, setOtp] = useState15(value.split("").slice(0, length));
-    const inputRefs = useRef11([]);
+    const inputRefs = useRef12([]);
     const inputId = id || `otp-${Math.random().toString(36).substr(2, 9)}`;
     const handleChange = (index, digit) => {
       if (digit && !/^\d$/.test(digit)) return;
@@ -5036,14 +5049,14 @@ NavigationMenuItem.displayName = "NavigationMenuItem";
 
 // src/components/Popover.tsx
 import clsx44 from "clsx";
-import { forwardRef as forwardRef44, useEffect as useEffect13, useRef as useRef12, useState as useState16 } from "react";
+import { forwardRef as forwardRef44, useEffect as useEffect14, useRef as useRef13, useState as useState16 } from "react";
 import { jsx as jsx44, jsxs as jsxs35 } from "react/jsx-runtime";
 var Popover = forwardRef44(
   ({ trigger, open, onOpenChange, children, className, ...props }, ref) => {
     const [internalOpen, setInternalOpen] = useState16(false);
-    const popoverRef = useRef12(null);
+    const popoverRef = useRef13(null);
     const isOpen = open !== void 0 ? open : internalOpen;
-    useEffect13(() => {
+    useEffect14(() => {
       const handleClickOutside = (event) => {
         if (popoverRef.current && !popoverRef.current.contains(event.target)) {
           if (open === void 0) {
@@ -5133,13 +5146,13 @@ Separator.displayName = "Separator";
 
 // src/components/Sheet.tsx
 import clsx47 from "clsx";
-import { forwardRef as forwardRef47, useEffect as useEffect14, useRef as useRef13 } from "react";
+import { forwardRef as forwardRef47, useEffect as useEffect15, useRef as useRef14 } from "react";
 import { jsx as jsx47, jsxs as jsxs36 } from "react/jsx-runtime";
 var Sheet = forwardRef47(
   ({ open, onClose, position = "right", title, children, className, ...props }, ref) => {
-    const dialogRef = useRef13(null);
+    const dialogRef = useRef14(null);
     const internalRef = ref || dialogRef;
-    useEffect14(() => {
+    useEffect15(() => {
       const dialog = internalRef.current;
       if (!dialog) return;
       if (open) {
@@ -5590,7 +5603,7 @@ import {
   XMarkIcon
 } from "@heroicons/react/24/outline";
 import clsx55 from "clsx";
-import { createContext as createContext5, forwardRef as forwardRef55, useContext as useContext5, useEffect as useEffect15, useState as useState18 } from "react";
+import { createContext as createContext5, forwardRef as forwardRef55, useContext as useContext5, useEffect as useEffect16, useState as useState18 } from "react";
 import { jsx as jsx55, jsxs as jsxs40 } from "react/jsx-runtime";
 var ToastContext = createContext5(null);
 var useToast = () => {
@@ -5629,7 +5642,7 @@ var positionClasses3 = {
 var ToastItem = forwardRef55(
   ({ message, variant = "info", duration = 3e3, onDismiss, className, ...props }, ref) => {
     const Icon = variantIcons[variant];
-    useEffect15(() => {
+    useEffect16(() => {
       if (duration && onDismiss) {
         const timer = setTimeout(onDismiss, duration);
         return () => clearTimeout(timer);

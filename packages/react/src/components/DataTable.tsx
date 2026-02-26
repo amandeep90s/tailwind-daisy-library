@@ -1,6 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import clsx from "clsx";
-import React, { forwardRef, useCallback, useMemo, useState } from "react";
+import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Pagination } from "./Pagination";
 
 // ============================================================================
@@ -338,6 +338,23 @@ export const SortableDataTable = forwardRef<HTMLDivElement, SortableDataTablePro
       return Math.ceil(sortedData.length / pageSize);
     }, [pagination, sortedData.length, pageSize]);
 
+    // Clamp current page to valid range (prevents stale page when data shrinks)
+    const effectivePage = useMemo(() => {
+      if (!pagination || totalPages <= 0) return 1;
+      return Math.min(Math.max(1, currentPage), totalPages);
+    }, [pagination, currentPage, totalPages]);
+
+    // Reset internal page to 1 when data length changes (e.g., external filters applied)
+    const prevDataLengthRef = useRef(data.length);
+    useEffect(() => {
+      if (prevDataLengthRef.current !== data.length) {
+        prevDataLengthRef.current = data.length;
+        if (controlledCurrentPage === undefined) {
+          setInternalCurrentPage(1);
+        }
+      }
+    }, [data.length, controlledCurrentPage]);
+
     // Handle page change
     const handlePageChange = useCallback(
       (page: number) => {
@@ -369,18 +386,18 @@ export const SortableDataTable = forwardRef<HTMLDivElement, SortableDataTablePro
     // Get paginated data
     const paginatedData = useMemo(() => {
       if (!pagination) return sortedData;
-      const startIndex = (currentPage - 1) * pageSize;
+      const startIndex = (effectivePage - 1) * pageSize;
       const endIndex = startIndex + pageSize;
       return sortedData.slice(startIndex, endIndex);
-    }, [pagination, sortedData, currentPage, pageSize]);
+    }, [pagination, sortedData, effectivePage, pageSize]);
 
     // Calculate record range for simple pagination
     const recordRange = useMemo(() => {
       if (!pagination) return { start: 1, end: sortedData.length, total: sortedData.length };
-      const start = (currentPage - 1) * pageSize + 1;
-      const end = Math.min(currentPage * pageSize, sortedData.length);
+      const start = sortedData.length === 0 ? 0 : (effectivePage - 1) * pageSize + 1;
+      const end = Math.min(effectivePage * pageSize, sortedData.length);
       return { start, end, total: sortedData.length };
-    }, [pagination, currentPage, pageSize, sortedData.length]);
+    }, [pagination, effectivePage, pageSize, sortedData.length]);
 
     // Get row class
     const getRowClass = (item: T, index: number) => {
@@ -428,7 +445,7 @@ export const SortableDataTable = forwardRef<HTMLDivElement, SortableDataTablePro
       return (
         <div className={clsx("flex justify-center", paginationClassName)}>
           <Pagination
-            currentPage={currentPage}
+            currentPage={effectivePage}
             totalPages={totalPages}
             onChange={handlePageChange}
             siblingCount={paginationSiblingCount}
@@ -464,8 +481,8 @@ export const SortableDataTable = forwardRef<HTMLDivElement, SortableDataTablePro
             <button
               type="button"
               className="btn btn-ghost btn-sm btn-square"
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
+              onClick={() => handlePageChange(effectivePage - 1)}
+              disabled={effectivePage === 1}
               aria-label="Previous page"
             >
               <ChevronLeftIcon className="h-5 w-5" />
@@ -473,8 +490,8 @@ export const SortableDataTable = forwardRef<HTMLDivElement, SortableDataTablePro
             <button
               type="button"
               className="btn btn-ghost btn-sm btn-square"
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage >= totalPages}
+              onClick={() => handlePageChange(effectivePage + 1)}
+              disabled={effectivePage >= totalPages}
               aria-label="Next page"
             >
               <ChevronRightIcon className="h-5 w-5" />
@@ -548,7 +565,7 @@ export const SortableDataTable = forwardRef<HTMLDivElement, SortableDataTablePro
                     <span className="loading loading-spinner loading-md"></span>
                   </td>
                 </tr>
-              ) : sortedData.length === 0 ? (
+              ) : paginatedData.length === 0 ? (
                 <tr>
                   <td colSpan={totalColumns} className="text-base-content/60 py-8 text-center">
                     {emptyMessage}
@@ -559,7 +576,7 @@ export const SortableDataTable = forwardRef<HTMLDivElement, SortableDataTablePro
                   const rowKey = getRowKey(item);
                   const isExpanded = expandedKeys.includes(rowKey);
                   // Calculate actual index considering pagination
-                  const actualIndex = pagination ? (currentPage - 1) * pageSize + index : index;
+                  const actualIndex = pagination ? (effectivePage - 1) * pageSize + index : index;
 
                   return (
                     <React.Fragment key={rowKey}>

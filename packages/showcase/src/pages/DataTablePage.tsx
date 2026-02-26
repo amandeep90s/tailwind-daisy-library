@@ -7,7 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import type { DataTableColumnDef } from "@shared-ui-library/react";
 import { Badge, SortableDataTable } from "@shared-ui-library/react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ComponentPage, ShowcaseSection } from "../components/ComponentPage";
 import { PropsTable } from "../components/PropsTable";
 
@@ -229,6 +229,163 @@ const orders: Order[] = [
   },
 ];
 
+// ============================================================================
+// LARGE DATASET FOR EXTERNAL FILTERS DEMO
+// ============================================================================
+
+interface Employee {
+  id: number;
+  name: string;
+  email: string;
+  department: string;
+  role: string;
+  status: "Active" | "Inactive" | "On Leave";
+  salary: number;
+  joinDate: string;
+}
+
+const FIRST_NAMES = [
+  "James",
+  "Mary",
+  "Robert",
+  "Patricia",
+  "John",
+  "Jennifer",
+  "Michael",
+  "Linda",
+  "David",
+  "Elizabeth",
+  "William",
+  "Barbara",
+  "Richard",
+  "Susan",
+  "Joseph",
+  "Jessica",
+  "Thomas",
+  "Sarah",
+  "Christopher",
+  "Karen",
+  "Daniel",
+  "Lisa",
+  "Matthew",
+  "Nancy",
+  "Anthony",
+  "Betty",
+  "Mark",
+  "Margaret",
+  "Steven",
+  "Sandra",
+];
+const LAST_NAMES = [
+  "Smith",
+  "Johnson",
+  "Williams",
+  "Brown",
+  "Jones",
+  "Garcia",
+  "Miller",
+  "Davis",
+  "Rodriguez",
+  "Martinez",
+  "Hernandez",
+  "Lopez",
+  "Gonzalez",
+  "Wilson",
+  "Anderson",
+  "Thomas",
+  "Taylor",
+  "Moore",
+  "Jackson",
+  "Martin",
+];
+const DEPARTMENTS = [
+  "Engineering",
+  "Marketing",
+  "Sales",
+  "HR",
+  "Finance",
+  "Design",
+  "Operations",
+  "Support",
+  "Legal",
+  "Product",
+];
+const ROLES = [
+  "Manager",
+  "Senior Engineer",
+  "Engineer",
+  "Analyst",
+  "Coordinator",
+  "Director",
+  "Specialist",
+  "Lead",
+  "Associate",
+  "Intern",
+];
+const EMPLOYEE_STATUSES: Employee["status"][] = [
+  "Active",
+  "Active",
+  "Active",
+  "Active",
+  "Active",
+  "Inactive",
+  "Inactive",
+  "On Leave",
+];
+
+function generateEmployees(count: number): Employee[] {
+  return Array.from({ length: count }, (_, i) => {
+    const id = i + 1;
+    const firstName = FIRST_NAMES[i % FIRST_NAMES.length];
+    const lastName = LAST_NAMES[Math.floor(i / FIRST_NAMES.length) % LAST_NAMES.length];
+    return {
+      id,
+      name: `${firstName} ${lastName}`,
+      email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}${id}@company.com`,
+      department: DEPARTMENTS[i % DEPARTMENTS.length],
+      role: ROLES[i % ROLES.length],
+      status: EMPLOYEE_STATUSES[i % EMPLOYEE_STATUSES.length],
+      salary: 40000 + ((i * 731) % 80000),
+      joinDate: `202${i % 4}-${String((i % 12) + 1).padStart(2, "0")}-${String((i % 28) + 1).padStart(2, "0")}`,
+    };
+  });
+}
+
+const largeDataset = generateEmployees(120);
+
+const employeeColumns: DataTableColumnDef<Employee>[] = [
+  { key: "id", header: "ID", sortable: true, width: "60px" },
+  { key: "name", header: "Name", sortable: true },
+  { key: "email", header: "Email", sortable: true },
+  { key: "department", header: "Department", sortable: true },
+  { key: "role", header: "Role", sortable: true },
+  {
+    key: "status",
+    header: "Status",
+    sortable: true,
+    render: (emp) => {
+      const variantMap: Record<Employee["status"], "success" | "ghost" | "warning"> = {
+        Active: "success",
+        Inactive: "ghost",
+        "On Leave": "warning",
+      };
+      return (
+        <Badge variant={variantMap[emp.status]} size="sm">
+          {emp.status}
+        </Badge>
+      );
+    },
+  },
+  {
+    key: "salary",
+    header: "Salary",
+    sortable: true,
+    headerAlign: "right",
+    cellAlign: "right",
+    render: (emp) => `$${emp.salary.toLocaleString()}`,
+  },
+];
+
 // Column definitions
 const userColumns: DataTableColumnDef<User>[] = [
   {
@@ -355,6 +512,25 @@ function OrderDetails({ order }: { order: Order }) {
 export function DataTablePage() {
   const [expandedKeys, setExpandedKeys] = useState<(string | number)[]>([]);
   const [paginationPage, setPaginationPage] = useState(1);
+
+  // External filters state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [departmentFilter, setDepartmentFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+
+  // Filtered employees for the large dataset demo
+  const filteredEmployees = useMemo(() => {
+    return largeDataset.filter((emp) => {
+      const matchesSearch =
+        searchQuery === "" ||
+        emp.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        emp.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        emp.role.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesDepartment = departmentFilter === "all" || emp.department === departmentFilter;
+      const matchesStatus = statusFilter === "all" || emp.status === statusFilter;
+      return matchesSearch && matchesDepartment && matchesStatus;
+    });
+  }, [searchQuery, departmentFilter, statusFilter]);
 
   return (
     <ComponentPage
@@ -612,6 +788,90 @@ export function DataTablePage() {
         description="Table can show a loading spinner while data is being fetched."
       >
         <SortableDataTable data={[]} columns={userColumns} getRowKey={(user) => user.id} loading />
+      </ShowcaseSection>
+
+      <ShowcaseSection
+        title="External Filters with Large Dataset (120 rows)"
+        description="DataTable with external search and filter controls applied to 120 employee records. Pagination resets automatically when filtered data changes."
+      >
+        <div className="space-y-4">
+          {/* Filter Controls */}
+          <div className="bg-base-200/50 flex flex-wrap items-end gap-4 rounded-lg p-4">
+            <div className="form-control w-full max-w-xs">
+              <label className="label">
+                <span className="label-text text-sm font-medium">Search</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Search name, email, role..."
+                className="input input-bordered input-sm w-full"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <div className="form-control w-full max-w-xs">
+              <label className="label">
+                <span className="label-text text-sm font-medium">Department</span>
+              </label>
+              <select
+                className="select select-bordered select-sm w-full"
+                value={departmentFilter}
+                onChange={(e) => setDepartmentFilter(e.target.value)}
+              >
+                <option value="all">All Departments</option>
+                {DEPARTMENTS.map((dept) => (
+                  <option key={dept} value={dept}>
+                    {dept}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-control w-full max-w-xs">
+              <label className="label">
+                <span className="label-text text-sm font-medium">Status</span>
+              </label>
+              <select
+                className="select select-bordered select-sm w-full"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="all">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="On Leave">On Leave</option>
+              </select>
+            </div>
+            <button
+              type="button"
+              className="btn btn-outline btn-sm"
+              onClick={() => {
+                setSearchQuery("");
+                setDepartmentFilter("all");
+                setStatusFilter("all");
+              }}
+            >
+              Clear Filters
+            </button>
+          </div>
+
+          {/* Results count */}
+          <p className="text-base-content/70 text-sm">
+            Showing {filteredEmployees.length} of {largeDataset.length} employees
+          </p>
+
+          {/* DataTable */}
+          <SortableDataTable
+            data={filteredEmployees}
+            columns={employeeColumns}
+            getRowKey={(emp) => emp.id}
+            pagination
+            pageSize={10}
+            paginationVariant="simple"
+            pageSizeOptions={[10, 20, 50, 100]}
+            zebra
+            emptyMessage="No employees match the current filters."
+          />
+        </div>
       </ShowcaseSection>
 
       <PropsTable
