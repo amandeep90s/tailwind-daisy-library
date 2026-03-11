@@ -489,6 +489,7 @@ var variantClasses4 = {
   plus: "collapse-plus",
   arrow: "collapse-arrow"
 };
+var stopPropagation = (e) => e.stopPropagation();
 var Accordion = forwardRef5(
   ({ children, className, ...props }, ref) => {
     return /* @__PURE__ */ jsx5("div", { ref, className: clsx5("space-y-2", className), ...props, children });
@@ -526,33 +527,31 @@ var AccordionItem = forwardRef5(
     const [internalOpen, setInternalOpen] = useState2(defaultOpen);
     const isControlled = controlledOpen !== void 0;
     const isOpen = isControlled ? controlledOpen : internalOpen;
-    const handleToggle = useCallback(() => {
-      const newOpen = !isOpen;
-      if (!isControlled) {
-        setInternalOpen(newOpen);
-      }
-      onOpenChange?.(newOpen);
-    }, [isOpen, isControlled, onOpenChange]);
     const handleTitleClick = useCallback(
       (e) => {
         e.preventDefault();
         e.stopPropagation();
-        handleToggle();
+        const newOpen = !isOpen;
+        if (!isControlled) {
+          setInternalOpen(newOpen);
+        }
+        onOpenChange?.(newOpen);
       },
-      [handleToggle]
+      [isOpen, isControlled, onOpenChange]
     );
     const handleTitleKeyDown = useCallback(
       (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          handleToggle();
+          const newOpen = !isOpen;
+          if (!isControlled) {
+            setInternalOpen(newOpen);
+          }
+          onOpenChange?.(newOpen);
         }
       },
-      [handleToggle]
+      [isOpen, isControlled, onOpenChange]
     );
-    const handleActionsClick = useCallback((e) => {
-      e.stopPropagation();
-    }, []);
     const useCustomIcon = variant === "default" || iconPosition === "right";
     return /* @__PURE__ */ jsxs5(
       "div",
@@ -568,13 +567,17 @@ var AccordionItem = forwardRef5(
         ),
         ...props,
         children: [
-          /* @__PURE__ */ jsx5("input", { type: "checkbox", className: "hidden", checked: isOpen, readOnly: true }),
+          /* @__PURE__ */ jsx5("input", { type: "checkbox", className: "hidden", checked: isOpen, readOnly: true, "aria-hidden": "true" }),
           /* @__PURE__ */ jsxs5(
             "div",
             {
               className: clsx5(
                 "collapse-title text-xl font-medium",
                 "flex cursor-pointer items-center gap-3 select-none",
+                // DaisyUI sets padding-inline-end:3rem on .collapse-title to reserve
+                // space for its ::after pseudo-element icon. When we render our own
+                // icon element, that reserved space is just dead whitespace — reset it.
+                useCustomIcon && "pe-4!",
                 iconPosition === "right" && "flex-row-reverse justify-between"
               ),
               onClick: handleTitleClick,
@@ -589,8 +592,8 @@ var AccordionItem = forwardRef5(
                   "div",
                   {
                     className: "flex items-center gap-2",
-                    onClick: handleActionsClick,
-                    onKeyDown: (e) => e.stopPropagation(),
+                    onClick: stopPropagation,
+                    onKeyDown: stopPropagation,
                     role: "group",
                     "aria-label": "Item actions",
                     children: actions

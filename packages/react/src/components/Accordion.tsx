@@ -8,16 +8,7 @@ import React, { forwardRef, useCallback, useState } from "react";
 export type AccordionVariant = "default" | "plus" | "arrow";
 export type AccordionIconPosition = "left" | "right";
 
-export interface AccordionProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Visual style variant */
-  variant?: AccordionVariant;
-  /** Whether the accordion is open by default */
-  defaultOpen?: boolean;
-  /** Controlled open state */
-  open?: boolean;
-  /** Callback when open state changes */
-  onOpenChange?: (open: boolean) => void;
-}
+export interface AccordionProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export interface AccordionItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   /** Title/summary content */
@@ -46,11 +37,8 @@ const variantClasses: Record<AccordionVariant, string> = {
   arrow: "collapse-arrow",
 };
 
-// Icon position classes - reverses the icon position
-const iconPositionClasses: Record<AccordionIconPosition, string> = {
-  left: "",
-  right: "[&>.collapse-title]:flex-row-reverse",
-};
+// Stable handler for stopping propagation from action elements — no closure needed
+const stopPropagation = (e: React.MouseEvent | React.KeyboardEvent) => e.stopPropagation();
 
 /**
  * Accordion component with DaisyUI styling
@@ -138,23 +126,18 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
     const isControlled = controlledOpen !== undefined;
     const isOpen = isControlled ? controlledOpen : internalOpen;
 
-    // Toggle handler - only triggered by title/icon click
-    const handleToggle = useCallback(() => {
-      const newOpen = !isOpen;
-      if (!isControlled) {
-        setInternalOpen(newOpen);
-      }
-      onOpenChange?.(newOpen);
-    }, [isOpen, isControlled, onOpenChange]);
-
     // Handle title/icon click
     const handleTitleClick = useCallback(
       (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        handleToggle();
+        const newOpen = !isOpen;
+        if (!isControlled) {
+          setInternalOpen(newOpen);
+        }
+        onOpenChange?.(newOpen);
       },
-      [handleToggle]
+      [isOpen, isControlled, onOpenChange]
     );
 
     // Handle keyboard accessibility
@@ -162,16 +145,15 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
       (e: React.KeyboardEvent) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          handleToggle();
+          const newOpen = !isOpen;
+          if (!isControlled) {
+            setInternalOpen(newOpen);
+          }
+          onOpenChange?.(newOpen);
         }
       },
-      [handleToggle]
+      [isOpen, isControlled, onOpenChange]
     );
-
-    // Stop propagation for actions to prevent accordion toggle
-    const handleActionsClick = useCallback((e: React.MouseEvent) => {
-      e.stopPropagation();
-    }, []);
 
     // Use custom icon rendering when variant is "default" or we need right positioning
     const useCustomIcon = variant === "default" || iconPosition === "right";
@@ -190,13 +172,17 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
         {...props}
       >
         {/* Hidden checkbox for DaisyUI collapse functionality - we control it manually */}
-        <input type="checkbox" className="hidden" checked={isOpen} readOnly />
+        <input type="checkbox" className="hidden" checked={isOpen} readOnly aria-hidden="true" />
 
         {/* Custom title with icon positioning and actions */}
         <div
           className={clsx(
             "collapse-title text-xl font-medium",
             "flex cursor-pointer items-center gap-3 select-none",
+            // DaisyUI sets padding-inline-end:3rem on .collapse-title to reserve
+            // space for its ::after pseudo-element icon. When we render our own
+            // icon element, that reserved space is just dead whitespace — reset it.
+            useCustomIcon && "pe-4!",
             iconPosition === "right" && "flex-row-reverse justify-between"
           )}
           onClick={handleTitleClick}
@@ -215,8 +201,8 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
           {actions && (
             <div
               className="flex items-center gap-2"
-              onClick={handleActionsClick}
-              onKeyDown={(e) => e.stopPropagation()}
+              onClick={stopPropagation}
+              onKeyDown={stopPropagation}
               role="group"
               aria-label="Item actions"
             >

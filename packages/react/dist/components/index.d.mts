@@ -181,14 +181,6 @@ declare const Label: React__default.ForwardRefExoticComponent<LabelProps & React
 type AccordionVariant = "default" | "plus" | "arrow";
 type AccordionIconPosition = "left" | "right";
 interface AccordionProps extends React__default.HTMLAttributes<HTMLDivElement> {
-    /** Visual style variant */
-    variant?: AccordionVariant;
-    /** Whether the accordion is open by default */
-    defaultOpen?: boolean;
-    /** Controlled open state */
-    open?: boolean;
-    /** Callback when open state changes */
-    onOpenChange?: (open: boolean) => void;
 }
 interface AccordionItemProps extends Omit<React__default.HTMLAttributes<HTMLDivElement>, "title"> {
     /** Title/summary content */

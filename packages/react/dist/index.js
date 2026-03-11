@@ -632,6 +632,7 @@ var variantClasses4 = {
   plus: "collapse-plus",
   arrow: "collapse-arrow"
 };
+var stopPropagation = (e) => e.stopPropagation();
 var Accordion = (0, import_react5.forwardRef)(
   ({ children, className, ...props }, ref) => {
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("div", { ref, className: (0, import_clsx5.default)("space-y-2", className), ...props, children });
@@ -669,33 +670,31 @@ var AccordionItem = (0, import_react5.forwardRef)(
     const [internalOpen, setInternalOpen] = (0, import_react5.useState)(defaultOpen);
     const isControlled = controlledOpen !== void 0;
     const isOpen = isControlled ? controlledOpen : internalOpen;
-    const handleToggle = (0, import_react5.useCallback)(() => {
-      const newOpen = !isOpen;
-      if (!isControlled) {
-        setInternalOpen(newOpen);
-      }
-      onOpenChange?.(newOpen);
-    }, [isOpen, isControlled, onOpenChange]);
     const handleTitleClick = (0, import_react5.useCallback)(
       (e) => {
         e.preventDefault();
         e.stopPropagation();
-        handleToggle();
+        const newOpen = !isOpen;
+        if (!isControlled) {
+          setInternalOpen(newOpen);
+        }
+        onOpenChange?.(newOpen);
       },
-      [handleToggle]
+      [isOpen, isControlled, onOpenChange]
     );
     const handleTitleKeyDown = (0, import_react5.useCallback)(
       (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          handleToggle();
+          const newOpen = !isOpen;
+          if (!isControlled) {
+            setInternalOpen(newOpen);
+          }
+          onOpenChange?.(newOpen);
         }
       },
-      [handleToggle]
+      [isOpen, isControlled, onOpenChange]
     );
-    const handleActionsClick = (0, import_react5.useCallback)((e) => {
-      e.stopPropagation();
-    }, []);
     const useCustomIcon = variant === "default" || iconPosition === "right";
     return /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
       "div",
@@ -711,13 +710,17 @@ var AccordionItem = (0, import_react5.forwardRef)(
         ),
         ...props,
         children: [
-          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "checkbox", className: "hidden", checked: isOpen, readOnly: true }),
+          /* @__PURE__ */ (0, import_jsx_runtime5.jsx)("input", { type: "checkbox", className: "hidden", checked: isOpen, readOnly: true, "aria-hidden": "true" }),
           /* @__PURE__ */ (0, import_jsx_runtime5.jsxs)(
             "div",
             {
               className: (0, import_clsx5.default)(
                 "collapse-title text-xl font-medium",
                 "flex cursor-pointer items-center gap-3 select-none",
+                // DaisyUI sets padding-inline-end:3rem on .collapse-title to reserve
+                // space for its ::after pseudo-element icon. When we render our own
+                // icon element, that reserved space is just dead whitespace — reset it.
+                useCustomIcon && "pe-4!",
                 iconPosition === "right" && "flex-row-reverse justify-between"
               ),
               onClick: handleTitleClick,
@@ -732,8 +735,8 @@ var AccordionItem = (0, import_react5.forwardRef)(
                   "div",
                   {
                     className: "flex items-center gap-2",
-                    onClick: handleActionsClick,
-                    onKeyDown: (e) => e.stopPropagation(),
+                    onClick: stopPropagation,
+                    onKeyDown: stopPropagation,
                     role: "group",
                     "aria-label": "Item actions",
                     children: actions
