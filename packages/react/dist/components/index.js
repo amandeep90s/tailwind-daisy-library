@@ -2662,34 +2662,7 @@ var DatePicker = (0, import_react22.forwardRef)(
       },
       [props.onFocus]
     );
-    const openPicker = (0, import_react22.useCallback)(() => {
-      setIsFocused(true);
-      dateInputRef.current?.showPicker();
-    }, []);
-    const handleCalendarClick = (0, import_react22.useCallback)(
-      (e) => {
-        e.stopPropagation();
-        openPicker();
-      },
-      [openPicker]
-    );
     const isActive = typedValue || isFocused;
-    const hiddenNativeInput = /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
-      "input",
-      {
-        ref: dateInputRef,
-        type: "date",
-        className: "datepicker-native",
-        value: currentISO,
-        onChange: handleDateChange,
-        onFocus: () => setIsFocused(true),
-        onBlur: () => setIsFocused(false),
-        min,
-        max,
-        "aria-hidden": "true",
-        tabIndex: -1
-      }
-    );
     const visibleTextInput = /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
       "input",
       {
@@ -2708,7 +2681,25 @@ var DatePicker = (0, import_react22.forwardRef)(
         "aria-invalid": error ? "true" : void 0
       }
     );
-    const calendarIcon = /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(import_solid2.CalendarIcon, { className: "h-5 w-5 shrink-0 cursor-pointer", onClick: handleCalendarClick });
+    const pickerTrigger = /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "datepicker-icon-wrapper self-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(import_solid2.CalendarIcon, { className: "pointer-events-none h-5 w-5 shrink-0 cursor-pointer" }),
+      /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+        "input",
+        {
+          ref: dateInputRef,
+          type: "date",
+          className: "datepicker-native",
+          value: currentISO,
+          onChange: handleDateChange,
+          onFocus: () => setIsFocused(true),
+          onBlur: () => setIsFocused(false),
+          min,
+          max,
+          "aria-hidden": "true",
+          tabIndex: -1
+        }
+      )
+    ] });
     if (variant === "floating") {
       return /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("div", { className: "form-control w-full", children: [
         /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("label", { className: `floating-label ${isActive ? "active" : ""}`, children: [
@@ -2736,8 +2727,25 @@ var DatePicker = (0, import_react22.forwardRef)(
                     ]
                   }
                 ),
-                hiddenNativeInput,
-                calendarIcon
+                /* @__PURE__ */ (0, import_jsx_runtime22.jsxs)("span", { className: "datepicker-icon-wrapper absolute top-3 right-0 -translate-y-1/2", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(import_solid2.CalendarIcon, { className: "pointer-events-none h-5 w-5 shrink-0 cursor-pointer" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime22.jsx)(
+                    "input",
+                    {
+                      ref: dateInputRef,
+                      type: "date",
+                      className: "datepicker-native",
+                      value: currentISO,
+                      onChange: handleDateChange,
+                      onFocus: () => setIsFocused(true),
+                      onBlur: () => setIsFocused(false),
+                      min,
+                      max,
+                      "aria-hidden": "true",
+                      tabIndex: -1
+                    }
+                  )
+                ] })
               ]
             }
           )
@@ -2756,8 +2764,7 @@ var DatePicker = (0, import_react22.forwardRef)(
           ),
           children: [
             visibleTextInput,
-            hiddenNativeInput,
-            calendarIcon
+            pickerTrigger
           ]
         }
       ) }),
@@ -2956,34 +2963,7 @@ var DatetimeInput = (0, import_react23.forwardRef)(
       },
       [props.onFocus]
     );
-    const openPicker = (0, import_react23.useCallback)(() => {
-      setIsFocused(true);
-      inputRef.current?.showPicker();
-    }, []);
-    const handleIconClick = (0, import_react23.useCallback)(
-      (e) => {
-        e.stopPropagation();
-        openPicker();
-      },
-      [openPicker]
-    );
     const isActive = typedValue || isFocused;
-    const hiddenNativeInput = /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
-      "input",
-      {
-        ref: inputRef,
-        type,
-        className: "datetime-native",
-        value: currentNative,
-        onChange: handleChange,
-        onFocus: () => setIsFocused(true),
-        onBlur: () => setIsFocused(false),
-        min,
-        max,
-        "aria-hidden": "true",
-        tabIndex: -1
-      }
-    );
     const visibleTextInput = /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
       "input",
       {
@@ -3002,7 +2982,25 @@ var DatetimeInput = (0, import_react23.forwardRef)(
         "aria-invalid": error ? "true" : void 0
       }
     );
-    const clockIcon = /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(import_outline4.ClockIcon, { className: "h-5 w-5 shrink-0 cursor-pointer", onClick: handleIconClick });
+    const pickerTrigger = /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "datetime-icon-wrapper self-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(import_outline4.ClockIcon, { className: "pointer-events-none h-5 w-5 shrink-0 cursor-pointer" }),
+      /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+        "input",
+        {
+          ref: inputRef,
+          type,
+          className: "datetime-native",
+          value: currentNative,
+          onChange: handleChange,
+          onFocus: () => setIsFocused(true),
+          onBlur: () => setIsFocused(false),
+          min,
+          max,
+          "aria-hidden": "true",
+          tabIndex: -1
+        }
+      )
+    ] });
     if (variant === "floating") {
       return /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("div", { className: "form-control w-full", children: [
         /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("label", { className: `floating-label ${isActive ? "active" : ""}`, children: [
@@ -3027,8 +3025,25 @@ var DatetimeInput = (0, import_react23.forwardRef)(
                     ]
                   }
                 ),
-                hiddenNativeInput,
-                clockIcon
+                /* @__PURE__ */ (0, import_jsx_runtime23.jsxs)("span", { className: "datetime-icon-wrapper absolute top-3 right-0 -translate-y-1/2", children: [
+                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(import_outline4.ClockIcon, { className: "pointer-events-none h-5 w-5 shrink-0 cursor-pointer" }),
+                  /* @__PURE__ */ (0, import_jsx_runtime23.jsx)(
+                    "input",
+                    {
+                      ref: inputRef,
+                      type,
+                      className: "datetime-native",
+                      value: currentNative,
+                      onChange: handleChange,
+                      onFocus: () => setIsFocused(true),
+                      onBlur: () => setIsFocused(false),
+                      min,
+                      max,
+                      "aria-hidden": "true",
+                      tabIndex: -1
+                    }
+                  )
+                ] })
               ]
             }
           )
@@ -3047,8 +3062,7 @@ var DatetimeInput = (0, import_react23.forwardRef)(
           ),
           children: [
             visibleTextInput,
-            hiddenNativeInput,
-            clockIcon
+            pickerTrigger
           ]
         }
       ) }),

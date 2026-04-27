@@ -293,38 +293,9 @@ export const DatetimeInput = forwardRef<HTMLInputElement, DatetimeInputProps>(
       [props.onFocus]
     );
 
-    const openPicker = useCallback(() => {
-      setIsFocused(true);
-      inputRef.current?.showPicker();
-    }, []);
-
-    const handleIconClick = useCallback(
-      (e: React.MouseEvent) => {
-        e.stopPropagation();
-        openPicker();
-      },
-      [openPicker]
-    );
-
     const isActive = typedValue || isFocused;
 
     // ── Shared elements ──────────────────────────────────────────────────────
-
-    const hiddenNativeInput = (
-      <input
-        ref={inputRef}
-        type={type}
-        className="datetime-native"
-        value={currentNative}
-        onChange={handleChange}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        min={min}
-        max={max}
-        aria-hidden="true"
-        tabIndex={-1}
-      />
-    );
 
     const visibleTextInput = (
       <input
@@ -344,8 +315,25 @@ export const DatetimeInput = forwardRef<HTMLInputElement, DatetimeInputProps>(
       />
     );
 
-    const clockIcon = (
-      <ClockIcon className="h-5 w-5 shrink-0 cursor-pointer" onClick={handleIconClick} />
+    // Native datetime input overlays the clock icon so iOS detects taps.
+    // The icon has pointer-events-none so clicks pass through to the native input.
+    const pickerTrigger = (
+      <span className="datetime-icon-wrapper self-center">
+        <ClockIcon className="pointer-events-none h-5 w-5 shrink-0 cursor-pointer" />
+        <input
+          ref={inputRef}
+          type={type}
+          className="datetime-native"
+          value={currentNative}
+          onChange={handleChange}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          min={min}
+          max={max}
+          aria-hidden="true"
+          tabIndex={-1}
+        />
+      </span>
     );
 
     // ── Floating variant ─────────────────────────────────────────────────────
@@ -369,8 +357,22 @@ export const DatetimeInput = forwardRef<HTMLInputElement, DatetimeInputProps>(
                 <span className="internal-label">{label}</span>
                 {visibleTextInput}
               </span>
-              {hiddenNativeInput}
-              {clockIcon}
+              <span className="datetime-icon-wrapper absolute top-3 right-0 -translate-y-1/2">
+                <ClockIcon className="pointer-events-none h-5 w-5 shrink-0 cursor-pointer" />
+                <input
+                  ref={inputRef}
+                  type={type}
+                  className="datetime-native"
+                  value={currentNative}
+                  onChange={handleChange}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  min={min}
+                  max={max}
+                  aria-hidden="true"
+                  tabIndex={-1}
+                />
+              </span>
             </div>
           </label>
           <ErrorHelperText error={error} helperText={helperText} inputId={inputId} />
@@ -395,8 +397,7 @@ export const DatetimeInput = forwardRef<HTMLInputElement, DatetimeInputProps>(
             )}
           >
             {visibleTextInput}
-            {hiddenNativeInput}
-            {clockIcon}
+            {pickerTrigger}
           </div>
         </div>
         <ErrorHelperText error={error} helperText={helperText} inputId={inputId} />

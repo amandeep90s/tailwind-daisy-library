@@ -315,38 +315,9 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
       [props.onFocus]
     );
 
-    const openPicker = useCallback(() => {
-      setIsFocused(true);
-      dateInputRef.current?.showPicker();
-    }, []);
-
-    const handleCalendarClick = useCallback(
-      (e: React.MouseEvent) => {
-        e.stopPropagation();
-        openPicker();
-      },
-      [openPicker]
-    );
-
     const isActive = typedValue || isFocused;
 
     // ── Shared elements ──────────────────────────────────────────────────────
-
-    const hiddenNativeInput = (
-      <input
-        ref={dateInputRef}
-        type="date"
-        className="datepicker-native"
-        value={currentISO}
-        onChange={handleDateChange}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        min={min}
-        max={max}
-        aria-hidden="true"
-        tabIndex={-1}
-      />
-    );
 
     const visibleTextInput = (
       <input
@@ -366,8 +337,25 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
       />
     );
 
-    const calendarIcon = (
-      <CalendarIcon className="h-5 w-5 shrink-0 cursor-pointer" onClick={handleCalendarClick} />
+    // Native date input overlays the calendar icon so iOS detects taps.
+    // The icon has pointer-events-none so clicks pass through to the native input.
+    const pickerTrigger = (
+      <span className="datepicker-icon-wrapper self-center">
+        <CalendarIcon className="pointer-events-none h-5 w-5 shrink-0 cursor-pointer" />
+        <input
+          ref={dateInputRef}
+          type="date"
+          className="datepicker-native"
+          value={currentISO}
+          onChange={handleDateChange}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          min={min}
+          max={max}
+          aria-hidden="true"
+          tabIndex={-1}
+        />
+      </span>
     );
 
     // ── Floating variant ─────────────────────────────────────────────────────
@@ -394,8 +382,22 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
                 <span className="internal-label">{label}</span>
                 {visibleTextInput}
               </span>
-              {hiddenNativeInput}
-              {calendarIcon}
+              <span className="datepicker-icon-wrapper absolute top-3 right-0 -translate-y-1/2">
+                <CalendarIcon className="pointer-events-none h-5 w-5 shrink-0 cursor-pointer" />
+                <input
+                  ref={dateInputRef}
+                  type="date"
+                  className="datepicker-native"
+                  value={currentISO}
+                  onChange={handleDateChange}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  min={min}
+                  max={max}
+                  aria-hidden="true"
+                  tabIndex={-1}
+                />
+              </span>
             </div>
           </label>
           <ErrorHelperText error={error} helperText={helperText} inputId={inputId} />
@@ -420,8 +422,7 @@ export const DatePicker = forwardRef<HTMLInputElement, DatePickerProps>(
             )}
           >
             {visibleTextInput}
-            {hiddenNativeInput}
-            {calendarIcon}
+            {pickerTrigger}
           </div>
         </div>
         <ErrorHelperText error={error} helperText={helperText} inputId={inputId} />

@@ -2528,34 +2528,7 @@ var DatePicker = forwardRef22(
       },
       [props.onFocus]
     );
-    const openPicker = useCallback5(() => {
-      setIsFocused(true);
-      dateInputRef.current?.showPicker();
-    }, []);
-    const handleCalendarClick = useCallback5(
-      (e) => {
-        e.stopPropagation();
-        openPicker();
-      },
-      [openPicker]
-    );
     const isActive = typedValue || isFocused;
-    const hiddenNativeInput = /* @__PURE__ */ jsx22(
-      "input",
-      {
-        ref: dateInputRef,
-        type: "date",
-        className: "datepicker-native",
-        value: currentISO,
-        onChange: handleDateChange,
-        onFocus: () => setIsFocused(true),
-        onBlur: () => setIsFocused(false),
-        min,
-        max,
-        "aria-hidden": "true",
-        tabIndex: -1
-      }
-    );
     const visibleTextInput = /* @__PURE__ */ jsx22(
       "input",
       {
@@ -2574,7 +2547,25 @@ var DatePicker = forwardRef22(
         "aria-invalid": error ? "true" : void 0
       }
     );
-    const calendarIcon = /* @__PURE__ */ jsx22(CalendarIcon, { className: "h-5 w-5 shrink-0 cursor-pointer", onClick: handleCalendarClick });
+    const pickerTrigger = /* @__PURE__ */ jsxs19("span", { className: "datepicker-icon-wrapper self-center", children: [
+      /* @__PURE__ */ jsx22(CalendarIcon, { className: "pointer-events-none h-5 w-5 shrink-0 cursor-pointer" }),
+      /* @__PURE__ */ jsx22(
+        "input",
+        {
+          ref: dateInputRef,
+          type: "date",
+          className: "datepicker-native",
+          value: currentISO,
+          onChange: handleDateChange,
+          onFocus: () => setIsFocused(true),
+          onBlur: () => setIsFocused(false),
+          min,
+          max,
+          "aria-hidden": "true",
+          tabIndex: -1
+        }
+      )
+    ] });
     if (variant === "floating") {
       return /* @__PURE__ */ jsxs19("div", { className: "form-control w-full", children: [
         /* @__PURE__ */ jsxs19("label", { className: `floating-label ${isActive ? "active" : ""}`, children: [
@@ -2602,8 +2593,25 @@ var DatePicker = forwardRef22(
                     ]
                   }
                 ),
-                hiddenNativeInput,
-                calendarIcon
+                /* @__PURE__ */ jsxs19("span", { className: "datepicker-icon-wrapper absolute top-3 right-0 -translate-y-1/2", children: [
+                  /* @__PURE__ */ jsx22(CalendarIcon, { className: "pointer-events-none h-5 w-5 shrink-0 cursor-pointer" }),
+                  /* @__PURE__ */ jsx22(
+                    "input",
+                    {
+                      ref: dateInputRef,
+                      type: "date",
+                      className: "datepicker-native",
+                      value: currentISO,
+                      onChange: handleDateChange,
+                      onFocus: () => setIsFocused(true),
+                      onBlur: () => setIsFocused(false),
+                      min,
+                      max,
+                      "aria-hidden": "true",
+                      tabIndex: -1
+                    }
+                  )
+                ] })
               ]
             }
           )
@@ -2622,8 +2630,7 @@ var DatePicker = forwardRef22(
           ),
           children: [
             visibleTextInput,
-            hiddenNativeInput,
-            calendarIcon
+            pickerTrigger
           ]
         }
       ) }),
@@ -2822,34 +2829,7 @@ var DatetimeInput = forwardRef23(
       },
       [props.onFocus]
     );
-    const openPicker = useCallback6(() => {
-      setIsFocused(true);
-      inputRef.current?.showPicker();
-    }, []);
-    const handleIconClick = useCallback6(
-      (e) => {
-        e.stopPropagation();
-        openPicker();
-      },
-      [openPicker]
-    );
     const isActive = typedValue || isFocused;
-    const hiddenNativeInput = /* @__PURE__ */ jsx23(
-      "input",
-      {
-        ref: inputRef,
-        type,
-        className: "datetime-native",
-        value: currentNative,
-        onChange: handleChange,
-        onFocus: () => setIsFocused(true),
-        onBlur: () => setIsFocused(false),
-        min,
-        max,
-        "aria-hidden": "true",
-        tabIndex: -1
-      }
-    );
     const visibleTextInput = /* @__PURE__ */ jsx23(
       "input",
       {
@@ -2868,7 +2848,25 @@ var DatetimeInput = forwardRef23(
         "aria-invalid": error ? "true" : void 0
       }
     );
-    const clockIcon = /* @__PURE__ */ jsx23(ClockIcon, { className: "h-5 w-5 shrink-0 cursor-pointer", onClick: handleIconClick });
+    const pickerTrigger = /* @__PURE__ */ jsxs20("span", { className: "datetime-icon-wrapper self-center", children: [
+      /* @__PURE__ */ jsx23(ClockIcon, { className: "pointer-events-none h-5 w-5 shrink-0 cursor-pointer" }),
+      /* @__PURE__ */ jsx23(
+        "input",
+        {
+          ref: inputRef,
+          type,
+          className: "datetime-native",
+          value: currentNative,
+          onChange: handleChange,
+          onFocus: () => setIsFocused(true),
+          onBlur: () => setIsFocused(false),
+          min,
+          max,
+          "aria-hidden": "true",
+          tabIndex: -1
+        }
+      )
+    ] });
     if (variant === "floating") {
       return /* @__PURE__ */ jsxs20("div", { className: "form-control w-full", children: [
         /* @__PURE__ */ jsxs20("label", { className: `floating-label ${isActive ? "active" : ""}`, children: [
@@ -2893,8 +2891,25 @@ var DatetimeInput = forwardRef23(
                     ]
                   }
                 ),
-                hiddenNativeInput,
-                clockIcon
+                /* @__PURE__ */ jsxs20("span", { className: "datetime-icon-wrapper absolute top-3 right-0 -translate-y-1/2", children: [
+                  /* @__PURE__ */ jsx23(ClockIcon, { className: "pointer-events-none h-5 w-5 shrink-0 cursor-pointer" }),
+                  /* @__PURE__ */ jsx23(
+                    "input",
+                    {
+                      ref: inputRef,
+                      type,
+                      className: "datetime-native",
+                      value: currentNative,
+                      onChange: handleChange,
+                      onFocus: () => setIsFocused(true),
+                      onBlur: () => setIsFocused(false),
+                      min,
+                      max,
+                      "aria-hidden": "true",
+                      tabIndex: -1
+                    }
+                  )
+                ] })
               ]
             }
           )
@@ -2913,8 +2928,7 @@ var DatetimeInput = forwardRef23(
           ),
           children: [
             visibleTextInput,
-            hiddenNativeInput,
-            clockIcon
+            pickerTrigger
           ]
         }
       ) }),
